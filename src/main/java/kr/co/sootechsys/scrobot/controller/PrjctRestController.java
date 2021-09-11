@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.controller;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.service.PrjctService;
 
@@ -23,32 +24,38 @@ public class PrjctRestController {
 
   private PrjctService service;
 
-  public PrjctRestController(PrjctService service){
+  public PrjctRestController(PrjctService service) {
     this.service = service;
   }
-  
+
   @PostMapping()
-  public void regist(@RequestBody PrjctDto dto){
+  @ApiOperation(value = "프로젝트 등록")
+  public void regist(@RequestBody PrjctDto dto) {
     service.regist(dto);
   }
 
   @PutMapping()
-  public void updt(@RequestBody PrjctDto dto){
+  @ApiOperation(value = "프로젝트 수정")
+  public void updt(@RequestBody PrjctDto dto) {
     service.updt(dto);
   }
 
+
   @DeleteMapping("/{prjctId}")
-  public void delete(@PathVariable String prjctId){
+  @ApiOperation(value = "프로젝트 아이디로 삭제")
+  public void delete(@PathVariable String prjctId) {
     service.delete(prjctId);
   }
 
   @GetMapping("/{prjctId}")
-  public ResponseEntity<Map<String,Object>> get(@PathVariable String prjctId){
-    return ResponseEntity.ok(Map.of("data", service.find(prjctId)));
+  @ApiOperation(value = "프로젝트 아이디로 조회")
+  public ResponseEntity<Map<String, Object>> get(@PathVariable String prjctId) {
+    return ResponseEntity.ok(Map.of("data", service.findById(prjctId)));
   }
 
   @GetMapping("/by-user")
-  public ResponseEntity<Map<String,Object>> list(@RequestParam String userId){
+  @ApiOperation(value = "사용자 아이디로 프로젝트 목록 조회")
+  public ResponseEntity<Map<String, Object>> list(@RequestParam String userId) {
     return ResponseEntity.ok(Map.of("data", service.findAllByUserId(userId)));
   }
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 
@@ -22,32 +22,37 @@ public class ScrinGroupRestController {
 
   private ScrinGroupService service;
 
-  public ScrinGroupRestController(ScrinGroupService service){
+  public ScrinGroupRestController(ScrinGroupService service) {
     this.service = service;
   }
-  
+
   @PostMapping()
-  public void regist(@RequestBody ScrinGroupDto dto){
+  @ApiOperation(value = "화면그룹 등록")
+  public void regist(@RequestBody ScrinGroupDto dto) {
     service.regist(dto);
   }
 
   @PutMapping()
-  public void updt(@RequestBody ScrinGroupDto dto){
+  @ApiOperation(value = "화면그룹 수정")
+  public void updt(@RequestBody ScrinGroupDto dto) {
     service.updt(dto);
   }
 
   @DeleteMapping("/{scrinGroupId}")
-  public void delete(@PathVariable String scrinGroupId){
+  @ApiOperation(value = "화면그룹 아이디로 삭제")
+  public void delete(@PathVariable String scrinGroupId) {
     service.deleteById(scrinGroupId);
   }
 
   @GetMapping("/{scrinGroupId}")
-  public ResponseEntity<Map<String,Object>> get(@PathVariable String scrinGroupId){
+  @ApiOperation(value = "화면그룹 아이디로 조회")
+  public ResponseEntity<Map<String, Object>> get(@PathVariable String scrinGroupId) {
     return ResponseEntity.ok(Map.of("data", service.find(scrinGroupId)));
   }
 
   @GetMapping("/by-prjct")
-  public ResponseEntity<Map<String,Object>> list(@RequestParam String prjctId){
+  @ApiOperation(value = "프로젝트 아이디로 화면그룹 목록 조회")
+  public ResponseEntity<Map<String, Object>> list(@RequestParam String prjctId) {
     return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
   }
 }

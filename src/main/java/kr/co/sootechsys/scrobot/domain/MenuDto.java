@@ -11,11 +11,18 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScrinGroupDto {
+public class MenuDto {
+  private String menuId;
 
-  private String scrinGroupId;
-  private String scrinGroupNm;
+  private String menuNm;
+
+  private String prntsMenuId;
+
+  private String urlNm;
+
+  private Integer menuOrdrValue;
+
   private String prjctId;
-  private String engAbrvNm;
-  private PrjctDto prjctDto;
+
+  private PrjctDto prjct;
 }

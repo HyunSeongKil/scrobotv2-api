@@ -17,24 +17,16 @@ public class ScrinGroupServiceImpl implements ScrinGroupService {
 
   private ScrinGroupRepository repo;
 
-  public ScrinGroupServiceImpl(ScrinGroupRepository repo){
+  public ScrinGroupServiceImpl(ScrinGroupRepository repo) {
     this.repo = repo;
   }
 
-  ScrinGroupDto toDto(ScrinGroup e){
-    return ScrinGroupDto.builder()
-      .prjctId(e.getPrjctId())
-      .scrinGroupId(e.getScrinGroupId())
-      .scrinGroupNm(e.getScrinGroupNm())
-      .build();
+  ScrinGroupDto toDto(ScrinGroup e) {
+    return ScrinGroupDto.builder().prjctId(e.getPrjctId()).scrinGroupId(e.getScrinGroupId()).scrinGroupNm(e.getScrinGroupNm()).engAbrvNm(e.getEngAbrvNm()).build();
   }
 
-  ScrinGroup toEntity(ScrinGroupDto dto){
-    return ScrinGroup.builder()
-      .scrinGroupId(Util.getShortUuid())
-      .scrinGroupNm(dto.getScrinGroupNm())
-      .prjctId(dto.getPrjctId())
-      .build();
+  ScrinGroup toEntity(ScrinGroupDto dto) {
+    return ScrinGroup.builder().scrinGroupId(Util.getShortUuid()).scrinGroupNm(dto.getScrinGroupNm()).prjctId(dto.getPrjctId()).engAbrvNm(dto.getEngAbrvNm()).build();
   }
 
   @Override
@@ -44,7 +36,7 @@ public class ScrinGroupServiceImpl implements ScrinGroupService {
 
   @Override
   public void updt(ScrinGroupDto dto) {
-    if(null == find(dto.getScrinGroupId())){
+    if (null == find(dto.getScrinGroupId())) {
       return;
     }
 
@@ -59,13 +51,13 @@ public class ScrinGroupServiceImpl implements ScrinGroupService {
     // TODO delete 화면
 
     repo.deleteById(scrinGroupId);
-    
+
   }
 
   @Override
   public ScrinGroupDto find(String scrinGroupId) {
     Optional<ScrinGroup> opt = repo.findById(scrinGroupId);
-    if(opt.isPresent()){
+    if (opt.isPresent()) {
       return toDto(opt.get());
     }
 
@@ -76,11 +68,11 @@ public class ScrinGroupServiceImpl implements ScrinGroupService {
   public List<ScrinGroupDto> findAllByPrjctId(String prjctId) {
     List<ScrinGroupDto> dtos = new ArrayList<>();
 
-    repo.findAllByPrjctId(prjctId).forEach(e->{
+    repo.findAllByPrjctId(prjctId).forEach(e -> {
       dtos.add(toDto(e));
     });
 
     return dtos;
   }
-  
+
 }

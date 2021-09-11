@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
@@ -11,7 +12,8 @@ public interface PrjctService {
 
   void delete(String prjctId);
 
-  PrjctDto find(String prjctId);
+  PrjctDto findById(String prjctId);
 
   List<PrjctDto> findAllByUserId(String userId);
+
 }
