@@ -27,6 +27,7 @@ public class MenuServiceImpl implements MenuService {
     e.setPrjctId(dto.getPrjctId());
     e.setPrntsMenuId(dto.getPrntsMenuId());
     e.setUrlNm(dto.getUrlNm());
+    e.setScrinId(dto.getScrinId());
 
     return e;
   }
@@ -39,6 +40,7 @@ public class MenuServiceImpl implements MenuService {
     dto.setPrjctId(e.getPrjctId());
     dto.setPrntsMenuId(e.getPrntsMenuId());
     dto.setUrlNm(e.getUrlNm());
+    dto.setScrinId(e.getScrinId());
 
     return dto;
   }

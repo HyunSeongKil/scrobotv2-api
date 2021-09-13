@@ -20,6 +20,8 @@ public class MenuDto {
 
   private String urlNm;
 
+  private String scrinId;
+
   private Integer menuOrdrValue;
 
   private String prjctId;

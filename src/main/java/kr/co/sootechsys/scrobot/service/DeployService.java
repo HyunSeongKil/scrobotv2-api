@@ -4,11 +4,6 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public interface DeployService {
-  public static final String TABLE_NAME_PRJCT = "prjct";
-  public static final String TABLE_NAME_SCRIN_GROUP = "scrin_group";
-  public static final String TABLE_NAME_MENU = "menu";
-  public static final String TABLE_NAME_SCRIN = "scrin";
-  public static final String TABLE_NAME_COMPN = "compn";
 
 
   /**

@@ -35,6 +35,9 @@ public class Menu {
   @Column(name = "url_nm")
   private String urlNm;
 
+  @Column(name = "scrin_id")
+  private String scrinId;
+
   @Column(name = "menu_ordr_value")
   private Integer menuOrdrValue;
 
