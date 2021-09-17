@@ -24,12 +24,14 @@ import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.domain.DbType;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.entity.Compn;
 import kr.co.sootechsys.scrobot.entity.Menu;
 import kr.co.sootechsys.scrobot.entity.Prjct;
+import kr.co.sootechsys.scrobot.entity.PrjctTrgetSysMapng;
 import kr.co.sootechsys.scrobot.entity.Scrin;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
 import kr.co.sootechsys.scrobot.entity.TrgetSys;
@@ -37,6 +39,7 @@ import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.DeployService;
 import kr.co.sootechsys.scrobot.service.MenuService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
+import kr.co.sootechsys.scrobot.service.PrjctTrgetSysMapngService;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
@@ -52,20 +55,25 @@ public class DeployServiceImpl implements DeployService {
   private ScrinService scrinService;
   private CompnService compnService;
   private TrgetSysService trgetSysService;
+  private PrjctTrgetSysMapngService prjctTrgetSysMapngService;
 
   public DeployServiceImpl(PrjctService prjctService, MenuService menuService, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService,
-      TrgetSysService trgetSysService) {
+      TrgetSysService trgetSysService, PrjctTrgetSysMapngService prjctTrgetSysMapngService) {
     this.prjctService = prjctService;
     this.menuService = menuService;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
     this.compnService = compnService;
     this.trgetSysService = trgetSysService;
+    this.prjctTrgetSysMapngService = prjctTrgetSysMapngService;
   }
 
 
   @Override
+  @Transactional
   public Map<String, Long> deploy(String prjctId, String trgetSysId) throws SQLException {
+    prjctTrgetSysMapngService.regist(prjctId, trgetSysId);
+
     BasicDataSource ds = null;
     TrgetSysDto trgetSysDto = trgetSysService.findById(trgetSysId);
 
@@ -74,7 +82,7 @@ public class DeployServiceImpl implements DeployService {
 
       JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-      executeBasicDdl(jdbcTemplate, trgetSysDto, Compn.class, Menu.class, Prjct.class, Scrin.class, ScrinGroup.class, TrgetSys.class);
+      executeBasicDdl(jdbcTemplate, trgetSysDto, Compn.class, Menu.class, Prjct.class, Scrin.class, ScrinGroup.class, TrgetSys.class, PrjctTrgetSysMapng.class);
 
       //
       deleteOldData(jdbcTemplate, prjctId);
@@ -157,6 +165,7 @@ public class DeployServiceImpl implements DeployService {
     List<MenuDto> menuDtos = getMenus(prjctId);
     List<ScrinDto> scrinDtos = getScrins(scrinGroupDtos);
     List<CompnDto> compnDtos = getCompns(scrinDtos);
+    PrjctTrgetSysMapngDto prjctTrgetSysMapng = prjctTrgetSysMapngService.findByPrjctId(prjctId);
 
 
     insertPrjct(jdbcTemplate, prjctDto);
@@ -164,6 +173,7 @@ public class DeployServiceImpl implements DeployService {
     insertScrinGroup(jdbcTemplate, scrinGroupDtos);
     insertScrin(jdbcTemplate, scrinDtos);
     insertCompn(jdbcTemplate, compnDtos);
+    insertPrjctTrgetSysMapng(jdbcTemplate, prjctTrgetSysMapng);
 
   }
 
@@ -306,6 +316,31 @@ public class DeployServiceImpl implements DeployService {
   }
 
 
+  /**
+   * 프로젝트-대상시스템 등록
+   * 
+   * @param jdbcTemplate
+   * @param prjctTrgetSysMapngDto
+   */
+  private void insertPrjctTrgetSysMapng(JdbcTemplate jdbcTemplate, PrjctTrgetSysMapngDto dto) {
+    StringBuffer sb = new StringBuffer();
+
+    sb.append(" INSERT INTO " + getTableName(PrjctTrgetSysMapng.class) + "(");
+    sb.append("   prjct_trget_sys_mapng_id");
+    sb.append("   , prjct_id");
+    sb.append("   , trget_sys_id");
+    sb.append(" )");
+    sb.append(" VALUES (");
+    sb.append("   '" + dto.getPrjctTrgetSysMapngId() + "' ");
+    sb.append("   , '" + dto.getPrjctId() + "' ");
+    sb.append("   , '" + dto.getTrgetSysId() + "' ");
+    sb.append(" )");
+
+    jdbcTemplate.execute(sb.toString());
+
+  }
+
+
 
   /**
    * insert 프로젝트 데이터 to 대상 시스템
@@ -422,8 +457,25 @@ public class DeployServiceImpl implements DeployService {
     deleteScrin(jdbcTemplate, scrins);
     deleteScrinGroup(jdbcTemplate, scrinGroups);
     deleteMenu(jdbcTemplate, menus);
+    deletePrjctTrgetSysMapng(jdbcTemplate, prjctId);
     deletePrjct(jdbcTemplate, prjctId);
 
+  }
+
+
+  /**
+   * 프로젝트-대상시스템 매핑 데이터 삭제
+   * 
+   * @param jdbcTemplate
+   * @param prjctId
+   */
+  @Transactional
+  void deletePrjctTrgetSysMapng(JdbcTemplate jdbcTemplate, String prjctId) {
+    if (null == prjctId) {
+      return;
+    }
+
+    jdbcTemplate.execute("DELETE FROM " + getTableName(PrjctTrgetSysMapng.class) + " WHERE prjct_id = '" + prjctId + "' ");
   }
 
 
@@ -820,7 +872,7 @@ public class DeployServiceImpl implements DeployService {
           sb.append("  `" + colmns.get(i) + "` ");
           if (String.class == classes.get(i)) {
             sb.append("VARCHAR(255)");
-          } else if (Integer.class == classes.get(i)) {
+          } else if (Integer.class == classes.get(i) || Long.class == classes.get(i)) {
             sb.append("INT");
           } else {
             throw new RuntimeException("NOT IMPL " + classes.get(i));
