@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.misc;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -20,5 +21,29 @@ public class Util {
 
 
     return sb.toString();
+  }
+
+
+  public static boolean isEmpty(Object obj) {
+    if (null == obj) {
+      return true;
+    }
+
+
+    if (String.class == obj.getClass()) {
+      return (0 == ((String) obj).trim().length());
+    }
+
+    if (List.class == obj.getClass() || ArrayList.class == obj.getClass()) {
+      return 0 == ((List<?>) obj).size();
+    }
+
+
+    throw new RuntimeException("NOT IMPL " + obj.getClass());
+  }
+
+
+  public static String getPkColmnName(String tableName) {
+    return tableName + "_pk";
   }
 }

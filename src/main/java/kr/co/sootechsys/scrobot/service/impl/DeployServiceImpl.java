@@ -35,6 +35,7 @@ import kr.co.sootechsys.scrobot.entity.PrjctTrgetSysMapng;
 import kr.co.sootechsys.scrobot.entity.Scrin;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
 import kr.co.sootechsys.scrobot.entity.TrgetSys;
+import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.DeployService;
 import kr.co.sootechsys.scrobot.service.MenuService;
@@ -679,9 +680,18 @@ public class DeployServiceImpl implements DeployService {
   }
 
 
+
+  /**
+   * 
+   * @param jdbcTemplate
+   * @param dbTyNm
+   * @param tableName
+   * @param colmns
+   * @param classes
+   */
   void alterTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, List<String> colmns, List<Class> classes) {
     // 현재 테이블의 모든 컬럼 목록
-    List<String> list = findAllColmns(jdbcTemplate, dbTyNm, tableName);
+    Set<String> list = findAllColmns(jdbcTemplate, dbTyNm, tableName);
 
     for (int i = 0; i < colmns.size(); i++) {
       boolean exists = false;
@@ -712,14 +722,19 @@ public class DeployServiceImpl implements DeployService {
   void alterTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, List<CompnDto> compnDtos) {
 
     // 현재 테이블의 모든 컬럼 목록
-    List<String> list = findAllColmns(jdbcTemplate, dbTyNm, tableName);
+    Set<String> list = findAllColmns(jdbcTemplate, dbTyNm, tableName);
 
 
     compnDtos.forEach(dto -> {
+      if (Util.isEmpty(dto.getEngAbrvNm())) {
+        return;
+      }
+
+
       boolean exists = false;
 
       for (String tableColmn : list) {
-        if (dto.getEngAbrvNm().equals(tableColmn)) {
+        if (tableColmn.equals(dto.getEngAbrvNm())) {
           exists = true;
           break;
         }
@@ -727,7 +742,7 @@ public class DeployServiceImpl implements DeployService {
 
       if (!exists) {
         // 현재 컬럼 목록에 없는 colmn이면 추가하기
-        alterTable(jdbcTemplate, dbTyNm, tableName, dto);
+        alterTableAddColumn(jdbcTemplate, dbTyNm, tableName, dto);
       }
     });
 
@@ -742,13 +757,14 @@ public class DeployServiceImpl implements DeployService {
    * @param tableName
    * @param dto
    */
-  void alterTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, CompnDto dto) {
+  void alterTableAddColumn(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, CompnDto dto) {
     StringBuffer sb = new StringBuffer();
 
     switch (DbType.valueOf(dbTyNm)) {
       case MYSQL:
       case MARIA_DB:
-        sb.append("ALTER TABLE `" + tableName + "` ADD COLUMN `" + dto.getEngAbrvNm() + "` VARCHAR(255) NOT NULL COMMENT '" + dto.getHnglAbrvNm() + "' ");
+        sb.append(" ALTER TABLE `" + tableName + "`");
+        sb.append(" ADD COLUMN `" + dto.getEngAbrvNm() + "` VARCHAR(255) NOT NULL COMMENT '" + dto.getHnglAbrvNm() + "' ");
         break;
 
       default:
@@ -806,13 +822,13 @@ public class DeployServiceImpl implements DeployService {
    * @param tableName
    * @return
    */
-  List<String> findAllColmns(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName) {
+  Set<String> findAllColmns(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName) {
     switch (DbType.valueOf(dbTyNm)) {
       case MYSQL:
       case MARIA_DB:
         String sql = "SELECT COLUMN_NAME FROM information_schema.columns WHERE TABLE_NAME = '" + tableName + "'";
 
-        List<String> list2 = new ArrayList<>();
+        Set<String> list2 = new HashSet<>();
 
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
         for (Map<String, Object> map : list) {
@@ -908,17 +924,21 @@ public class DeployServiceImpl implements DeployService {
   void createTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, List<CompnDto> compnDtos) {
     StringBuffer sb = new StringBuffer();
 
+    String pkColmnName = Util.getPkColmnName(tableName);
+
     switch (DbType.valueOf(dbTyNm)) {
       case MYSQL:
       case MARIA_DB:
         sb.append(" CREATE TABLE `" + tableName + "` (");
-        sb.append("  `" + tableName + "_id" + "` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci', "); // pk
+        sb.append("  `" + pkColmnName + "` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci', "); // pk
 
         for (CompnDto dto : compnDtos) {
-          sb.append("  `" + dto.getEngAbrvNm() + "` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci', ");
+          if (!Util.isEmpty(dto.getEngAbrvNm())) {
+            sb.append("  `" + dto.getEngAbrvNm() + "` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci', ");
+          }
         }
 
-        sb.append(" PRIMARY KEY (`" + tableName + "_id" + "`)  ");
+        sb.append(" PRIMARY KEY (`" + pkColmnName + "`)  "); // pk
         sb.append(" )");
         sb.append(" COLLATE='utf8_general_ci'");
         sb.append(" ENGINE=InnoDB");
@@ -938,7 +958,7 @@ public class DeployServiceImpl implements DeployService {
 
 
   /**
-   * 테이블명, 컬럼목록 조회
+   * key:테이블명, value:컬럼목록 조회
    * 
    * @param prjctId 프로젝트 아이디
    * @return
