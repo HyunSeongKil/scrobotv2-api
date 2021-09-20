@@ -16,6 +16,7 @@ public class CompnDto {
   private String compnId;
   private String compnNm;
   private String compnCn;
+  private String compnSeCode;
   private String hnglAbrvNm;
   private String engAbrvNm;
   private String scrinId;

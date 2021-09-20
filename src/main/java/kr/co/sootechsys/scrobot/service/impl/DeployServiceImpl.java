@@ -15,19 +15,23 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
+import ch.qos.logback.core.db.dialect.DBUtil;
+import kr.co.sootechsys.scrobot.domain.CmmnCodeDto;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
-import kr.co.sootechsys.scrobot.domain.DbType;
+import kr.co.sootechsys.scrobot.domain.DbProduct;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
+import kr.co.sootechsys.scrobot.entity.CmmnCode;
 import kr.co.sootechsys.scrobot.entity.Compn;
 import kr.co.sootechsys.scrobot.entity.Menu;
 import kr.co.sootechsys.scrobot.entity.Prjct;
@@ -35,7 +39,9 @@ import kr.co.sootechsys.scrobot.entity.PrjctTrgetSysMapng;
 import kr.co.sootechsys.scrobot.entity.Scrin;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
 import kr.co.sootechsys.scrobot.entity.TrgetSys;
+import kr.co.sootechsys.scrobot.misc.DbUtil;
 import kr.co.sootechsys.scrobot.misc.Util;
+import kr.co.sootechsys.scrobot.service.CmmnCodeService;
 import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.DeployService;
 import kr.co.sootechsys.scrobot.service.MenuService;
@@ -57,9 +63,11 @@ public class DeployServiceImpl implements DeployService {
   private CompnService compnService;
   private TrgetSysService trgetSysService;
   private PrjctTrgetSysMapngService prjctTrgetSysMapngService;
+  private CmmnCodeService cmmnCodeService;
 
-  public DeployServiceImpl(PrjctService prjctService, MenuService menuService, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService,
-      TrgetSysService trgetSysService, PrjctTrgetSysMapngService prjctTrgetSysMapngService) {
+  public DeployServiceImpl(CmmnCodeService cmmnCodeService, PrjctService prjctService, MenuService menuService, ScrinGroupService scrinGroupService, ScrinService scrinService,
+      CompnService compnService, TrgetSysService trgetSysService, PrjctTrgetSysMapngService prjctTrgetSysMapngService) {
+    this.cmmnCodeService = cmmnCodeService;
     this.prjctService = prjctService;
     this.menuService = menuService;
     this.scrinGroupService = scrinGroupService;
@@ -83,7 +91,11 @@ public class DeployServiceImpl implements DeployService {
 
       JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-      executeBasicDdl(jdbcTemplate, trgetSysDto, Compn.class, Menu.class, Prjct.class, Scrin.class, ScrinGroup.class, TrgetSys.class, PrjctTrgetSysMapng.class);
+      trgetSysDto.setDbNm(DbUtil.getDbName(jdbcTemplate));
+      trgetSysDto.setDbTyNm(DbUtil.getDbProductName(jdbcTemplate));
+
+
+      executeBasicDdl(jdbcTemplate, trgetSysDto, CmmnCode.class, Compn.class, Menu.class, Prjct.class, Scrin.class, ScrinGroup.class, TrgetSys.class, PrjctTrgetSysMapng.class);
 
       //
       deleteOldData(jdbcTemplate, prjctId);
@@ -116,43 +128,60 @@ public class DeployServiceImpl implements DeployService {
    * 
    * @param jdbcTemplate
    * @param trgetSysDto
-   * @param entityClasses
+   * @param entityClass
+   * @throws SQLException
    */
-  private void executeBasicDdl(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, Class<?>... entityClasses) {
+  private void executeBasicDdl(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, Class<?> entityClass) throws SQLException {
+    Table t = entityClass.getAnnotation(Table.class);
+    String tableName = (null == t) ? "" : t.name();
+
+
+
+    String pkColmnName = "";
+    List<String> colmns = new ArrayList<>();
+    List<Class<?>> classes = new ArrayList<>();
+
+    Field[] fields = entityClass.getDeclaredFields();
+    for (Field f : fields) {
+      f.setAccessible(true);
+      Column c = f.getAnnotation(Column.class);
+      if (null == c) {
+        continue;
+      }
+
+      if (colmns.contains(c.name())) {
+        continue;
+      }
+
+      colmns.add(c.name());
+      classes.add(f.getType());
+
+      if (null != f.getAnnotation(Id.class)) {
+        pkColmnName = c.name();
+      }
+    }
+
+    boolean b = existsTable(jdbcTemplate, tableName);
+    if (!b) {
+      createTable(jdbcTemplate, trgetSysDto, tableName, pkColmnName, colmns, classes);
+    } else {
+      alterTable(jdbcTemplate, trgetSysDto, tableName, colmns, classes);
+    }
+  }
+
+
+  /**
+   * 기본 테이블 생성/수정
+   * 
+   * @param jdbcTemplate
+   * @param trgetSysDto
+   * @param entityClasses
+   * @throws SQLException
+   */
+  private void executeBasicDdl(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, Class<?>... entityClasses) throws SQLException {
 
     for (Class<?> clz : entityClasses) {
-      Table t = clz.getAnnotation(Table.class);
-      String tableName = (null == t) ? "" : t.name();
-
-
-
-      String pk = "";
-      List<String> colmns = new ArrayList<>();
-      List<Class> classes = new ArrayList<>();
-
-      Field[] fields = clz.getDeclaredFields();
-      for (Field f : fields) {
-        f.setAccessible(true);
-        Column c = f.getAnnotation(Column.class);
-        if (null == c) {
-          continue;
-        }
-
-        colmns.add(c.name());
-        classes.add(f.getType());
-
-        if (null != f.getAnnotation(Id.class)) {
-          pk = c.name();
-        }
-      }
-
-      boolean b = existsTable(jdbcTemplate, tableName);
-      if (!b) {
-        createTable(jdbcTemplate, trgetSysDto.getDbTyNm(), tableName, pk, colmns, classes);
-      } else {
-        alterTable(jdbcTemplate, trgetSysDto.getDbTyNm(), tableName, colmns, classes);
-      }
-
+      executeBasicDdl(jdbcTemplate, trgetSysDto, clz);
     }
 
 
@@ -161,6 +190,7 @@ public class DeployServiceImpl implements DeployService {
 
   @Transactional
   void insertNewData(JdbcTemplate jdbcTemplate, String prjctId) {
+    List<CmmnCodeDto> cmmnCodeDtos = cmmnCodeService.findAll();
     PrjctDto prjctDto = prjctService.findById(prjctId);
     List<ScrinGroupDto> scrinGroupDtos = getScrinGroups(prjctId);
     List<MenuDto> menuDtos = getMenus(prjctId);
@@ -169,6 +199,7 @@ public class DeployServiceImpl implements DeployService {
     PrjctTrgetSysMapngDto prjctTrgetSysMapng = prjctTrgetSysMapngService.findByPrjctId(prjctId);
 
 
+    insertCmmnCode(jdbcTemplate, cmmnCodeDtos);
     insertPrjct(jdbcTemplate, prjctDto);
     insertMenu(jdbcTemplate, menuDtos);
     insertScrinGroup(jdbcTemplate, scrinGroupDtos);
@@ -194,13 +225,14 @@ public class DeployServiceImpl implements DeployService {
     compnDtos.forEach(dto -> {
       StringBuffer sb = new StringBuffer();
 
-      sb.append(" INSERT INTO " + getTableName(Compn.class) + "(");
+      sb.append(" INSERT INTO " + DbUtil.getTableName(Compn.class) + "(");
       sb.append("   compn_id");
       sb.append("   , compn_nm");
       sb.append("   , compn_cn");
       sb.append("   , eng_abrv_nm");
       sb.append("   , hngl_abrv_nm");
       sb.append("   , scrin_id");
+      sb.append("   , compn_se_code");
       sb.append(" )");
       sb.append(" VALUES (");
       sb.append("   '" + dto.getCompnId() + "' ");
@@ -209,6 +241,7 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , '" + dto.getEngAbrvNm() + "' ");
       sb.append("   , '" + dto.getHnglAbrvNm() + "' ");
       sb.append("   , '" + dto.getScrinId() + "' ");
+      sb.append("   , '" + dto.getCompnSeCode() + "' ");
       sb.append(" )");
 
       jdbcTemplate.execute(sb.toString());
@@ -230,7 +263,7 @@ public class DeployServiceImpl implements DeployService {
     scrinDtos.forEach(dto -> {
       StringBuffer sb = new StringBuffer();
 
-      sb.append(" INSERT INTO " + getTableName(Scrin.class) + "(");
+      sb.append(" INSERT INTO " + DbUtil.getTableName(Scrin.class) + "(");
       sb.append("   scrin_id");
       sb.append("   , scrin_nm");
       sb.append("   , scrin_se_code");
@@ -262,7 +295,7 @@ public class DeployServiceImpl implements DeployService {
     menuDtos.forEach(dto -> {
       StringBuffer sb = new StringBuffer();
 
-      sb.append(" INSERT INTO " + getTableName(Menu.class) + "(");
+      sb.append(" INSERT INTO " + DbUtil.getTableName(Menu.class) + "(");
       sb.append("   menu_id");
       sb.append("   , menu_nm");
       sb.append("   , prjct_id");
@@ -299,7 +332,7 @@ public class DeployServiceImpl implements DeployService {
     scrinGroupDtos.forEach(dto -> {
       StringBuffer sb = new StringBuffer();
 
-      sb.append(" INSERT INTO " + getTableName(ScrinGroup.class) + "(");
+      sb.append(" INSERT INTO " + DbUtil.getTableName(ScrinGroup.class) + "(");
       sb.append("   scrin_group_id");
       sb.append("   , scrin_group_nm");
       sb.append("   , eng_abrv_nm");
@@ -326,7 +359,7 @@ public class DeployServiceImpl implements DeployService {
   private void insertPrjctTrgetSysMapng(JdbcTemplate jdbcTemplate, PrjctTrgetSysMapngDto dto) {
     StringBuffer sb = new StringBuffer();
 
-    sb.append(" INSERT INTO " + getTableName(PrjctTrgetSysMapng.class) + "(");
+    sb.append(" INSERT INTO " + DbUtil.getTableName(PrjctTrgetSysMapng.class) + "(");
     sb.append("   prjct_trget_sys_mapng_id");
     sb.append("   , prjct_id");
     sb.append("   , trget_sys_id");
@@ -344,6 +377,38 @@ public class DeployServiceImpl implements DeployService {
 
 
   /**
+   * 공통코드 등록
+   * 
+   * @param jdbcTemplate
+   * @param dtos
+   */
+  private void insertCmmnCode(JdbcTemplate jdbcTemplate, List<CmmnCodeDto> dtos) {
+    StringBuffer sb = new StringBuffer();
+
+    dtos.forEach(dto -> {
+      sb.setLength(0);
+
+      sb.append(" INSERT INTO " + DbUtil.getTableName(CmmnCode.class) + " (");
+      sb.append("   cmmn_code_id");
+      sb.append("   , cmmn_code");
+      sb.append("   , cmmn_code_nm");
+      sb.append("   , prnts_cmmn_code");
+      sb.append("   , use_at");
+      sb.append(" )");
+      sb.append(" VALUES (");
+      sb.append(" " + dto.getCmmnCodeId() + " ");
+      sb.append("   ,'" + dto.getCmmnCode() + "' ");
+      sb.append("   ,'" + dto.getCmmnCodeNm() + "' ");
+      sb.append("   ,'" + dto.getPrntsCmmnCode() + "' ");
+      sb.append("   ,'" + dto.getUseAt() + "' ");
+      sb.append(" )");
+
+      jdbcTemplate.execute(sb.toString());
+    });
+  }
+
+
+  /**
    * insert 프로젝트 데이터 to 대상 시스템
    * 
    * @param jdbcTemplate
@@ -352,7 +417,7 @@ public class DeployServiceImpl implements DeployService {
   private void insertPrjct(JdbcTemplate jdbcTemplate, PrjctDto prjctDto) {
     StringBuffer sb = new StringBuffer();
 
-    sb.append(" INSERT INTO " + getTableName(Prjct.class) + "(");
+    sb.append(" INSERT INTO " + DbUtil.getTableName(Prjct.class) + "(");
     sb.append("   prjct_id");
     sb.append("   , prjct_nm");
     sb.append("   , user_id");
@@ -435,17 +500,20 @@ public class DeployServiceImpl implements DeployService {
 
   @Transactional
   void deleteOldData(JdbcTemplate jdbcTemplate, String prjctId) {
+    // 공통코드
+    List<Map<String, Object>> cmmnCodes = jdbcTemplate.queryForList("SELECT * FROM " + DbUtil.getTableName(CmmnCode.class));
+
     // 프로젝트
-    List<Map<String, Object>> prjcts = jdbcTemplate.queryForList("SELECT * FROM " + getTableName(Prjct.class) + " WHERE prjct_id = '" + prjctId + "'");
+    List<Map<String, Object>> prjcts = jdbcTemplate.queryForList("SELECT * FROM " + DbUtil.getTableName(Prjct.class) + " WHERE prjct_id = '" + prjctId + "'");
     if (null == prjcts) {
       return;
     }
 
     // 메뉴
-    List<Map<String, Object>> menus = jdbcTemplate.queryForList("SELECT menu_id, prjct_id FROM " + getTableName(Menu.class) + " WHERE prjct_id = '" + prjctId + "'");
+    List<Map<String, Object>> menus = jdbcTemplate.queryForList("SELECT menu_id, prjct_id FROM " + DbUtil.getTableName(Menu.class) + " WHERE prjct_id = '" + prjctId + "'");
 
     // 화면그룹
-    List<Map<String, Object>> scrinGroups = jdbcTemplate.queryForList("SELECT scrin_group_id, prjct_id FROM " + getTableName(ScrinGroup.class) + " WHERE prjct_id = '" + prjctId + "'");
+    List<Map<String, Object>> scrinGroups = jdbcTemplate.queryForList("SELECT scrin_group_id, prjct_id FROM " + DbUtil.getTableName(ScrinGroup.class) + " WHERE prjct_id = '" + prjctId + "'");
 
     // 화면
     List<Map<String, Object>> scrins = getScrins(jdbcTemplate, scrinGroups);
@@ -460,6 +528,7 @@ public class DeployServiceImpl implements DeployService {
     deleteMenu(jdbcTemplate, menus);
     deletePrjctTrgetSysMapng(jdbcTemplate, prjctId);
     deletePrjct(jdbcTemplate, prjctId);
+    deleteCmmnCode(jdbcTemplate, cmmnCodes);
 
   }
 
@@ -476,7 +545,20 @@ public class DeployServiceImpl implements DeployService {
       return;
     }
 
-    jdbcTemplate.execute("DELETE FROM " + getTableName(PrjctTrgetSysMapng.class) + " WHERE prjct_id = '" + prjctId + "' ");
+    jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(PrjctTrgetSysMapng.class) + " WHERE prjct_id = '" + prjctId + "' ");
+  }
+
+
+
+  /**
+   * 공통코드 데이터 삭제
+   * 
+   * @param jdbcTemplate
+   * @param list
+   */
+  @Transactional
+  void deleteCmmnCode(JdbcTemplate jdbcTemplate, List<Map<String, Object>> list) {
+    jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(CmmnCode.class));
   }
 
 
@@ -492,7 +574,7 @@ public class DeployServiceImpl implements DeployService {
       return;
     }
 
-    jdbcTemplate.execute("DELETE FROM " + getTableName(Prjct.class) + " WHERE prjct_id = '" + prjctId + "' ");
+    jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(Prjct.class) + " WHERE prjct_id = '" + prjctId + "' ");
   }
 
 
@@ -510,7 +592,7 @@ public class DeployServiceImpl implements DeployService {
     }
 
     menus.forEach(map -> {
-      jdbcTemplate.execute("DELETE FROM " + getTableName(Menu.class) + " WHERE menu_id = '" + map.get("menu_id") + "' ");
+      jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(Menu.class) + " WHERE menu_id = '" + map.get("menu_id") + "' ");
     });
   }
 
@@ -528,7 +610,7 @@ public class DeployServiceImpl implements DeployService {
     }
 
     scrinGroups.forEach(map -> {
-      jdbcTemplate.execute("DELETE FROM " + getTableName(ScrinGroup.class) + " WHERE scrin_group_id = '" + map.get("scrin_group_id") + "' ");
+      jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(ScrinGroup.class) + " WHERE scrin_group_id = '" + map.get("scrin_group_id") + "' ");
     });
   }
 
@@ -546,7 +628,7 @@ public class DeployServiceImpl implements DeployService {
     }
 
     scrins.forEach(map -> {
-      jdbcTemplate.execute("DELETE FROM " + getTableName(Scrin.class) + " WHERE scrin_id = '" + map.get("scrin_id") + "' ");
+      jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(Scrin.class) + " WHERE scrin_id = '" + map.get("scrin_id") + "' ");
     });
   }
 
@@ -566,7 +648,7 @@ public class DeployServiceImpl implements DeployService {
 
 
     compns.forEach(map -> {
-      jdbcTemplate.execute("DELETE FROM " + getTableName(Compn.class) + " WHERE compn_id = '" + map.get("compn_id") + "' ");
+      jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(Compn.class) + " WHERE compn_id = '" + map.get("compn_id") + "' ");
     });
   }
 
@@ -586,7 +668,7 @@ public class DeployServiceImpl implements DeployService {
     }
 
     for (Map<String, Object> map : scrins) {
-      List<Map<String, Object>> compns = jdbcTemplate.queryForList("SELECT compn_id FROM " + getTableName(Compn.class) + " WHERE scrin_id = '" + map.get("scrin_id") + "' ");
+      List<Map<String, Object>> compns = jdbcTemplate.queryForList("SELECT compn_id FROM " + DbUtil.getTableName(Compn.class) + " WHERE scrin_id = '" + map.get("scrin_id") + "' ");
       list.addAll(compns);
     }
 
@@ -610,7 +692,7 @@ public class DeployServiceImpl implements DeployService {
     }
 
     for (Map<String, Object> map : scrinGroups) {
-      List<Map<String, Object>> scrins = jdbcTemplate.queryForList("SELECT scrin_id FROM " + getTableName(Scrin.class) + " WHERE scrin_group_id = '" + map.get("scrin_group_id") + "' ");
+      List<Map<String, Object>> scrins = jdbcTemplate.queryForList("SELECT scrin_id FROM " + DbUtil.getTableName(Scrin.class) + " WHERE scrin_group_id = '" + map.get("scrin_group_id") + "' ");
       list.addAll(scrins);
 
     }
@@ -645,8 +727,9 @@ public class DeployServiceImpl implements DeployService {
    * @param trgetSysDto
    * @param prjctId 프로젝트 아이디
    * @return
+   * @throws SQLException
    */
-  Map<String, Long> executeBizDdl(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String prjctId) {
+  Map<String, Long> executeBizDdl(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String prjctId) throws SQLException {
     Map<String, List<CompnDto>> compnDtoMap = getCompnDtos(prjctId);
     if (null == compnDtoMap) {
       return Map.of();
@@ -664,12 +747,12 @@ public class DeployServiceImpl implements DeployService {
       // 테이블 존재여부 확인
       if (!existsTable(jdbcTemplate, tableName)) {
         // 테이블 미존재이면
-        createTable(jdbcTemplate, trgetSysDto.getDbTyNm(), tableName, compnDtos);
+        createTable(jdbcTemplate, trgetSysDto, tableName, compnDtos);
         createCo++;
 
       } else {
         // 테이블 존재이면
-        alterTable(jdbcTemplate, trgetSysDto.getDbTyNm(), tableName, compnDtos);
+        alterTable(jdbcTemplate, trgetSysDto, tableName, compnDtos);
         alterCo++;
       }
 
@@ -684,14 +767,14 @@ public class DeployServiceImpl implements DeployService {
   /**
    * 
    * @param jdbcTemplate
-   * @param dbTyNm
    * @param tableName
    * @param colmns
    * @param classes
+   * @throws SQLException
    */
-  void alterTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, List<String> colmns, List<Class> classes) {
+  void alterTable(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName, List<String> colmns, List<Class<?>> classes) throws SQLException {
     // 현재 테이블의 모든 컬럼 목록
-    Set<String> list = findAllColmns(jdbcTemplate, dbTyNm, tableName);
+    Set<String> list = findAllColmns(jdbcTemplate, trgetSysDto, tableName);
 
     for (int i = 0; i < colmns.size(); i++) {
       boolean exists = false;
@@ -705,7 +788,7 @@ public class DeployServiceImpl implements DeployService {
 
       if (!exists) {
         // 현재 컬럼 목록에 없는 colmn이면 추가하기
-        alterTable(jdbcTemplate, dbTyNm, tableName, colmns.get(i), classes.get(i));
+        alterTable(jdbcTemplate, trgetSysDto, tableName, colmns.get(i), classes.get(i));
       }
     }
   }
@@ -715,14 +798,14 @@ public class DeployServiceImpl implements DeployService {
    * alter table
    * 
    * @param jdbcTemplate
-   * @param dbTyNm
    * @param tableName
    * @param compnDtos
+   * @throws SQLException
    */
-  void alterTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, List<CompnDto> compnDtos) {
+  void alterTable(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName, List<CompnDto> compnDtos) throws SQLException {
 
     // 현재 테이블의 모든 컬럼 목록
-    Set<String> list = findAllColmns(jdbcTemplate, dbTyNm, tableName);
+    Set<String> list = findAllColmns(jdbcTemplate, trgetSysDto, tableName);
 
 
     compnDtos.forEach(dto -> {
@@ -742,7 +825,11 @@ public class DeployServiceImpl implements DeployService {
 
       if (!exists) {
         // 현재 컬럼 목록에 없는 colmn이면 추가하기
-        alterTableAddColumn(jdbcTemplate, dbTyNm, tableName, dto);
+        try {
+          alterTableAddColumn(jdbcTemplate, trgetSysDto, tableName, dto);
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
       }
     });
 
@@ -753,26 +840,26 @@ public class DeployServiceImpl implements DeployService {
    * 테이블에 컬럼 추가
    * 
    * @param jdbcTemplate
-   * @param dbTyNm
    * @param tableName
    * @param dto
+   * @throws SQLException
    */
-  void alterTableAddColumn(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, CompnDto dto) {
+  void alterTableAddColumn(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName, CompnDto dto) throws SQLException {
     StringBuffer sb = new StringBuffer();
 
-    switch (DbType.valueOf(dbTyNm)) {
-      case MYSQL:
-      case MARIA_DB:
+    switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
+      case MySQL:
+      case MariaDB:
         sb.append(" ALTER TABLE `" + tableName + "`");
         sb.append(" ADD COLUMN `" + dto.getEngAbrvNm() + "` VARCHAR(255) NOT NULL COMMENT '" + dto.getHnglAbrvNm() + "' ");
         break;
 
       default:
-        throw new RuntimeException("NOT IMPL " + dbTyNm);
+        throw new RuntimeException("NOT IMPL " + trgetSysDto);
     }
 
 
-    log.debug("<< - {} {} {}", dbTyNm, tableName, dto.getEngAbrvNm());
+    log.debug("<< - {} {} {}", trgetSysDto, tableName, dto.getEngAbrvNm());
     jdbcTemplate.execute(sb.toString());
   }
 
@@ -782,17 +869,17 @@ public class DeployServiceImpl implements DeployService {
    * alter table
    * 
    * @param jdbcTemplate
-   * @param dbTyNm
    * @param tableName 테이블 명
    * @param colmnName 컬럼 명
    * @param colmnType 컬럼 타입
+   * @throws SQLException
    */
-  void alterTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, String colmnName, Class colmnType) {
+  void alterTable(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName, String colmnName, Class colmnType) throws SQLException {
     StringBuffer sb = new StringBuffer();
 
-    switch (DbType.valueOf(dbTyNm)) {
-      case MYSQL:
-      case MARIA_DB:
+    switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
+      case MySQL:
+      case MariaDB:
         sb.append("ALTER TABLE `" + tableName + "` ADD COLUMN `" + colmnName + "` ");
         if (String.class == colmnType) {
           sb.append(" VARCHAR(255) ");
@@ -805,11 +892,11 @@ public class DeployServiceImpl implements DeployService {
         break;
 
       default:
-        throw new RuntimeException("NOT IMPL " + dbTyNm);
+        throw new RuntimeException("NOT IMPL " + trgetSysDto);
     }
 
 
-    log.debug("<< - {} {} {}", dbTyNm, tableName, colmnName, colmnType);
+    log.debug("<< - {} {} {}", trgetSysDto, tableName, colmnName, colmnType);
     jdbcTemplate.execute(sb.toString());
   }
 
@@ -821,24 +908,29 @@ public class DeployServiceImpl implements DeployService {
    * @param trgetSysDto
    * @param tableName
    * @return
+   * @throws SQLException
    */
-  Set<String> findAllColmns(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName) {
-    switch (DbType.valueOf(dbTyNm)) {
-      case MYSQL:
-      case MARIA_DB:
-        String sql = "SELECT COLUMN_NAME FROM information_schema.columns WHERE TABLE_NAME = '" + tableName + "'";
+  Set<String> findAllColmns(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName) throws SQLException {
+    switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
+      case MySQL:
+      case MariaDB:
+        StringBuffer sb = new StringBuffer();
+        sb.append(" SELECT COLUMN_NAME");
+        sb.append(" FROM information_schema.columns");
+        sb.append(" WHERE TABLE_NAME = '" + tableName + "'");
+        sb.append(" AND TABLE_SCHEMA = '" + trgetSysDto.getDbNm() + "'");
 
-        Set<String> list2 = new HashSet<>();
+        Set<String> set = new HashSet<>();
 
-        List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+        List<Map<String, Object>> list = jdbcTemplate.queryForList(sb.toString());
         for (Map<String, Object> map : list) {
-          list2.add(map.get("COLUMN_NAME").toString());
+          set.add(map.get("COLUMN_NAME").toString());
         }
 
-        return list2;
+        return set;
 
       default:
-        throw new RuntimeException("NOT IMPL " + dbTyNm);
+        throw new RuntimeException("NOT IMPL " + trgetSysDto);
     }
 
   }
@@ -870,24 +962,24 @@ public class DeployServiceImpl implements DeployService {
    * 테이블 생성
    * 
    * @param jdbcTemplate
-   * @param dbTyNm
    * @param tableName
    * @param pk pk 컬럼 명
    * @param colmns 컬럼 목록
    * @param classes 컬럼의 타입 목록
+   * @throws SQLException
    */
-  void createTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, String pk, List<String> colmns, List<Class> classes) {
+  void createTable(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName, String pk, List<String> colmns, List<Class<?>> classes) throws SQLException {
     StringBuffer sb = new StringBuffer();
 
-    switch (DbType.valueOf(dbTyNm)) {
-      case MYSQL:
-      case MARIA_DB:
+    switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
+      case MySQL:
+      case MariaDB:
         sb.append(" CREATE TABLE `" + tableName + "` (");
 
         for (int i = 0; i < colmns.size(); i++) {
           sb.append("  `" + colmns.get(i) + "` ");
           if (String.class == classes.get(i)) {
-            sb.append("VARCHAR(255)");
+            sb.append("VARCHAR(1000)");
           } else if (Integer.class == classes.get(i) || Long.class == classes.get(i)) {
             sb.append("INT");
           } else {
@@ -904,11 +996,11 @@ public class DeployServiceImpl implements DeployService {
         break;
 
       default:
-        throw new RuntimeException("NOT IMPL " + dbTyNm);
+        throw new RuntimeException("NOT IMPL " + trgetSysDto);
     }
 
 
-    log.debug("<< - {} {} {} {} {}", dbTyNm, tableName, pk, colmns, classes);
+    log.debug("<< - {} {} {} {} {}", trgetSysDto, tableName, pk, colmns, classes);
     jdbcTemplate.execute(sb.toString());
   }
 
@@ -920,21 +1012,22 @@ public class DeployServiceImpl implements DeployService {
    * @param tableName 테이블명
    * @param compnDtos 컬럼 목록
    * @return
+   * @throws SQLException
    */
-  void createTable(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName, List<CompnDto> compnDtos) {
+  void createTable(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName, List<CompnDto> compnDtos) throws SQLException {
     StringBuffer sb = new StringBuffer();
 
     String pkColmnName = Util.getPkColmnName(tableName);
 
-    switch (DbType.valueOf(dbTyNm)) {
-      case MYSQL:
-      case MARIA_DB:
+    switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
+      case MySQL:
+      case MariaDB:
         sb.append(" CREATE TABLE `" + tableName + "` (");
-        sb.append("  `" + pkColmnName + "` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci', "); // pk
+        sb.append("  `" + pkColmnName + "` VARCHAR(255) NOT NULL COMMENT 'PK' COLLATE 'utf8_general_ci', "); // pk
 
         for (CompnDto dto : compnDtos) {
           if (!Util.isEmpty(dto.getEngAbrvNm())) {
-            sb.append("  `" + dto.getEngAbrvNm() + "` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci', ");
+            sb.append("  `" + dto.getEngAbrvNm() + "` VARCHAR(255) NULL DEFAULT NULL COMMENT '" + dto.getHnglAbrvNm() + "' COLLATE 'utf8_general_ci', ");
           }
         }
 
@@ -946,11 +1039,11 @@ public class DeployServiceImpl implements DeployService {
         break;
 
       default:
-        throw new RuntimeException("NOT IMPL " + dbTyNm);
+        throw new RuntimeException("NOT IMPL " + trgetSysDto);
     }
 
 
-    log.debug("<< - {} {} {}", dbTyNm, tableName, compnDtos);
+    log.debug("<< - {} {} {}", trgetSysDto, tableName, compnDtos);
     jdbcTemplate.execute(sb.toString());
 
   }
@@ -977,7 +1070,7 @@ public class DeployServiceImpl implements DeployService {
 
         //
         compnService.findAllByScrinId(scrinDto.getScrinId()).forEach(compnDto -> {
-          compnDtos.add(compnDto);
+          addIfNotExists(compnDtos, compnDto);
         });
       });
 
@@ -988,7 +1081,34 @@ public class DeployServiceImpl implements DeployService {
   }
 
 
-  String getTableName(Class<?> entityClass) {
-    return entityClass.getAnnotation(Table.class).name();
+  /**
+   * compnDtos에 존재하지 않는 compnDto이면 compnDtos에 추가
+   * 
+   * @param compnDtos
+   * @param compnDto
+   */
+  void addIfNotExists(List<CompnDto> compnDtos, CompnDto compnDto) {
+    if (Util.isEmpty(compnDto.getEngAbrvNm())) {
+      return;
+    }
+
+    boolean exists = false;
+    for (CompnDto dto : compnDtos) {
+      if (Util.isEmpty(dto.getEngAbrvNm())) {
+        return;
+      }
+
+
+      if (dto.getEngAbrvNm().equals(compnDto.getEngAbrvNm())) {
+        exists = true;
+        break;
+      }
+    }
+
+    if (!exists) {
+      compnDtos.add(compnDto);
+    }
   }
+
+
 }

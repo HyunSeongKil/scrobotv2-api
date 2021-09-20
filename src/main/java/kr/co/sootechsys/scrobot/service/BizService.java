@@ -118,4 +118,15 @@ public interface BizService {
    */
   List<Map<String, Object>> findAllScrins(String prjctId, String scrinGroupId) throws SQLException;
 
+
+  /**
+   * 테이블의 메타정보 조회
+   * 
+   * @param prjctId 프로젝트아이디
+   * @param scrinId 화면아이디
+   * @return
+   * @throws SQLException
+   */
+  List<Map<String, Object>> findAllMeta(String prjctId, String scrinId) throws SQLException;
+
 }

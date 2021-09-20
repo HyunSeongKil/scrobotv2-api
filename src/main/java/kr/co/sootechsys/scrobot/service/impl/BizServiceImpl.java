@@ -15,7 +15,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
-import kr.co.sootechsys.scrobot.domain.DbType;
+import kr.co.sootechsys.scrobot.domain.DbProduct;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
@@ -23,6 +23,7 @@ import kr.co.sootechsys.scrobot.entity.Compn;
 import kr.co.sootechsys.scrobot.entity.Menu;
 import kr.co.sootechsys.scrobot.entity.Scrin;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
+import kr.co.sootechsys.scrobot.entity.TrgetSys;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.service.BizService;
 import kr.co.sootechsys.scrobot.service.CompnService;
@@ -670,10 +671,12 @@ public class BizServiceImpl implements BizService {
   Set<String> getColmns(JdbcTemplate jdbcTemplate, String dbTyNm, String tableName) {
     StringBuffer sb = new StringBuffer();
 
-    switch (DbType.valueOf(dbTyNm)) {
-      case MYSQL:
-      case MARIA_DB:
-        sb.append(" SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION.SCHEMA WHERE TALBE_NAME = '" + tableName + "'");
+    switch (DbProduct.valueOf(dbTyNm)) {
+      case MySQL:
+      case MariaDB:
+        sb.append(" SELECT TABLE_NAME, COLUMN_NAME AS column_name");
+        sb.append(" FROM INFORMATION.SCHEMA");
+        sb.append(" WHERE TALBE_NAME = '" + tableName + "'");
         break;
 
       default:
@@ -688,11 +691,78 @@ public class BizServiceImpl implements BizService {
 
     Set<String> set = new HashSet<>();
     list.forEach(map -> {
-      set.add("" + map.get("COLUMN_NAME"));
+      set.add("" + map.get("column_name"));
     });
 
     return set;
 
+  }
+
+
+
+  @Override
+  public List<Map<String, Object>> findAllMeta(String prjctId, String scrinId) throws SQLException {
+    TrgetSysDto trgetSysDto = getTrgetSysDto(prjctId);
+    if (null == trgetSysDto) {
+      return List.of();
+    }
+
+
+    BasicDataSource ds = null;
+
+    try {
+      ds = createDataSource(trgetSysDto);
+      JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+      String tableName = getTableName(jdbcTemplate, scrinId);
+      if (null == tableName) {
+        throw new RuntimeException("NULL TABLE_NAME. scrinId:" + scrinId);
+      }
+
+      return findAllMeta(jdbcTemplate, trgetSysDto, tableName);
+
+    } catch (Exception e) {
+      throw e;
+    } finally {
+      if (null != ds) {
+        ds.close();
+      }
+    }
+
+  }
+
+
+  /**
+   * 테이블의 메타정보 조회. key:table_name, column_name, data_type, column_comment
+   * 
+   * @param jdbcTemplate
+   * @param dbTyNm 디비타입
+   * @param tableName 테이블명
+   * @return
+   * @throws SQLException
+   */
+  List<Map<String, Object>> findAllMeta(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName) throws SQLException {
+    StringBuffer sb = new StringBuffer();
+
+
+    switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
+      case MySQL:
+      case MariaDB:
+        sb.append(" SELECT TABLE_NAME AS table_name");
+        sb.append("   , COLUMN_NAME AS column_name");
+        sb.append("   , DATA_TYPE AS data_type");
+        sb.append("   , COLUMN_COMMENT AS column_comment");
+        sb.append(" FROM information_schema.columns");
+        sb.append(" WHERE TABLE_NAME = '" + tableName + "'");
+        sb.append(" AND TABLE_SCHEMA = '" + trgetSysDto.getDbNm() + "'");
+
+        break;
+
+      default:
+        throw new RuntimeException("NO IMPL " + trgetSysDto);
+    }
+
+    return jdbcTemplate.queryForList(sb.toString());
   }
 
 

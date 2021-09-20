@@ -1,12 +1,12 @@
 package kr.co.sootechsys.scrobot.domain;
 
-public enum DbType {
-  MYSQL("MYSQL"), MARIA_DB("MARIA_DB");
+public enum DbProduct {
+  MySQL("MySQL"), MariaDB("MariaDB");
 
   private String value;
 
 
-  DbType(String dbType) {
+  DbProduct(String dbType) {
     this.value = dbType;
   }
 

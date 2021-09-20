@@ -47,17 +47,24 @@ public class BizRestController {
   }
 
 
+  @GetMapping("/{prjctId}/{scrinId}")
+  @ApiOperation(value = "화면아이디로 데이터 목록조회")
+  public ResponseEntity<Map<String, Object>> list(@PathVariable String prjctId, @PathVariable String scrinId) throws SQLException {
+    return ResponseEntity.ok(Map.of("data", service.findAll(prjctId, scrinId)));
+  }
+
+  @GetMapping("/{prjctId}/{scrinId}/metas")
+  @ApiOperation(value = "화면아이디로 테이블의 메타정보 목록조회")
+  public ResponseEntity<Map<String, Object>> listMeta(@PathVariable String prjctId, @PathVariable String scrinId) throws SQLException {
+    return ResponseEntity.ok(Map.of("data", service.findAllMeta(prjctId, scrinId)));
+  }
+
   @GetMapping("/{prjctId}/{scrinId}/{id}")
   @ApiOperation(value = "상세조회")
   public ResponseEntity<Map<String, Object>> detail(@PathVariable String prjctId, @PathVariable String scrinId, @PathVariable String id) throws SQLException {
     return ResponseEntity.ok(Map.of("data", service.findById(prjctId, scrinId, id)));
   }
 
-  @GetMapping("/{prjctId}/{scrinId}")
-  @ApiOperation(value = "목록 조회")
-  public ResponseEntity<Map<String, Object>> list(@PathVariable String prjctId, @PathVariable String scrinId) throws SQLException {
-    return ResponseEntity.ok(Map.of("data", service.findAll(prjctId, scrinId)));
-  }
 
 
   @GetMapping("/{prjctId}/menus")

@@ -35,8 +35,13 @@ public class Compn {
   @Column(name = "hngl_abrv_nm")
   private String hnglAbrvNm;
 
-  @Column(name = "compn_cn")
+  @Column(name = "compn_cn", length = 4000)
   private String compnCn;
+
+  @Column(name = "compn_se_code")
+  private String compnSeCode;
+
+
 
   @Column(name = "scrin_id")
   private String scrinId;

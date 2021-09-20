@@ -28,6 +28,7 @@ public class CompnServiceImpl implements CompnService {
     e.setEngAbrvNm(dto.getEngAbrvNm());
     e.setScrinId(dto.getScrinId());
     e.setHnglAbrvNm(dto.getHnglAbrvNm());
+    e.setCompnSeCode(dto.getCompnSeCode());
 
     return e;
   }
@@ -40,6 +41,7 @@ public class CompnServiceImpl implements CompnService {
     dto.setEngAbrvNm(e.getEngAbrvNm());
     dto.setScrinId(e.getScrinId());
     dto.setHnglAbrvNm(e.getHnglAbrvNm());
+    dto.setCompnSeCode(e.getCompnSeCode());
 
     // TODO ScrinDto
 
