@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 프로젝트 - 대상 시스템 매핑
+ */
 @Getter
 @Setter
 @Builder
@@ -13,9 +16,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PrjctTrgetSysMapngDto {
 
+  /**
+   * 프로젝트-대상 시스템 매핑 아이디
+   */
   private Long prjctTrgetSysMapngId;
 
+  /**
+   * 프로젝트 아이디
+   */
   private String prjctId;
 
+  /**
+   * 대상 시스템 아이디
+   */
   private String trgetSysId;
 }

@@ -1,5 +1,9 @@
 package kr.co.sootechsys.scrobot.domain;
 
+
+/**
+ * 열거형
+ */
 public enum DbProduct {
   MySQL("MySQL"), MariaDB("MariaDB");
 

@@ -36,5 +36,10 @@ public interface CmmnCodeService {
   CmmnCodeDto findByPrntsCmmnCodeAndCmmnCode(String prntsCmmnCode, String cmmnCode);
 
 
+  /**
+   * 전체 목록 조회
+   * 
+   * @return
+   */
   List<CmmnCodeDto> findAll();
 }

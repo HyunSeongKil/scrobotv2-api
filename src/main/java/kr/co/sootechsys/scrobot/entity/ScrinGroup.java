@@ -28,13 +28,22 @@ import lombok.Setter;
 @Table(name = "scrin_group")
 public class ScrinGroup {
 
+  /**
+   * 화면 그룹 아이디
+   */
   @Id
   @Column(name = "scrin_group_id")
   private String scrinGroupId;
 
+  /**
+   * 화면 그룹 명
+   */
   @Column(name = "scrin_group_nm")
   private String scrinGroupNm;
 
+  /**
+   * 프로젝트 아이디
+   */
   @Column(name = "prjct_id")
   private String prjctId;
 
@@ -44,6 +53,9 @@ public class ScrinGroup {
   @Column(name = "eng_abrv_nm")
   private String engAbrvNm;
 
+  /**
+   * 프로젝트 인스턴스
+   */
   @ManyToOne(targetEntity = Prjct.class, fetch = FetchType.LAZY)
   @JoinColumn(name = "prjct_id", insertable = false, updatable = false)
   private Prjct prjct;

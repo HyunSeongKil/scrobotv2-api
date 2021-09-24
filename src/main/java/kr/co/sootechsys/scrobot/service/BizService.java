@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 
+
+/**
+ * 업무
+ */
 public interface BizService {
 
   void xxx(String prjctId, String scrinId);

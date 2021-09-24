@@ -16,6 +16,10 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 
+
+/**
+ * 화면
+ */
 @RestController
 @RequestMapping("/scrins")
 public class ScrinRestController {

@@ -12,6 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 프로젝트-대상 시스템 매핑
+ */
 @Getter
 @Setter
 @Builder
@@ -21,14 +24,23 @@ import lombok.Setter;
 @Table(name = "prjct_trget_sys_mapng")
 public class PrjctTrgetSysMapng {
 
+  /**
+   * 프로젝트-대상 시스템 매핑 아이디
+   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "prjct_trget_sys_mapng_id")
   private Long prjctTrgetSysMapngId;
 
+  /**
+   * 프로젝트 아이디
+   */
   @Column(name = "prjct_id")
   private String prjctId;
 
+  /**
+   * 대상 시스템 아이디
+   */
   @Column(name = "trget_sys_id")
   private String trgetSysId;
 }

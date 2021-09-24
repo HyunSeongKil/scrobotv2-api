@@ -14,6 +14,10 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
 
+
+/**
+ * 대상 시스템
+ */
 @RestController
 @RequestMapping("trget-syss")
 public class TrgetSysRestController {

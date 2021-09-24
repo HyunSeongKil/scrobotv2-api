@@ -18,6 +18,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+
+/**
+ * 유틸
+ */
 public class Util {
 
 

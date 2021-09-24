@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.service.DeployService;
 
+
+/**
+ * 배포
+ */
 @RestController
 @RequestMapping("/deploys")
 public class DeployRestController {

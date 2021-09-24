@@ -18,6 +18,9 @@ import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.service.PrjctService;
 
 
+/**
+ * 프로젝트
+ */
 @RestController
 @RequestMapping("/prjcts")
 public class PrjctRestController {

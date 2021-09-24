@@ -15,6 +15,10 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.service.CompnService;
 
+
+/**
+ * 컴포넌트
+ */
 @RestController
 @RequestMapping("/compns")
 public class CompnRestController {

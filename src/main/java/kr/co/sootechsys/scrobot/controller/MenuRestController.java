@@ -15,6 +15,10 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.service.MenuService;
 
+
+/**
+ * 메뉴
+ */
 @RestController
 @RequestMapping("/menus")
 public class MenuRestController {

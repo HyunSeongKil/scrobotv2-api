@@ -16,6 +16,10 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 
+
+/**
+ * 화면 그룹
+ */
 @RestController
 @RequestMapping("/scrin-groups")
 public class ScrinGroupRestController {

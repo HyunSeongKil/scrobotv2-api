@@ -12,6 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 프로젝트
+ */
 @Getter
 @Setter
 @Builder
@@ -20,13 +23,22 @@ import lombok.Setter;
 @Entity
 @Table(name = "prjct2")
 public class Prjct {
+  /**
+   * 프로젝트 아이디
+   */
   @Id
   @Column(name = "prjct_id")
   private String prjctId;
 
+  /**
+   * 프로젝트 명
+   */
   @Column(name = "prjct_nm")
   private String prjctNm;
 
+  /**
+   * 사용자 아이디
+   */
   @Column(name = "user_id")
   private String userId;
 }

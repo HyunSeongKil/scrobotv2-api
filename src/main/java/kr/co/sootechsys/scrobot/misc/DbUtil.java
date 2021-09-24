@@ -4,6 +4,10 @@ import java.sql.SQLException;
 import javax.persistence.Table;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+
+/**
+ * 디비 유틸
+ */
 public class DbUtil {
 
 
