@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +28,14 @@ public class PrjctDto {
   private String prjctNm;
 
   /**
+   * 프로젝트 내용
+   */
+  private String prjctCn;
+
+  /**
    * 사용자 명
    */
   private String userId;
+
+  private List<ScrinGroupDto> scrinGroupDtos;
 }

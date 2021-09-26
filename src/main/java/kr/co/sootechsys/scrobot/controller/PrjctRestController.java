@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
+import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
+import kr.co.sootechsys.scrobot.service.ScrinGroupService;
+import kr.co.sootechsys.scrobot.service.ScrinService;
 
 
 /**
@@ -26,15 +31,27 @@ import kr.co.sootechsys.scrobot.service.PrjctService;
 public class PrjctRestController {
 
   private PrjctService service;
+  private ScrinGroupService scrinGroupService;
+  private ScrinService scrinService;
+  private CompnService compnService;
 
-  public PrjctRestController(PrjctService service) {
+  public PrjctRestController(PrjctService service, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService ){
     this.service = service;
+    this.scrinGroupService = scrinGroupService;
+    this.scrinService = scrinService;
+    this.compnService = compnService;
   }
 
   @PostMapping()
   @ApiOperation(value = "프로젝트 등록")
   public void regist(@RequestBody PrjctDto dto) {
     service.regist(dto);
+  }
+
+  @PostMapping("/copy")
+  @ApiOperation(value = "프로젝트 복사")
+  public ResponseEntity<Map<String,Object>> copy(@RequestBody PrjctDto dto) {
+    return ResponseEntity.ok(Map.of("data", service.copy(dto.getPrjctId())));
   }
 
   @PutMapping()

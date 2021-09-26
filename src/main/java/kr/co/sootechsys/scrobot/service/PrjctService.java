@@ -48,4 +48,11 @@ public interface PrjctService {
    */
   List<PrjctDto> findAllByUserId(String userId);
 
+  /**
+   * 프로젝트 복사 
+   * @param oldPrjctId
+   * @return 신규로 생성된 프로젝트 아이디
+   */
+  String copy(String oldPrjctId);
+
 }

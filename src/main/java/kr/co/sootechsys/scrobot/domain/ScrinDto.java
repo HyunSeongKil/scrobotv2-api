@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,4 +43,6 @@ public class ScrinDto {
    * 화면 그룹 인스턴스
    */
   private ScrinGroupDto scrinGroup;
+
+  private List<CompnDto> compnDtos;
 }

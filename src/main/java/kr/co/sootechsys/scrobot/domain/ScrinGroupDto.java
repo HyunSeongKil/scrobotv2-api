@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,4 +42,6 @@ public class ScrinGroupDto {
    * 프로젝트 인스턴스
    */
   private PrjctDto prjctDto;
+
+  private List<ScrinDto> scrinDtos;
 }

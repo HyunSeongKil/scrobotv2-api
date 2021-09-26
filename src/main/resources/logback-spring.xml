@@ -18,9 +18,9 @@
     <!-- log file -->
    <appender name="FILE"
              class="ch.qos.logback.core.rolling.RollingFileAppender">
-       <file>d:\\temp\\scrobot-api.log</file>
+       <file>c:\\temp\\scrobotv2-api.log</file>
        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-           <fileNamePattern>d:\\temp\\scrobot-api.%d{yyyy-MM-dd}.log
+           <fileNamePattern>c:\\temp\\scrobotv2-api.%d{yyyy-MM-dd}.log
            </fileNamePattern>
        </rollingPolicy>
        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

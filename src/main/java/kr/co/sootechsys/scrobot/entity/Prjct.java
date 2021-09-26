@@ -37,6 +37,12 @@ public class Prjct {
   private String prjctNm;
 
   /**
+   * 프로젝트 내용
+   */
+  @Column(name = "prjct_cn", length = 4000)
+  private String prjctCn;
+
+  /**
    * 사용자 아이디
    */
   @Column(name = "user_id")
