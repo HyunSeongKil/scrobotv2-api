@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -47,4 +49,16 @@ public class Prjct {
    */
   @Column(name = "user_id")
   private String userId;
+
+  /**
+   * 생성 일시
+   */
+  @Column(name = "regist_dt")
+  private Date registDt;
+
+  /**
+   * 수정 일시
+   */
+  @Column(name = "updt_dt")
+  private Date updtDt;
 }

@@ -47,4 +47,5 @@ public interface ScrinGroupService {
    * @return
    */
   List<ScrinGroupDto> findAllByPrjctId(String prjctId);
+
 }

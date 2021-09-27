@@ -5,20 +5,24 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.entity.Scrin;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.persistence.ScrinRepository;
+import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 
 @Service
 public class ScrinServiceImpl implements ScrinService {
 
   private ScrinRepository repo;
+  private ScrinGroupService scrinGroupService;
 
-  public ScrinServiceImpl(ScrinRepository repo){
+  public ScrinServiceImpl(ScrinRepository repo, ScrinGroupService scrinGroupService){
     this.repo = repo;
+    this.scrinGroupService = scrinGroupService;
   }
 
   ScrinDto toDto(Scrin e){
@@ -38,6 +42,8 @@ public class ScrinServiceImpl implements ScrinService {
       .scrinGroupId(dto.getScrinGroupId())
       .build();
   }
+
+
 
   @Override
   public String regist(ScrinDto dto) {
@@ -85,5 +91,17 @@ public class ScrinServiceImpl implements ScrinService {
 
     return dtos;
   }
+
+  @Override
+  public List<ScrinDto> findAllByPrjctId(String prjctId) {
+    List<ScrinDto> scrinDtos = new ArrayList<>();
+    scrinGroupService.findAllByPrjctId(prjctId).forEach(scrinGroupDto->{      
+      scrinDtos.addAll(findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()));
+    });
+
+    return scrinDtos;
+  }
+
+ 
   
 }

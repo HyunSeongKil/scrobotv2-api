@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import kr.co.sootechsys.scrobot.entity.Prjct;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.persistence.PrjctRepository;
 import kr.co.sootechsys.scrobot.service.CompnService;
+import kr.co.sootechsys.scrobot.service.MenuService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
@@ -23,21 +25,23 @@ public class PrjctServiceImpl implements PrjctService {
   private ScrinGroupService scrinGroupService;
   private ScrinService scrinService;
   private CompnService compnService;
+  private MenuService menuService;
 
-  public PrjctServiceImpl(PrjctRepository repo, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService){
+  public PrjctServiceImpl(PrjctRepository repo, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService, MenuService menuService){
     this.repo = repo;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
     this.compnService = compnService;
+    this.menuService = menuService;
 
   }
 
   Prjct toEntity(PrjctDto dto) {
-    return Prjct.builder().prjctId(Util.getShortUuid()).prjctNm(dto.getPrjctNm()).prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).build();
+    return Prjct.builder().registDt(new Date()).prjctId(Util.getShortUuid()).prjctNm(dto.getPrjctNm()).prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).build();
   }
 
   PrjctDto toDto(Prjct e) {
-    return PrjctDto.builder().prjctId(e.getPrjctId()).prjctNm(e.getPrjctNm()).prjctCn(e.getPrjctCn()).userId(e.getUserId()).build();
+    return PrjctDto.builder().registDt(e.getRegistDt()).prjctId(e.getPrjctId()).prjctNm(e.getPrjctNm()).prjctCn(e.getPrjctCn()).userId(e.getUserId()).build();
   }
 
 
@@ -60,12 +64,29 @@ public class PrjctServiceImpl implements PrjctService {
   }
 
   @Override
+  @Transactional
   public void delete(String prjctId) {
-    // TODO delete 화면그룹
+    scrinGroupService.findAllByPrjctId(prjctId).forEach(scrinGroupDto->{
+      scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()).forEach(scrinDto->{
+        compnService.findAllByScrinId(scrinDto.getScrinId()).forEach(compnDto->{
+          // delete 콤포넌트
+          compnService.delete(compnDto.getCompnId());
+        });
 
-    // TODO delete 메뉴
+        // delete 화면
+        scrinService.delete(scrinDto.getScrinId());
+      });
+
+      // delete 화면그룹
+      scrinGroupService.deleteById(scrinGroupDto.getScrinGroupId());
+    });
 
 
+    // delete 메뉴
+    menuService.deleteByPrjctId(prjctId);
+
+
+    // delete 프로젝트
     repo.deleteById(prjctId);
   }
 
@@ -110,6 +131,7 @@ public class PrjctServiceImpl implements PrjctService {
 
 
     // 프로젝트 등록
+    prjctDto.setPrjctNm(prjctDto.getPrjctNm() + "(복사본)");
     String newPrjctId = regist(prjctDto);
 
     prjctDto.getScrinGroupDtos().forEach(scrinGroupDto->{

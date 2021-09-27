@@ -46,6 +46,13 @@ public class MenuServiceImpl implements MenuService {
   }
 
   @Override
+  public void deleteByPrjctId(String prjctId) {
+    repo.findAllByPrjctId(prjctId).forEach(e->{
+      repo.delete(e);
+    });
+  }
+
+  @Override
   public String regist(MenuDto dto) {
     return repo.save(toEntity(dto)).getMenuId();
   }
@@ -92,5 +99,7 @@ public class MenuServiceImpl implements MenuService {
 
     return dtos;
   }
+
+ 
 
 }

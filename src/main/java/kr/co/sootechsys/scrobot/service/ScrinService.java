@@ -45,4 +45,10 @@ public interface ScrinService {
    * @return
    */
   List<ScrinDto> findAllByScrinGroupId(String scrinGroupId);
+
+  /**
+   * 프로젝트 아이디로 화면 목록 조회
+   */
+  List<ScrinDto> findAllByPrjctId(String prjctId);
+
 }

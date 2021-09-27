@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.persistence.ScrinGroupRepository;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
+import kr.co.sootechsys.scrobot.service.ScrinService;
 
 @Service
 public class ScrinGroupServiceImpl implements ScrinGroupService {
@@ -28,6 +30,9 @@ public class ScrinGroupServiceImpl implements ScrinGroupService {
   ScrinGroup toEntity(ScrinGroupDto dto) {
     return ScrinGroup.builder().scrinGroupId(Util.getShortUuid()).scrinGroupNm(dto.getScrinGroupNm()).prjctId(dto.getPrjctId()).engAbrvNm(dto.getEngAbrvNm()).build();
   }
+
+
+
 
   @Override
   public String regist(ScrinGroupDto dto) {

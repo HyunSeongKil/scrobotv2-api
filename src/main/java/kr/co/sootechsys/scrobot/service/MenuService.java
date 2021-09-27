@@ -46,4 +46,6 @@ public interface MenuService {
    * @return
    */
   List<MenuDto> findAllByPrjctId(String prjctId);
+
+  void deleteByPrjctId(String prjctId);
 }
