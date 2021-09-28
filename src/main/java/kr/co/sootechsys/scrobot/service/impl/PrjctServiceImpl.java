@@ -19,6 +19,7 @@ import kr.co.sootechsys.scrobot.service.ScrinService;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class PrjctServiceImpl implements PrjctService {
   private PrjctRepository repo;
 
@@ -27,7 +28,7 @@ public class PrjctServiceImpl implements PrjctService {
   private CompnService compnService;
   private MenuService menuService;
 
-  public PrjctServiceImpl(PrjctRepository repo, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService, MenuService menuService){
+  public PrjctServiceImpl(PrjctRepository repo, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService, MenuService menuService) {
     this.repo = repo;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
@@ -66,9 +67,9 @@ public class PrjctServiceImpl implements PrjctService {
   @Override
   @Transactional
   public void delete(String prjctId) {
-    scrinGroupService.findAllByPrjctId(prjctId).forEach(scrinGroupDto->{
-      scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()).forEach(scrinDto->{
-        compnService.findAllByScrinId(scrinDto.getScrinId()).forEach(compnDto->{
+    scrinGroupService.findAllByPrjctId(prjctId).forEach(scrinGroupDto -> {
+      scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()).forEach(scrinDto -> {
+        compnService.findAllByScrinId(scrinDto.getScrinId()).forEach(compnDto -> {
           // delete 콤포넌트
           compnService.delete(compnDto.getCompnId());
         });
@@ -115,41 +116,45 @@ public class PrjctServiceImpl implements PrjctService {
   @Override
   @Transactional
   public String copy(String oldPrjctId) {
-     // 프로젝트 조회
-     PrjctDto prjctDto = findById(oldPrjctId);
-     // 화면그룹 목록 조회
-     prjctDto.setScrinGroupDtos(scrinGroupService.findAllByPrjctId(prjctDto.getPrjctId()));
-     prjctDto.getScrinGroupDtos().forEach(scrinGroupDto->{      
-       // 화면 목록 조회
-       scrinGroupDto.setScrinDtos(scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()));
- 
-       scrinGroupDto.getScrinDtos().forEach(scrinDto->{
-         // 콤포넌트 목록 조회
-         scrinDto.setCompnDtos(compnService.findAllByScrinId(scrinDto.getScrinId()));
-       });
-     });
+    // 프로젝트 조회
+    PrjctDto prjctDto = findById(oldPrjctId);
+    // 화면그룹 목록 조회
+    prjctDto.setScrinGroupDtos(scrinGroupService.findAllByPrjctId(prjctDto.getPrjctId()));
+    prjctDto.getScrinGroupDtos().forEach(scrinGroupDto -> {
+      // 화면 목록 조회
+      scrinGroupDto.setScrinDtos(scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()));
+
+      scrinGroupDto.getScrinDtos().forEach(scrinDto -> {
+        // 콤포넌트 목록 조회
+        scrinDto.setCompnDtos(compnService.findAllByScrinId(scrinDto.getScrinId()));
+      });
+    });
 
 
     // 프로젝트 등록
     prjctDto.setPrjctNm(prjctDto.getPrjctNm() + "(복사본)");
+    log.debug("{}", prjctDto);
     String newPrjctId = regist(prjctDto);
 
-    prjctDto.getScrinGroupDtos().forEach(scrinGroupDto->{
+    prjctDto.getScrinGroupDtos().forEach(scrinGroupDto -> {
       scrinGroupDto.setPrjctId(newPrjctId);
 
       // 화면 그룹 등록
-      String scrinGroupId = scrinGroupService.regist(scrinGroupDto);
+      log.debug("{}", scrinGroupDto);
+      String newScrinGroupId = scrinGroupService.regist(scrinGroupDto);
 
-      scrinGroupDto.getScrinDtos().forEach(scrinDto->{
-        scrinDto.setScrinGroupId(scrinGroupId);
+      scrinGroupDto.getScrinDtos().forEach(scrinDto -> {
+        scrinDto.setScrinGroupId(newScrinGroupId);
 
         // 화면 등록
-        String scrinId = scrinService.regist(scrinDto);
+        log.debug("{}", scrinDto);
+        String newScrinId = scrinService.regist(scrinDto);
 
-        scrinDto.getCompnDtos().forEach(compnDto->{
-          compnDto.setScrinId(scrinId);
+        scrinDto.getCompnDtos().forEach(compnDto -> {
+          compnDto.setScrinId(newScrinId);
 
           // 콤포넌트 등록
+          log.debug("{}", compnDto);
           compnService.regist(compnDto);
         });
       });

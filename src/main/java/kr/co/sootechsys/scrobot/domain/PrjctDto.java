@@ -2,7 +2,7 @@ package kr.co.sootechsys.scrobot.domain;
 
 import java.util.Date;
 import java.util.List;
-
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,4 +50,9 @@ public class PrjctDto {
   private Date updtDt;
 
   private List<ScrinGroupDto> scrinGroupDtos;
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 }

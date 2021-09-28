@@ -33,10 +33,9 @@ public class ScrinGroupServiceImpl implements ScrinGroupService {
 
 
 
-
   @Override
   public String regist(ScrinGroupDto dto) {
-    return repo.save(toEntity(dto)).getPrjctId();
+    return repo.save(toEntity(dto)).getScrinGroupId();
   }
 
   @Override
