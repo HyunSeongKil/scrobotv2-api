@@ -35,7 +35,7 @@ public class PrjctRestController {
   private ScrinService scrinService;
   private CompnService compnService;
 
-  public PrjctRestController(PrjctService service, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService ){
+  public PrjctRestController(PrjctService service, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService) {
     this.service = service;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
@@ -44,13 +44,13 @@ public class PrjctRestController {
 
   @PostMapping()
   @ApiOperation(value = "프로젝트 등록")
-  public void regist(@RequestBody PrjctDto dto) {
-    service.regist(dto);
+  public ResponseEntity<Map<String, Object>> regist(@RequestBody PrjctDto dto) {
+    return ResponseEntity.ok(Map.of("data", service.regist(dto)));
   }
 
   @PostMapping("/copy")
   @ApiOperation(value = "프로젝트 복사")
-  public ResponseEntity<Map<String,Object>> copy(@RequestBody PrjctDto dto) {
+  public ResponseEntity<Map<String, Object>> copy(@RequestBody PrjctDto dto) {
     return ResponseEntity.ok(Map.of("data", service.copy(dto.getPrjctId())));
   }
 
