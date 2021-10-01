@@ -53,13 +53,16 @@ public class PrjctServiceImpl implements PrjctService {
 
   @Override
   public void updt(PrjctDto dto) {
-    Optional<Prjct> opt = repo.findById(dto.getUserId());
+    Optional<Prjct> opt = repo.findById(dto.getPrjctId());
     if (opt.isEmpty()) {
       return;
     }
 
-    Prjct e = toEntity(dto);
-    e.setPrjctId(dto.getUserId());
+    Prjct e = opt.get();
+    e.setPrjctCn(dto.getPrjctCn());
+    e.setPrjctNm(dto.getPrjctNm());
+    e.setUpdtDt(new Date());
+    e.setUserId(dto.getUserId());
 
     repo.save(e);
   }

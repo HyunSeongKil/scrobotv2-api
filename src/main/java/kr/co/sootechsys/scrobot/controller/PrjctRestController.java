@@ -56,8 +56,10 @@ public class PrjctRestController {
 
   @PutMapping()
   @ApiOperation(value = "프로젝트 수정")
-  public void updt(@RequestBody PrjctDto dto) {
+  public ResponseEntity<Map<String, Object>> updt(@RequestBody PrjctDto dto) {
     service.updt(dto);
+
+    return ResponseEntity.ok().build();
   }
 
 
