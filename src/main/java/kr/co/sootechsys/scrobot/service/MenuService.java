@@ -47,5 +47,14 @@ public interface MenuService {
    */
   List<MenuDto> findAllByPrjctId(String prjctId);
 
+
+  /**
+   * 프로젝트 아이디로 목록 조회 with 메뉴 순서
+   * 
+   * @param prjctId
+   * @return
+   */
+  List<MenuDto> findAllByPrjctIdWithSort(String prjctId);
+
   void deleteByPrjctId(String prjctId);
 }

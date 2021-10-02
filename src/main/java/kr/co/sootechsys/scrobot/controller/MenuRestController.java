@@ -59,4 +59,10 @@ public class MenuRestController {
     return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
   }
 
+  @GetMapping("/by-prjct-with-sort")
+  @ApiOperation(value = "프로젝트 아이디로 화면 목록 조회 with 정렬")
+  public ResponseEntity<Map<String, Object>> listByPrjctIdWithSort(@RequestParam String prjctId) {
+    return ResponseEntity.ok(Map.of("data", service.findAllByPrjctIdWithSort(prjctId)));
+  }
+
 }

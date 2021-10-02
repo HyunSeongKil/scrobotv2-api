@@ -3,6 +3,7 @@ package kr.co.sootechsys.scrobot.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.el.MethodNotFoundException;
 import org.springframework.stereotype.Service;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.entity.Menu;
@@ -47,7 +48,7 @@ public class MenuServiceImpl implements MenuService {
 
   @Override
   public void deleteByPrjctId(String prjctId) {
-    repo.findAllByPrjctId(prjctId).forEach(e->{
+    repo.findAllByPrjctId(prjctId).forEach(e -> {
       repo.delete(e);
     });
   }
@@ -100,6 +101,42 @@ public class MenuServiceImpl implements MenuService {
     return dtos;
   }
 
- 
+  @Override
+  public List<MenuDto> findAllByPrjctIdWithSort(String prjctId) {
+    List<MenuDto> menuDtos = findAllByPrjctId(prjctId);
+
+    List<MenuDto> dtos = new ArrayList<>();
+
+    menuDtos.forEach(dto -> {
+      if ("-".equals(dto.getPrntsMenuId())) {
+        dtos.add(dto);
+        dtos.addAll(getChildren(menuDtos, dto.getMenuId()));
+      }
+    });
+
+    return dtos;
+  }
+
+
+  /**
+   * 하위 메뉴 목록 조회
+   * 
+   * @param menuDtos 전체 메뉴 목록
+   * @param prntsMenuId 부모 메뉴 아이디
+   * @return 하위 메뉴 목록
+   */
+  private List<MenuDto> getChildren(List<MenuDto> menuDtos, String prntsMenuId) {
+    List<MenuDto> dtos = new ArrayList<>();
+
+    menuDtos.forEach(dto -> {
+      if (prntsMenuId.equals(dto.getPrntsMenuId())) {
+        dtos.add(dto);
+      }
+    });
+
+    return dtos;
+  }
+
+
 
 }
