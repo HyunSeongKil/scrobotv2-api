@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,5 +57,10 @@ public class CompnDto {
    * 화면
    */
   private ScrinDto scrin;
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 
 }

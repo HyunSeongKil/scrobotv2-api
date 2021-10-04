@@ -25,6 +25,7 @@ import ch.qos.logback.core.db.dialect.DBUtil;
 import kr.co.sootechsys.scrobot.domain.CmmnCodeDto;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.domain.DbProduct;
+import kr.co.sootechsys.scrobot.domain.DeployDto;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
@@ -80,11 +81,11 @@ public class DeployServiceImpl implements DeployService {
 
   @Override
   @Transactional
-  public Map<String, Long> deploy(String prjctId, String trgetSysId) throws SQLException {
-    prjctTrgetSysMapngService.regist(prjctId, trgetSysId);
+  public Map<String, Long> deploy(DeployDto dto) throws SQLException {
+    prjctTrgetSysMapngService.regist(dto.getPrjctId(), dto.getTrgetSysId());
 
     BasicDataSource ds = null;
-    TrgetSysDto trgetSysDto = trgetSysService.findById(trgetSysId);
+    TrgetSysDto trgetSysDto = trgetSysService.findById(dto.getTrgetSysId());
 
     try {
       ds = createDataSource(trgetSysDto);
@@ -98,13 +99,13 @@ public class DeployServiceImpl implements DeployService {
       executeBasicDdl(jdbcTemplate, trgetSysDto, CmmnCode.class, Compn.class, Menu.class, Prjct.class, Scrin.class, ScrinGroup.class, TrgetSys.class, PrjctTrgetSysMapng.class);
 
       //
-      deleteOldData(jdbcTemplate, prjctId);
+      deleteOldData(jdbcTemplate, dto.getPrjctId());
 
       //
-      insertNewData(jdbcTemplate, prjctId);
+      insertNewData(jdbcTemplate, dto.getPrjctId());
 
       //
-      return executeBizDdl(jdbcTemplate, trgetSysDto, prjctId);
+      return executeBizDdl(jdbcTemplate, trgetSysDto, dto.getPrjctId());
 
     } catch (Exception e) {
       // if (null != ds) {
@@ -885,6 +886,8 @@ public class DeployServiceImpl implements DeployService {
           sb.append(" VARCHAR(255) ");
         } else if (Integer.class == colmnType) {
           sb.append(" INT ");
+        } else if (Date.class == colmnType) {
+          sb.append(" DATETIME ");
         } else {
           throw new RuntimeException("NOT IMPL " + colmnType);
         }
