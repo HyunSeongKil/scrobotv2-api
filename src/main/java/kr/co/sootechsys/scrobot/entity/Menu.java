@@ -61,7 +61,7 @@ public class Menu {
   /**
    * 메뉴 순서 값
    */
-  @Column(name = "menu_ordr_value")
+  @Column(name = "menu_ordr_value", nullable = false)
   private Integer menuOrdrValue;
 
   /**
