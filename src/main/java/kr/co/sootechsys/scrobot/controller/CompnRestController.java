@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.controller;
 
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +32,8 @@ public class CompnRestController {
 
   @PostMapping()
   @ApiOperation(value = "컴포넌트 등록", notes = "컴포넌트 등록")
-  public void regist(@RequestBody CompnDto dto) {
-    service.regist(dto);
+  public void regist(@RequestBody List<CompnDto> dtos) {
+    service.regist(dtos);
   }
 
   @PutMapping()
@@ -45,6 +46,12 @@ public class CompnRestController {
   @ApiOperation(value = "컴포넌트 아이디로 삭제")
   public void delete(@PathVariable String compnId) {
     service.delete(compnId);
+  }
+
+  @DeleteMapping("/by-scrin")
+  @ApiOperation(value = "컴포넌트 아이디로 삭제")
+  public void deleteByScrinId(@RequestParam String scrinId) {
+    service.deleteByScrinId(scrinId);
   }
 
 

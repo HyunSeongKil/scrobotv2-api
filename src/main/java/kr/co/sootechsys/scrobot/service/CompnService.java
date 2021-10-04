@@ -15,6 +15,14 @@ public interface CompnService {
    * @param dto 값
    * @return
    */
+  String regist(List<CompnDto> dtos);
+
+  /**
+   * 등록
+   * 
+   * @param dto 값
+   * @return
+   */
   String regist(CompnDto dto);
 
   /**
@@ -47,4 +55,6 @@ public interface CompnService {
    * @return
    */
   List<CompnDto> findAllByScrinId(String scrinId);
+
+  void deleteByScrinId(String scrinId);
 }

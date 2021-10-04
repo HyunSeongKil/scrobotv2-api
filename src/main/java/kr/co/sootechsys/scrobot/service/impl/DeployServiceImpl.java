@@ -234,6 +234,9 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , hngl_abrv_nm");
       sb.append("   , scrin_id");
       sb.append("   , compn_se_code");
+      sb.append("   , ordr_value");
+      sb.append("   , regist_dt");
+      sb.append("   , updt_dt");
       sb.append(" )");
       sb.append(" VALUES (");
       sb.append("   '" + dto.getCompnId() + "' ");
@@ -243,6 +246,9 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , '" + dto.getHnglAbrvNm() + "' ");
       sb.append("   , '" + dto.getScrinId() + "' ");
       sb.append("   , '" + dto.getCompnSeCode() + "' ");
+      sb.append("   , '" + dto.getOrdrValue() + "' ");
+      sb.append("   , '" + dto.getRegistDt() + "' ");
+      sb.append("   , '" + dto.getUpdtDt() + "' ");
       sb.append(" )");
 
       jdbcTemplate.execute(sb.toString());
@@ -985,7 +991,9 @@ public class DeployServiceImpl implements DeployService {
             sb.append("VARCHAR(1000)");
           } else if (Integer.class == classes.get(i) || Long.class == classes.get(i)) {
             sb.append("INT");
-          } else {
+          } else if (Date.class == classes.get(i)){
+            sb.append("DATETIME");
+          } else{
             throw new RuntimeException("NOT IMPL " + classes.get(i));
           }
           sb.append(" NULL DEFAULT NULL COLLATE 'utf8_general_ci', ");

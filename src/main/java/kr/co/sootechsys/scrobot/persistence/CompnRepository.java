@@ -18,4 +18,10 @@ public interface CompnRepository extends JpaRepository<Compn, String> {
    */
   List<Compn> findAllByScrinId(String scrinId);
 
+  /**
+   * 화면 아이디로 삭제
+   * @param scrinId
+   */
+  void deleteByScrinId(String scrinId);
+
 }

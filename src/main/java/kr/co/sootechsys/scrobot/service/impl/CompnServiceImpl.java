@@ -1,9 +1,12 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.entity.Compn;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -29,6 +32,9 @@ public class CompnServiceImpl implements CompnService {
     e.setScrinId(dto.getScrinId());
     e.setHnglAbrvNm(dto.getHnglAbrvNm());
     e.setCompnSeCode(dto.getCompnSeCode());
+    e.setOrdrValue(dto.getOrdrValue());
+    e.setRegistDt(new Date());
+    e.setUpdtDt(new Date());
 
     return e;
   }
@@ -42,15 +48,37 @@ public class CompnServiceImpl implements CompnService {
     dto.setScrinId(e.getScrinId());
     dto.setHnglAbrvNm(e.getHnglAbrvNm());
     dto.setCompnSeCode(e.getCompnSeCode());
+    dto.setOrdrValue(e.getOrdrValue());
+    dto.setRegistDt(e.getRegistDt());
+    dto.setUpdtDt(e.getUpdtDt());
 
     // TODO ScrinDto
 
     return dto;
   }
 
+  
   @Override
+  @Transactional
+  public void deleteByScrinId(String scrinId) {
+    repo.deleteByScrinId(scrinId);
+  }
+
+  @Override
+  @Transactional
   public String regist(CompnDto dto) {
     return repo.save(toEntity(dto)).getCompnId();
+  }
+
+  
+  @Override
+  @Transactional
+  public String regist(List<CompnDto> dtos) {
+    dtos.forEach(dto->{
+      regist(dto);
+    });
+    // TODO Auto-generated method stub
+    return null;
   }
 
 
@@ -98,4 +126,8 @@ public class CompnServiceImpl implements CompnService {
 
     return dtos;
   }
+
+
+
+
 }

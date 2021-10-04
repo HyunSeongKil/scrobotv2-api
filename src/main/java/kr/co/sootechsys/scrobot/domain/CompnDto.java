@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,9 +59,13 @@ public class CompnDto {
    */
   private ScrinDto scrin;
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
-  }
+  /**
+   * 순서 값
+   */
+  private Integer ordrValue;
+
+  private Date registDt;
+
+  private Date updtDt;
 
 }

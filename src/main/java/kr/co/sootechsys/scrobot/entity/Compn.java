@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -70,6 +72,24 @@ public class Compn {
    */
   @Column(name = "scrin_id")
   private String scrinId;
+
+  /**
+   * 순서 값
+   */
+  @Column(name = "ordr_value")
+  private Integer ordrValue;
+
+  /**
+   * 등록 일시
+   */
+  @Column(name = "regist_dt")
+  private Date registDt;
+
+  /**
+   * 수정 일시
+   */
+  @Column(name = "updt_dt")
+  private Date updtDt;
 
   /**
    * 화면 인스턴스
