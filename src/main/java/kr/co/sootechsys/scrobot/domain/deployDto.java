@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class deployDto {
+public class DeployDto {
     private String prjctId;
 
     private String trgetSysId;
