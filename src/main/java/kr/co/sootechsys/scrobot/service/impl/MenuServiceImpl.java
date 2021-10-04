@@ -55,6 +55,7 @@ public class MenuServiceImpl implements MenuService {
 
   @Override
   public String regist(MenuDto dto) {
+    dto.setMenuOrdrValue(repo.findAll().size());
     return repo.save(toEntity(dto)).getMenuId();
   }
 
