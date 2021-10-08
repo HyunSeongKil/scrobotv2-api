@@ -4,6 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.service.CompnService;
+import kr.co.sootechsys.scrobot.service.JwtService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
-
 
 /**
  * 프로젝트
@@ -31,12 +36,15 @@ import kr.co.sootechsys.scrobot.service.ScrinService;
 public class PrjctRestController {
 
   private PrjctService service;
+  private JwtService jwtService;
   private ScrinGroupService scrinGroupService;
   private ScrinService scrinService;
   private CompnService compnService;
 
-  public PrjctRestController(PrjctService service, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService) {
+  public PrjctRestController(JwtService jwtService, PrjctService service, ScrinGroupService scrinGroupService,
+      ScrinService scrinService, CompnService compnService) {
     this.service = service;
+    this.jwtService = jwtService;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
     this.compnService = compnService;
@@ -62,7 +70,6 @@ public class PrjctRestController {
     return ResponseEntity.ok().build();
   }
 
-
   @DeleteMapping("/{prjctId}")
   @ApiOperation(value = "프로젝트 아이디로 삭제")
   public void delete(@PathVariable String prjctId) {
@@ -77,7 +84,11 @@ public class PrjctRestController {
 
   @GetMapping("/by-user")
   @ApiOperation(value = "사용자 아이디로 프로젝트 목록 조회")
-  public ResponseEntity<Map<String, Object>> list(@RequestParam String userId) {
+  public ResponseEntity<Map<String, Object>> list(HttpServletRequest request, @RequestParam String userId) {
+    if (!jwtService.getUserId(request).equals(userId)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
     return ResponseEntity.ok(Map.of("data", service.findAllByUserId(userId)));
   }
 }

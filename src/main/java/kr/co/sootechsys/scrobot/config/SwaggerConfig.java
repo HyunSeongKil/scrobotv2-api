@@ -24,56 +24,42 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-//    @Bean
-//    public Docket api() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .select()
-//                .apis(RequestHandlerSelectors.any())
-//                .paths(PathSelectors.any())
-//                .build();
-//    }
+        // @Bean
+        // public Docket api() {
+        // return new Docket(DocumentationType.SWAGGER_2)
+        // .select()
+        // .apis(RequestHandlerSelectors.any())
+        // .paths(PathSelectors.any())
+        // .build();
+        // }
 
+        @Bean
+        public Docket api() {
 
-    @Bean
-    public Docket api() {
+                RequestParameterBuilder aParameterBuilder = new RequestParameterBuilder();
+                List<RequestParameter> aParameters = new ArrayList<RequestParameter>();
 
-        RequestParameterBuilder aParameterBuilder = new RequestParameterBuilder();
-        List<RequestParameter> aParameters = new ArrayList<RequestParameter>();
+                aParameters.clear();
 
-        aParameters.clear();
+                // aParameterBuilder.name("HTTP_AUTH_ACCESS_ID").
+                // in(ParameterType.HEADER).
+                // query(q -> q.model(m -> m.scalarModel(ScalarType.STRING))).
+                // build();
+                // aParameters.add(aParameterBuilder.build());
 
-//        aParameterBuilder.name("HTTP_AUTH_ACCESS_ID").
-//                in(ParameterType.HEADER).
-//                query(q -> q.model(m -> m.scalarModel(ScalarType.STRING))).
-//                build();
-//        aParameters.add(aParameterBuilder.build());
+                aParameterBuilder.name("Authorization").in(ParameterType.HEADER)
+                                .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING))).build();
+                aParameters.add(aParameterBuilder.build());
 
-        aParameterBuilder.name("X-AUTH-TOKEN").
-                in(ParameterType.HEADER).
-                query(q -> q.model(m -> m.scalarModel(ScalarType.STRING))).
-                build();
-        aParameters.add(aParameterBuilder.build());
+                return new Docket(DocumentationType.SWAGGER_2).apiInfo(this.apiInfo())
+                                .globalRequestParameters(aParameters).useDefaultResponseMessages(false).select()
+                                .apis(RequestHandlerSelectors.basePackage("kr.co.sootechsys.scrobot.controller"))
+                                .paths(PathSelectors.any()).build();
+        }
 
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(this.apiInfo())
-                .globalRequestParameters(aParameters)
-                .useDefaultResponseMessages(false)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("kr.co.sootechsys.scrobot.controller"))
-                .paths(PathSelectors.any())
-                .build();
-    }
-    private ApiInfo apiInfo() {
-        return new ApiInfo(
-                "scrobotv2-server",
-                "scrobotv2-server",
-                "1.0.0",
-                "#",
-                new Contact("Contact Me", "#", "#"),
-                "Licenses",
-                "#",
-                new ArrayList<>()
-        );
-    }
+        private ApiInfo apiInfo() {
+                return new ApiInfo("scrobotv2-server", "scrobotv2-server", "1.0.0", "#",
+                                new Contact("Contact Me", "#", "#"), "Licenses", "#", new ArrayList<>());
+        }
 
 }
