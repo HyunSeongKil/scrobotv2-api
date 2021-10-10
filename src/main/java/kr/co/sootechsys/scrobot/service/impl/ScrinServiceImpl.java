@@ -101,13 +101,16 @@ public class ScrinServiceImpl implements ScrinService {
   }
 
   @Override
+  @Transactional
   public void updt(ScrinDto dto) {
-    if (null == find(dto.getScrinId())) {
+    Optional<Scrin> opt = repo.findById(dto.getScrinId());
+    if (opt.isEmpty()) {
       return;
     }
 
-    Scrin e = toEntity(dto);
-    e.setScrinId(dto.getScrinId());
+    Scrin e = opt.get();
+    e.setScrinNm(dto.getScrinNm());
+    e.setScrinSeCode(dto.getScrinSeCode());
 
     repo.save(e);
   }
