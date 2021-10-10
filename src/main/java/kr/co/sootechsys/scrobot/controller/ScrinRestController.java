@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 
-
 /**
  * 화면
  */
@@ -34,6 +33,12 @@ public class ScrinRestController {
   @ApiOperation(value = "화면 등록")
   public void regist(@RequestBody ScrinDto dto) {
     service.regist(dto);
+  }
+
+  @PostMapping("/copy")
+  @ApiOperation(value = "화면 복사")
+  public ResponseEntity<Map<String, Object>> copy(@RequestParam String srcScrinId, @RequestBody ScrinDto trgetDto) {
+    return ResponseEntity.ok(Map.of("data", service.copy(srcScrinId, trgetDto)));
   }
 
   @PutMapping()
@@ -62,7 +67,7 @@ public class ScrinRestController {
 
   @GetMapping("/by-prjct")
   @ApiOperation(value = "프로젝트 아이디로 화면 목록 조회")
-  public ResponseEntity<Map<String,Object>> listByPrjctId(@RequestParam String prjctId){
+  public ResponseEntity<Map<String, Object>> listByPrjctId(@RequestParam String prjctId) {
     return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
   }
 }

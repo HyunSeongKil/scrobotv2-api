@@ -51,4 +51,13 @@ public interface ScrinService {
    */
   List<ScrinDto> findAllByPrjctId(String prjctId);
 
+  /**
+   * 화면 복사
+   * 
+   * @param scrinId  원본 화면아이디
+   * @param trgetDto 대상 dtl
+   * @return 대상 화면아이디
+   */
+  String copy(String scrinId, ScrinDto trgetDto);
+
 }
