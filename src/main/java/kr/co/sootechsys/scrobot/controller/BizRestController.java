@@ -28,9 +28,9 @@ public class BizRestController {
   }
 
 
-  @PostMapping("/{prjctId}/{scrinId}")
+  @PostMapping("/{prjctId}")
   @ApiOperation(value = "등록")
-  public void regist(@PathVariable String prjctId, @PathVariable String scrinId, @RequestBody Map<String, Object> map) throws SQLException {
+  public void regist(@PathVariable String prjctId, @RequestParam String scrinId, @RequestBody Map<String, Object> map) throws SQLException {
     service.regist(prjctId, scrinId, map);
   }
 

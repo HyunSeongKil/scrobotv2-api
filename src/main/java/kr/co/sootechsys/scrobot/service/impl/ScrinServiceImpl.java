@@ -36,7 +36,7 @@ public class ScrinServiceImpl implements ScrinService {
 
   Scrin toEntity(ScrinDto dto){
     return Scrin.builder()
-      .scrinId(Util.getShortUuid())
+      .scrinId(dto.getScrinSeCode() + Util.getShortUuid())
       .scrinNm(dto.getScrinNm())
       .scrinSeCode(dto.getScrinSeCode())
       .scrinGroupId(dto.getScrinGroupId())
