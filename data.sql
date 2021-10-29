@@ -15,7 +15,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- scrobotdb 데이터베이스 구조 내보내기
+-- scrobotdb 데이터베이스 구조 내보내기 
 DROP DATABASE IF EXISTS `scrobotdb`;
 CREATE DATABASE IF NOT EXISTS `scrobotdb` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `scrobotdb`;

@@ -25,6 +25,19 @@ import org.apache.commons.codec.binary.Base64;
 public class Util {
 
 
+  public static void main(String[] args) {
+    String secretKey = "sootechsys.co.kr-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789";
+
+    try {
+      System.out.println(encodeAes(secretKey, "password"));
+    } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+        | BadPaddingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+
   /**
    * SecretKeySpec 생성
    * 
