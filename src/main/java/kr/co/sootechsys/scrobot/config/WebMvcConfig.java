@@ -36,14 +36,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*").allowedMethods(HttpMethod.GET.name(), HttpMethod.HEAD.name(),
-                HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name());
+        registry.addMapping("/**").allowedOrigins("*").allowedMethods(HttpMethod.GET.name(), HttpMethod.HEAD.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name());
 
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtCheckInterceptor).addPathPatterns("/**").excludePathPatterns("/users/**", "/biz/**");
+        registry.addInterceptor(jwtCheckInterceptor).addPathPatterns("/**").excludePathPatterns("/users/**", "/biz/**", "/swagger-ui/**");
     }
 
 }
