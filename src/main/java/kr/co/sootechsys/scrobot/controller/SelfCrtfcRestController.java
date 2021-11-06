@@ -57,6 +57,11 @@ public class SelfCrtfcRestController {
 
     //
     JSONObject resJson = new JSONObject(resultStr);
+
+    log.debug("요청 : {}", reqJson);
+    log.debug("응답 : {}", resJson);
+
+    //
     String rsltCd = resJson.getString("RSLT_CD");
     String rsltMsg = resJson.getString("RSLT_MSG");
     String txSeqNo = resJson.getString("TX_SEQ_NO");
@@ -69,19 +74,22 @@ public class SelfCrtfcRestController {
   @GetMapping("/step1")
   public ResponseEntity<Map<String, Object>> step1() throws URISyntaxException, OkCertException {
 
-    JSONObject json = new JSONObject();
-    json.put("RETURN_URL", returnUrl);
-    json.put("SITE_NAME", "수테크시스템즈(주)");
-    json.put("SITE_URL", "sootechsys.co.kr");
-    json.put("RQST_CAUS_CD", "00");
-    String reqStr = json.toString();
+    JSONObject reqJson = new JSONObject();
+    reqJson.put("RETURN_URL", returnUrl);
+    reqJson.put("SITE_NAME", "수테크시스템즈(주)");
+    reqJson.put("SITE_URL", "sootechsys.co.kr");
+    reqJson.put("RQST_CAUS_CD", "00");
+    String reqStr = reqJson.toString();
 
     kcb.module.v3.OkCert okCert = new kcb.module.v3.OkCert();
 
     String resultStr = okCert.callOkCert(target, cpCd, svcName, getLicenseFilePath().toString(), reqStr);
 
-    log.debug("{}", resultStr);
+    //
     JSONObject resJson = new JSONObject(resultStr);
+
+    log.debug("요청 : {}", reqJson);
+    log.debug("응답 : {}", resJson);
 
     String rsltCd = resJson.getString("RSLT_CD");
     String rsltMsg = resJson.getString("RSLT_MSG");
