@@ -1,7 +1,7 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
 import javax.servlet.http.HttpServletRequest;
-
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,16 +48,19 @@ public class JwtServiceImpl implements JwtService {
     header.put("typ", "JWT");
     header.put("alg", "HS256");
 
+    // Long expiredTime = 1000 * 60L * 60L * 2L;
+    Long expiredTime = 1000 * 60L * 10L; // 1분
+    Date exp = new Date();
+    exp.setTime(exp.getTime() + expiredTime);
+
     Map<String, Object> payload = new HashMap<>();
     payload.put("userId", dto.getUserId());
     payload.put("userNm", dto.getUserNm());
 
-    Long expiredTime = 1000 * 60L * 60L * 2L;
-    Date exp = new Date();
-    exp.setTime(exp.getTime() + expiredTime);
+    // 초단위로 설정되어야 함 (밀리초단위 아님)
+    payload.put("exp", (System.currentTimeMillis() / 1000) + (expiredTime / 1000));
 
-    String jwt = Jwts.builder().setSubject("user").setExpiration(exp).setHeader(header).setClaims(payload).signWith(key)
-        .compact();
+    String jwt = Jwts.builder().setSubject("user").setExpiration(exp).setHeader(header).setClaims(payload).signWith(key).compact();
 
     return jwt;
   }
