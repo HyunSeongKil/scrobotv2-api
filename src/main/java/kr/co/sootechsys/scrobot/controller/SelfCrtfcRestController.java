@@ -34,8 +34,11 @@ public class SelfCrtfcRestController {
   @Value("${app.target}")
   private String target;
 
-  @Value("${app.svc.name}")
-  private String svcName;
+  @Value("${app.svc.name.start}")
+  private String svcNameStart;
+
+  @Value("${app.svc.name.result}")
+  private String svcNameResult;
 
   @Value("${app.cp.cd}")
   private String cpCd;
@@ -49,11 +52,15 @@ public class SelfCrtfcRestController {
 
     JSONObject reqJson = new JSONObject();
     reqJson.put("MDL_TKN", mdlTkn);
+    // reqJson.put("SITE_NAME", "수테크시스템즈(주)");
+    // reqJson.put("SITE_URL", "sootechsys.co.kr");
+    // reqJson.put("RQST_CAUS_CD", "00");
+    // reqJson.put("RETURN_URL", returnUrl);
     String reqStr = reqJson.toString();
 
     //
     kcb.module.v3.OkCert okCert = new kcb.module.v3.OkCert();
-    String resultStr = okCert.callOkCert(target, cpCd, svcName, getLicenseFilePath().toString(), reqStr);
+    String resultStr = okCert.callOkCert(target, cpCd, svcNameResult, getLicenseFilePath().toString(), reqStr);
 
     //
     JSONObject resJson = new JSONObject(resultStr);
@@ -83,7 +90,7 @@ public class SelfCrtfcRestController {
 
     kcb.module.v3.OkCert okCert = new kcb.module.v3.OkCert();
 
-    String resultStr = okCert.callOkCert(target, cpCd, svcName, getLicenseFilePath().toString(), reqStr);
+    String resultStr = okCert.callOkCert(target, cpCd, svcNameStart, getLicenseFilePath().toString(), reqStr);
 
     //
     JSONObject resJson = new JSONObject(resultStr);
