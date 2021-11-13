@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,12 +34,14 @@ public class Compn {
    */
   @Id
   @Column(name = "compn_id")
+  @ApiModelProperty(value = "콤포넌트 아이디")
   private String compnId;
 
   /**
    * 콤포넌트 명
    */
   @Column(name = "compn_nm")
+  @ApiModelProperty(value = "")
   private String compnNm;
 
   /**

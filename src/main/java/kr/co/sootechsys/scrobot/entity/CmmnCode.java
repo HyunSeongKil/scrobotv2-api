@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,18 +33,21 @@ public class CmmnCode {
    */
   @Id
   @Column(name = "cmmn_code_id")
+  @ApiModelProperty(value = "공통 코드 아이디")
   private Long cmmnCodeId;
 
   /**
    * 공통 코드
    */
   @Column(name = "cmmn_code")
+  @ApiModelProperty(value = "공통 코드")
   private String cmmnCode;
 
   /**
    * 공통 코드 명
    */
   @Column(name = "cmmn_code_nm")
+  @ApiModelProperty(value = "공통 코드 명")
   private String cmmnCodeNm;
 
 
@@ -51,12 +55,14 @@ public class CmmnCode {
    * 부모 공통 코드
    */
   @Column(name = "prnts_cmmn_code")
+  @ApiModelProperty(value = "부모 공통 코드")
   private String prntsCmmnCode;
 
   /**
    * 사용 여부
    */
   @Column(name = "use_at")
+  @ApiModelProperty(value = "사용 여부")
   private String useAt;
 
 }

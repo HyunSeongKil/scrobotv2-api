@@ -18,6 +18,8 @@ public class UserDto {
 
   private String sttusCode;
 
+  private String telno;
+
   private Date lastLoginDt;
 
   private Date registDt;

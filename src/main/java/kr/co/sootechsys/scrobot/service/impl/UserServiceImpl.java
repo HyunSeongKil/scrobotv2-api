@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import com.jayway.jsonpath.Option;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,15 +38,22 @@ public class UserServiceImpl implements UserService {
     this.jwtService = jwtService;
   }
 
+  User toEntity(UserDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    User e = User.builder().password(Util.encodeAes(secretKey, dto.getPassword())).userId(dto.getUserId()).userNm(dto.getUserNm()).registDt(new Date()).telno(dto.getTelno()).build();
+
+    return e;
+  }
+
   UserDto toDto(User e) {
-    return UserDto.builder().userId(e.getUserId()).userNm(e.getUserNm()).password(e.getPassword())
-        .registDt(e.getRegistDt()).lastLoginDt(e.getLastLoginDt()).sttusCode(e.getSttusCode()).build();
+    return UserDto.builder().userId(e.getUserId()).userNm(e.getUserNm()).password(e.getPassword()).registDt(e.getRegistDt()).lastLoginDt(e.getLastLoginDt()).sttusCode(e.getSttusCode())
+        .telno(e.getTelno()).build();
   }
 
   @Override
   @Transactional
-  public String signin(UserDto dto) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException,
-      NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+  public String signin(UserDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     Optional<User> opt = repo.findById(dto.getUserId());
     if (opt.isEmpty()) {
       // 회원 없음
@@ -73,6 +81,25 @@ public class UserServiceImpl implements UserService {
     log.debug("{} {}", jwt, jwtService.getUserId(jwt));
 
     return jwt;
+  }
+
+  @Override
+  public void join(UserDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    repo.save(toEntity(dto));
+
+  }
+
+  @Override
+  public UserDto findById(String userId) {
+    Optional<User> opt = repo.findById(userId);
+    if (opt.isPresent()) {
+      return toDto(opt.get());
+    }
+
+
+    return null;
+
   }
 
 }

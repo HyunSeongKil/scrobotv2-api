@@ -10,6 +10,11 @@ import javax.crypto.NoSuchPaddingException;
 import kr.co.sootechsys.scrobot.domain.UserDto;
 
 public interface UserService {
-  String signin(UserDto dto) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException,
-      NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
+  String signin(UserDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
+
+  void join(UserDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
+
+  UserDto findById(String userId);
 }

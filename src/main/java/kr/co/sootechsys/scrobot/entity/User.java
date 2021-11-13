@@ -31,6 +31,9 @@ public class User {
   @Column(name = "sttus_code")
   private String sttusCode;
 
+  @Column(name = "telno")
+  private String telno;
+
   @Column(name = "last_login_dt")
   private Date lastLoginDt;
 
