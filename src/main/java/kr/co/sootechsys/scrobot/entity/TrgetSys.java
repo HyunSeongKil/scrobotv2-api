@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 /**
  * 대상 시스템
  */
@@ -44,8 +43,8 @@ public class TrgetSys {
   /**
    * 디비 드라이버 명
    */
-  @Column(name = "db_driver_nm")
-  private String dbDriverNm;
+  // @Column(name = "db_driver_nm")
+  // private String dbDriverNm;
 
   /**
    * 디비 url 명

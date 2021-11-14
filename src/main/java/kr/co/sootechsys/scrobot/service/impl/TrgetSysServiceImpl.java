@@ -22,7 +22,7 @@ public class TrgetSysServiceImpl implements TrgetSysService {
   TrgetSys toEntity(TrgetSysDto dto) {
     TrgetSys e = TrgetSys.builder().build();
     e.setTrgetSysId(Util.getShortUuid());
-    e.setDbDriverNm(dto.getDbDriverNm());
+    // e.setDbDriverNm(dto.getDbDriverNm());
     e.setDbPasswordNm(dto.getDbPasswordNm());
     e.setDbUrlNm(dto.getDbUrlNm());
     e.setDbUserNm(dto.getDbUserNm());
@@ -35,7 +35,7 @@ public class TrgetSysServiceImpl implements TrgetSysService {
 
   TrgetSysDto toDto(TrgetSys e) {
     TrgetSysDto dto = TrgetSysDto.builder().build();
-    dto.setDbDriverNm(e.getDbDriverNm());
+    // dto.setDbDriverNm(e.getDbDriverNm());
     dto.setDbPasswordNm(e.getDbPasswordNm());
     dto.setDbTyNm(e.getDbTyNm());
     dto.setDbUrlNm(e.getDbUrlNm());
@@ -87,8 +87,6 @@ public class TrgetSysServiceImpl implements TrgetSysService {
     repo.findAll().forEach(e -> {
       dtos.add(toDto(e));
     });
-
-
 
     return dtos;
   }

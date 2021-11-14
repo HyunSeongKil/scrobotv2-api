@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 /**
  * 대상 시스템
  */
@@ -22,7 +21,6 @@ public class TrgetSysDto {
    */
   private String trgetSysId;
 
-
   /**
    * 대상 시스템 명
    */
@@ -33,11 +31,10 @@ public class TrgetSysDto {
    */
   private String dbTyNm;
 
-
   /**
    * 디비 드라이버 명
    */
-  private String dbDriverNm;
+  // private String dbDriverNm;
 
   /**
    * 디비 url 명

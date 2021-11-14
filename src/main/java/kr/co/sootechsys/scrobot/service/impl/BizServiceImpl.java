@@ -1,6 +1,8 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
+import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,8 +12,11 @@ import java.util.Set;
 import java.util.Map.Entry;
 import javax.persistence.Column;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.internal.Utils;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
@@ -27,25 +32,28 @@ import kr.co.sootechsys.scrobot.entity.TrgetSys;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.service.BizService;
 import kr.co.sootechsys.scrobot.service.CompnService;
+import kr.co.sootechsys.scrobot.service.DbDriverService;
 import kr.co.sootechsys.scrobot.service.PrjctTrgetSysMapngService;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class BizServiceImpl implements BizService {
 
   private CompnService compnService;
   private PrjctTrgetSysMapngService prjctTrgetSysMapngService;
   private TrgetSysService trgetSysService;
+  private DbDriverService dbDriverService;
 
-
-
-  public BizServiceImpl(CompnService compnService, PrjctTrgetSysMapngService prjctTrgetSysMapngService, TrgetSysService trgetSysService) {
+  public BizServiceImpl(CompnService compnService, PrjctTrgetSysMapngService prjctTrgetSysMapngService,
+      TrgetSysService trgetSysService, DbDriverService dbDriverService) {
     this.compnService = compnService;
     this.prjctTrgetSysMapngService = prjctTrgetSysMapngService;
     this.trgetSysService = trgetSysService;
+    this.dbDriverService = dbDriverService;
+
   }
-
-
 
   @Override
   public void updt(String prjctId, String scrinId, Map<String, Object> map) throws SQLException {
@@ -85,7 +93,6 @@ public class BizServiceImpl implements BizService {
     }
   }
 
-
   @Override
   public void delete(String prjctId, String scrinId, String id) throws SQLException {
     TrgetSysDto trgetSysDto = getTrgetSysDto(prjctId);
@@ -117,7 +124,6 @@ public class BizServiceImpl implements BizService {
       }
     }
   }
-
 
   @Override
   public void regist(String prjctId, String scrinId, Map<String, Object> map) throws SQLException {
@@ -151,8 +157,6 @@ public class BizServiceImpl implements BizService {
     }
 
   }
-
-
 
   @Override
   public Map<String, Object> findById(String prjctId, String scrinId, String id) throws SQLException {
@@ -192,7 +196,6 @@ public class BizServiceImpl implements BizService {
 
   }
 
-
   @Override
   public List<Map<String, Object>> findAll(String prjctId, String scrinId) throws SQLException {
     TrgetSysDto trgetSysDto = getTrgetSysDto(prjctId);
@@ -226,14 +229,12 @@ public class BizServiceImpl implements BizService {
 
   }
 
-
-
   /**
    * select sql문 생성
    * 
-   * @param dbTyNm db 종류
+   * @param dbTyNm    db 종류
    * @param tableName 테이블명
-   * @param id (데이터)아이디
+   * @param id        (데이터)아이디
    * @return
    */
   private String createSelectSql(String dbTyNm, String tableName, String id) {
@@ -243,14 +244,12 @@ public class BizServiceImpl implements BizService {
     return sql;
   }
 
-
-
   /**
    * select sql문 생성
    * 
-   * @param dbTyNm db 종류
+   * @param dbTyNm    db 종류
    * @param tableName 테이블명
-   * @param id (데이터)아이디
+   * @param id        (데이터)아이디
    * @return
    */
   private String createSelectSql(String dbTyNm, String tableName) {
@@ -260,18 +259,15 @@ public class BizServiceImpl implements BizService {
     sb.append(" SELECT * ");
     sb.append(" FROM " + tableName);
 
-
-
     return sb.toString();
   }
-
 
   /**
    * delete sql문 생성
    * 
-   * @param dbTyNm db 종류
+   * @param dbTyNm    db 종류
    * @param tableName 테이블명
-   * @param id (데이터)아이디
+   * @param id        (데이터)아이디
    * @return
    */
   private String createDeleteSql(String dbTyNm, String tableName, String id) {
@@ -281,22 +277,19 @@ public class BizServiceImpl implements BizService {
     sb.append(" DELETE FROM " + tableName);
     sb.append(" WHERE " + Util.getPkColmnName(tableName) + " = '" + id + "'"); // pk
 
-
-
     return sb.toString();
   }
 
   /**
    * insert sql문 생성
    * 
-   * @param dbTyNm db 종류
+   * @param dbTyNm    db 종류
    * @param tableName 테이블명
-   * @param map 데이터
+   * @param map       데이터
    * @return
    */
   private String createInsertSql(String dbTyNm, String tableName, Map<String, Object> map) {
     StringBuffer sb = new StringBuffer();
-
 
     //
     sb.append(" INSERT INTO " + tableName + " (");
@@ -321,9 +314,9 @@ public class BizServiceImpl implements BizService {
   /**
    * update sql문 생성
    * 
-   * @param dbTyNm db 종류
+   * @param dbTyNm    db 종류
    * @param tableName 테이블명
-   * @param map 데이터
+   * @param map       데이터
    * @return
    */
   private String createUpdateSql(String dbTyNm, String tableName, Map<String, Object> map) {
@@ -348,7 +341,6 @@ public class BizServiceImpl implements BizService {
     return sb.toString();
   }
 
-
   @Override
   public void xxx(String prjctId, String scrinId) {
     PrjctTrgetSysMapngDto prjctTrgetSysMapngDto = prjctTrgetSysMapngService.findByPrjctId(prjctId);
@@ -356,10 +348,7 @@ public class BizServiceImpl implements BizService {
     // 대상 시스템에 접속해서 컴포넌트 목록 조회 by scrinId
     // 대상 시스템에 접속해서 화면그룹 조회 by scrinId
 
-
   }
-
-
 
   @Override
   public List<Map<String, Object>> findAllScrins(String prjctId, String scrinGroupId) throws SQLException {
@@ -415,7 +404,6 @@ public class BizServiceImpl implements BizService {
 
   }
 
-
   @Override
   public Map<String, Object> findScrin(String prjctId, String scrinId) throws SQLException {
     TrgetSysDto trgetSysDto = getTrgetSysDto(prjctId);
@@ -424,7 +412,6 @@ public class BizServiceImpl implements BizService {
     }
 
     BasicDataSource ds = null;
-
 
     try {
       ds = createDataSource(trgetSysDto);
@@ -448,7 +435,6 @@ public class BizServiceImpl implements BizService {
     }
   }
 
-
   @Override
   public Map<String, Object> findScrinGroup(String prjctId, String scrinId) throws SQLException {
     TrgetSysDto trgetSysDto = getTrgetSysDto(prjctId);
@@ -457,7 +443,6 @@ public class BizServiceImpl implements BizService {
     }
 
     BasicDataSource ds = null;
-
 
     try {
       ds = createDataSource(trgetSysDto);
@@ -478,7 +463,6 @@ public class BizServiceImpl implements BizService {
         return list.get(0);
       }
 
-
     } catch (Exception e) {
       throw e;
     } finally {
@@ -487,11 +471,8 @@ public class BizServiceImpl implements BizService {
       }
     }
 
-
     return Map.of();
   }
-
-
 
   @Override
   public List<Map<String, Object>> findAllCompns(String prjctId, String scrinId) throws SQLException {
@@ -501,7 +482,6 @@ public class BizServiceImpl implements BizService {
     }
 
     BasicDataSource ds = null;
-
 
     try {
       ds = createDataSource(trgetSysDto);
@@ -520,7 +500,6 @@ public class BizServiceImpl implements BizService {
     }
   }
 
-
   /**
    * datasource 생성
    * 
@@ -530,7 +509,7 @@ public class BizServiceImpl implements BizService {
   BasicDataSource createDataSource(TrgetSysDto dto) {
 
     BasicDataSource ds = new BasicDataSource();
-    ds.setDriverClassName(dto.getDbDriverNm());
+    ds.setDriverClassName(dbDriverService.getDbDriverNm(dto.getDbTyNm()));
     ds.setUrl(dto.getDbUrlNm());
     ds.setUsername(dto.getDbUserNm());
     ds.setPassword(dto.getDbPasswordNm());
@@ -541,7 +520,6 @@ public class BizServiceImpl implements BizService {
   String getTableName(Class<?> entityClass) {
     return entityClass.getAnnotation(Table.class).name();
   }
-
 
   /**
    * key:필드명, value:컬럼명
@@ -564,7 +542,6 @@ public class BizServiceImpl implements BizService {
     return map;
 
   }
-
 
   /**
    * select 문 생성
@@ -590,8 +567,6 @@ public class BizServiceImpl implements BizService {
     return sb.toString();
   }
 
-
-
   /**
    * 프로젝트아이디로 대상시스템 정보 조회
    * 
@@ -607,13 +582,11 @@ public class BizServiceImpl implements BizService {
     return trgetSysService.findById(prjctTrgetSysMapngDto.getTrgetSysId());
   }
 
-
-
   /**
    * 화면아이디로 테이블명 구하기
    * 
    * @param jdbcTemplate
-   * @param scrinId 화면아이디
+   * @param scrinId      화면아이디
    * @return 테이블명
    */
   String getTableName(JdbcTemplate jdbcTemplate, String scrinId) {
@@ -635,13 +608,11 @@ public class BizServiceImpl implements BizService {
     return "" + list.get(0).get("eng_abrv_nm");
   }
 
-
-
   /**
    * 화면아이디로 화면그룹아이디 구하기
    * 
    * @param jdbcTemplate
-   * @param scrinId 화면아이디
+   * @param scrinId      화면아이디
    * @return 화면그룹아이디
    */
   String getScrinGroupIdByScrinId(JdbcTemplate jdbcTemplate, String scrinId) {
@@ -658,8 +629,6 @@ public class BizServiceImpl implements BizService {
     return "" + list.get(0).get("scrin_group_id");
   }
 
-
-
   /**
    * 해당 테이블의 컬럼 목록 구하기
    * 
@@ -672,17 +641,16 @@ public class BizServiceImpl implements BizService {
     StringBuffer sb = new StringBuffer();
 
     switch (DbProduct.valueOf(dbTyNm)) {
-      case MySQL:
-      case MariaDB:
-        sb.append(" SELECT TABLE_NAME, COLUMN_NAME AS column_name");
-        sb.append(" FROM INFORMATION.SCHEMA");
-        sb.append(" WHERE TALBE_NAME = '" + tableName + "'");
-        break;
+    case MySQL:
+    case MariaDB:
+      sb.append(" SELECT TABLE_NAME, COLUMN_NAME AS column_name");
+      sb.append(" FROM INFORMATION.SCHEMA");
+      sb.append(" WHERE TALBE_NAME = '" + tableName + "'");
+      break;
 
-      default:
-        throw new RuntimeException("NOT IMPL " + dbTyNm);
+    default:
+      throw new RuntimeException("NOT IMPL " + dbTyNm);
     }
-
 
     List<Map<String, Object>> list = jdbcTemplate.queryForList(sb.toString());
     if (Util.isEmpty(list)) {
@@ -698,15 +666,12 @@ public class BizServiceImpl implements BizService {
 
   }
 
-
-
   @Override
   public List<Map<String, Object>> findAllMeta(String prjctId, String scrinId) throws SQLException {
     TrgetSysDto trgetSysDto = getTrgetSysDto(prjctId);
     if (null == trgetSysDto) {
       return List.of();
     }
-
 
     BasicDataSource ds = null;
 
@@ -731,40 +696,37 @@ public class BizServiceImpl implements BizService {
 
   }
 
-
   /**
    * 테이블의 메타정보 조회. key:table_name, column_name, data_type, column_comment
    * 
    * @param jdbcTemplate
-   * @param dbTyNm 디비타입
-   * @param tableName 테이블명
+   * @param dbTyNm       디비타입
+   * @param tableName    테이블명
    * @return
    * @throws SQLException
    */
-  List<Map<String, Object>> findAllMeta(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName) throws SQLException {
+  List<Map<String, Object>> findAllMeta(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName)
+      throws SQLException {
     StringBuffer sb = new StringBuffer();
 
-
     switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
-      case MySQL:
-      case MariaDB:
-        sb.append(" SELECT TABLE_NAME AS table_name");
-        sb.append("   , COLUMN_NAME AS column_name");
-        sb.append("   , DATA_TYPE AS data_type");
-        sb.append("   , COLUMN_COMMENT AS column_comment");
-        sb.append(" FROM information_schema.columns");
-        sb.append(" WHERE TABLE_NAME = '" + tableName + "'");
-        sb.append(" AND TABLE_SCHEMA = '" + trgetSysDto.getDbNm() + "'");
+    case MySQL:
+    case MariaDB:
+      sb.append(" SELECT TABLE_NAME AS table_name");
+      sb.append("   , COLUMN_NAME AS column_name");
+      sb.append("   , DATA_TYPE AS data_type");
+      sb.append("   , COLUMN_COMMENT AS column_comment");
+      sb.append(" FROM information_schema.columns");
+      sb.append(" WHERE TABLE_NAME = '" + tableName + "'");
+      sb.append(" AND TABLE_SCHEMA = '" + trgetSysDto.getDbNm() + "'");
 
-        break;
+      break;
 
-      default:
-        throw new RuntimeException("NO IMPL " + trgetSysDto);
+    default:
+      throw new RuntimeException("NO IMPL " + trgetSysDto);
     }
 
     return jdbcTemplate.queryForList(sb.toString());
   }
-
-
 
 }

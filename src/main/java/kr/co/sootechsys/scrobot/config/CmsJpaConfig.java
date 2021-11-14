@@ -1,5 +1,10 @@
 package kr.co.sootechsys.scrobot.config;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -13,6 +18,9 @@ import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -21,16 +29,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  * jpa용 연결 환경
  */
 @Slf4j
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = {"kr.co.sootechsys.scrobot.persistence" })
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", basePackages = {
+        "kr.co.sootechsys.scrobot.persistence" })
 
-    public class CmsJpaConfig {
+public class CmsJpaConfig {
+
     @Value("${app.datasource.encrypted}")
     private Boolean encrypted;
 
@@ -71,16 +80,12 @@ import lombok.extern.slf4j.Slf4j;
         String _password = password;
 
         // if(encrypted){
-        //     _url = CmmnCrypto.decrypt(url);
-        //     _username = CmmnCrypto.decrypt(username);
-        //     _password = CmmnCrypto.decrypt(password);
+        // _url = CmmnCrypto.decrypt(url);
+        // _username = CmmnCrypto.decrypt(username);
+        // _password = CmmnCrypto.decrypt(password);
         // }
-        return DataSourceBuilder.create()
-                                .type(HikariDataSource.class)
-                                .url(_url)
-                                .username(_username)
-                                .password(_password)
-                                .build();
+        return DataSourceBuilder.create().type(HikariDataSource.class).url(_url).username(_username).password(_password)
+                .build();
     }
 
     /**
