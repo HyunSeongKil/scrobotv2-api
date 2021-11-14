@@ -9,12 +9,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 /**
  * 화면
@@ -26,6 +27,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "scrin")
+@Api(description = "화면")
 public class Scrin {
 
   /**
@@ -33,24 +35,28 @@ public class Scrin {
    */
   @Id
   @Column(name = "scrin_id")
+  @ApiModelProperty(value = "화면 아이디")
   private String scrinId;
 
   /**
    * 화면 명
    */
   @Column(name = "scrin_nm")
+  @ApiModelProperty(value = "화면 명")
   private String scrinNm;
 
   /**
    * 화면 그룹 아이디
    */
   @Column(name = "scrin_group_id")
+  @ApiModelProperty(value = "화면 그룹 아이디")
   private String scrinGroupId;
 
   /**
    * 화면 구분 코드
    */
   @Column(name = "scrin_se_code")
+  @ApiModelProperty(value = "화면 구분 코드")
   private String scrinSeCode;
 
   /**
