@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -116,6 +117,17 @@ public class Util {
 
   public static String getShortUuid() {
     return UUID.randomUUID().toString().split("-")[0];
+  }
+
+
+  /**
+   * 파일 확장자 추출
+   * 
+   * @param filename 파일 명
+   * @return
+   */
+  public static Optional<String> getFileExt(String filename) {
+    return Optional.ofNullable(filename).filter(f -> f.contains(".")).map(f -> f.substring(filename.lastIndexOf(".") + 1));
   }
 
 
