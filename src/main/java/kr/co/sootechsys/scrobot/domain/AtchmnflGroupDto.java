@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 public class AtchmnflGroupDto {
   private Long atchmnflGroupId;
 
+  private String prjctId;
+
   private Date registDt;
 
 }

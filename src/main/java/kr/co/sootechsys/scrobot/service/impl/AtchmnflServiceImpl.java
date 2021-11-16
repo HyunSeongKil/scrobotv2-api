@@ -6,7 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,6 +101,17 @@ public class AtchmnflServiceImpl implements AtchmnflService {
     }
 
     return Paths.get(uploadFilePath, dto.getAtchmnflStorgPathValue(), dto.getStorgFileNm()).toFile();
+  }
+
+
+  @Override
+  public List<AtchmnflDto> findAllByPrjctId(String prjctId) {
+    List<AtchmnflDto> dtos = new ArrayList<>();
+    repo.findAllByPrjctId(prjctId).forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return dtos;
   }
 
 }

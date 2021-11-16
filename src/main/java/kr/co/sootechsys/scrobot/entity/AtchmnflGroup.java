@@ -26,6 +26,9 @@ public class AtchmnflGroup {
   @Column(name = "atchmnfl_group_id")
   private Long atchmnflGroupId;
 
+  @Column(name = "prjct_id")
+  private String prjctId;
+
   @Column(name = "regist_dt")
   private Date registDt;
 }

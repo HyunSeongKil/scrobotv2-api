@@ -34,8 +34,8 @@ public class AtchmnflRestController {
 
   @PostMapping()
   @ApiOperation(value = "등록")
-  public ResponseEntity<Map<String, Object>> regist(@RequestParam MultipartFile file) throws IllegalStateException, IOException {
-    Long atchmnflGroupId = atchmnflGroupService.regist();
+  public ResponseEntity<Map<String, Object>> regist(@RequestParam String prjctId, @RequestParam MultipartFile file) throws IllegalStateException, IOException {
+    Long atchmnflGroupId = atchmnflGroupService.regist(prjctId);
 
     return ResponseEntity.ok(Map.of("data", service.regist(atchmnflGroupId, file)));
   }

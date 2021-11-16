@@ -21,4 +21,7 @@ public interface AtchmnflRepository extends JpaRepository<Atchmnfl, Long> {
 
   void deleteAllByAtchmnflGroupId(Long atchmnflGroupId);
 
+  @Query("SELECT a FROM Atchmnfl a INNER JOIN AtchmnflGroup b ON a.atchmnflGroupId = b.atchmnflGroupId WHERE b.prjctId = :prjctId")
+  Iterable<Atchmnfl> findAllByPrjctId(@Param("prjctId") String prjctId);
+
 }
