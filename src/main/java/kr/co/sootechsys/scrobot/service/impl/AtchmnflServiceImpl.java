@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.AtchmnflDto;
 import kr.co.sootechsys.scrobot.entity.Atchmnfl;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -24,6 +25,7 @@ import kr.co.sootechsys.scrobot.persistence.AtchmnflRepository;
 import kr.co.sootechsys.scrobot.service.AtchmnflService;
 
 @Service
+@Api(value = "첨부파일 서비스")
 public class AtchmnflServiceImpl implements AtchmnflService {
 
   @Value("${app.upload.file.path}")

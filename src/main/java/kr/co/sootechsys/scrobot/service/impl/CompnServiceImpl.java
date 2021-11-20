@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.entity.Compn;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -14,6 +14,7 @@ import kr.co.sootechsys.scrobot.persistence.CompnRepository;
 import kr.co.sootechsys.scrobot.service.CompnService;
 
 @Service
+@Api(value = "콤포넌트 서비스")
 public class CompnServiceImpl implements CompnService {
 
   private CompnRepository repo;
@@ -57,7 +58,7 @@ public class CompnServiceImpl implements CompnService {
     return dto;
   }
 
-  
+
   @Override
   @Transactional
   public void deleteByScrinId(String scrinId) {
@@ -70,11 +71,11 @@ public class CompnServiceImpl implements CompnService {
     return repo.save(toEntity(dto)).getCompnId();
   }
 
-  
+
   @Override
   @Transactional
   public String regist(List<CompnDto> dtos) {
-    dtos.forEach(dto->{
+    dtos.forEach(dto -> {
       regist(dto);
     });
     // TODO Auto-generated method stub
@@ -126,7 +127,6 @@ public class CompnServiceImpl implements CompnService {
 
     return dtos;
   }
-
 
 
 

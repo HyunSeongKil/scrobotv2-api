@@ -47,6 +47,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
+	implementation 'org.reflections:reflections:0.9.12'
+
 	implementation  fileTree(dir: 'lib', include: ['*.jar'])
 
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.entity.TrgetSys;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -11,6 +12,7 @@ import kr.co.sootechsys.scrobot.persistence.TrgetSysRepository;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
 
 @Service
+@Api(value = "대상시스템 서비스")
 public class TrgetSysServiceImpl implements TrgetSysService {
 
   private TrgetSysRepository repo;

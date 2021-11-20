@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Api(value = " 메뉴 DTO")
 public class MenuDto {
   /**
    * 메뉴 아이디

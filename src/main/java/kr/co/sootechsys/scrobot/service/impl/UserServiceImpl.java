@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.jsonwebtoken.Jwts;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.UserDto;
 import kr.co.sootechsys.scrobot.entity.User;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Api(value = "회원 서비스")
 public class UserServiceImpl implements UserService {
 
   @Value("${app.secret.key}")

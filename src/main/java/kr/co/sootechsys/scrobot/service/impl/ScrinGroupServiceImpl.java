@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -15,6 +15,7 @@ import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 
 @Service
+@Api(value = "화면그룹 서비스")
 public class ScrinGroupServiceImpl implements ScrinGroupService {
 
   private ScrinGroupRepository repo;

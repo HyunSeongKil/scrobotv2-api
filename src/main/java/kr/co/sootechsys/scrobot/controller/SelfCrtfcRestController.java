@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
 import kcb.module.v3.exception.OkCertException;
 import kcb.org.json.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/self-crtfc")
 @Slf4j
+@Api(value = "실명인증 CONTROLLER")
 public class SelfCrtfcRestController {
 
   @Value("${app.license.file.path}")

@@ -24,9 +24,11 @@ import javax.annotation.PostConstruct;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.swagger.annotations.Api;
 
 @Service
 @Slf4j
+@Api(value = "jwt 서비스")
 public class JwtServiceImpl implements JwtService {
 
   @Value("${app.secret.key}")

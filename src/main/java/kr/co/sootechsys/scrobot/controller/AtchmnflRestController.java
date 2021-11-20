@@ -20,7 +20,7 @@ import kr.co.sootechsys.scrobot.service.AtchmnflService;
 
 @RestController
 @RequestMapping("/atchmnfls")
-@Api(description = "파일 첨부")
+@Api(value = "파일 첨부 CONTROLLER")
 public class AtchmnflRestController {
 
 

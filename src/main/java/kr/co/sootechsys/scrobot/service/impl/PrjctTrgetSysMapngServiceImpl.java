@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
 import kr.co.sootechsys.scrobot.entity.PrjctTrgetSysMapng;
 import kr.co.sootechsys.scrobot.persistence.PrjctTrgetSysMapngRepository;
@@ -11,6 +12,7 @@ import kr.co.sootechsys.scrobot.service.PrjctTrgetSysMapngService;
 
 
 @Service
+@Api(value = "프로젝트-대상시스템 서비스")
 public class PrjctTrgetSysMapngServiceImpl implements PrjctTrgetSysMapngService {
 
   private PrjctTrgetSysMapngRepository repo;

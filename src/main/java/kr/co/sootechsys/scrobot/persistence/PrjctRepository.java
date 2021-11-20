@@ -3,13 +3,14 @@ package kr.co.sootechsys.scrobot.persistence;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.entity.Prjct;
 
 
 /**
  * 프로젝트
  */
+@Api(value = "프로젝트 레포지토리")
 public interface PrjctRepository extends JpaRepository<Prjct, String> {
 
   /**

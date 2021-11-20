@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.service.WordDicaryService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping("/word-dicarys")
+@Api(value = "용어 사전 CONTROLLER")
 @Slf4j
 public class WordDicaryRestController {
 

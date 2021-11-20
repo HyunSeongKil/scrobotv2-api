@@ -5,12 +5,14 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.AtchmnflGroupDto;
 import kr.co.sootechsys.scrobot.entity.AtchmnflGroup;
 import kr.co.sootechsys.scrobot.persistence.AtchmnflGroupRepository;
 import kr.co.sootechsys.scrobot.service.AtchmnflGroupService;
 
 @Service
+@Api(value = "첨부파일그룹 서비스")
 public class AtchmnflGroupServiceImpl implements AtchmnflGroupService {
 
   private AtchmnflGroupRepository repo;

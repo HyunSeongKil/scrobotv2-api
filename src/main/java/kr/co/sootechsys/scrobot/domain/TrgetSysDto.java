@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Api(value = "대상 시스템 DTO")
 public class TrgetSysDto {
   /**
    * 대상 시스템 아이디

@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.entity.Atchmnfl;
 
 
+@Api(value = "첨부파일 레포지토리")
 public interface AtchmnflRepository extends JpaRepository<Atchmnfl, Long> {
 
   List<Atchmnfl> findAllByAtchmnflGroupId(Long atchmnflGroupId);

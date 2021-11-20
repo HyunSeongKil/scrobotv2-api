@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.entity.Prjct;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Api(value = "프로젝트 서비스")
 public class PrjctServiceImpl implements PrjctService {
   private PrjctRepository repo;
 

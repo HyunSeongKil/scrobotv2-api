@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.DeployDto;
 import kr.co.sootechsys.scrobot.service.DeployService;
@@ -17,6 +18,7 @@ import kr.co.sootechsys.scrobot.service.DeployService;
  */
 @RestController
 @RequestMapping("/deploys")
+@Api(value = "배포 CONTROLLER")
 public class DeployRestController {
 
   private DeployService service;

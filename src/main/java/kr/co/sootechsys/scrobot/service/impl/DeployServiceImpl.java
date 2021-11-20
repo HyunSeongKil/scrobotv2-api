@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StopWatch;
 import ch.qos.logback.core.db.dialect.DBUtil;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.AtchmnflDto;
 import kr.co.sootechsys.scrobot.domain.AtchmnflGroupDto;
 import kr.co.sootechsys.scrobot.domain.CmmnCodeDto;
@@ -62,6 +63,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Api(value = "배포 서비스")
 public class DeployServiceImpl implements DeployService {
 
   private PrjctService prjctService;

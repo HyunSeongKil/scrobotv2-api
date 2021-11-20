@@ -19,6 +19,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.domain.DbProduct;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
@@ -39,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Api(value = "업무 서비스")
 public class BizServiceImpl implements BizService {
 
   private CompnService compnService;
@@ -46,8 +48,7 @@ public class BizServiceImpl implements BizService {
   private TrgetSysService trgetSysService;
   private DbDriverService dbDriverService;
 
-  public BizServiceImpl(CompnService compnService, PrjctTrgetSysMapngService prjctTrgetSysMapngService,
-      TrgetSysService trgetSysService, DbDriverService dbDriverService) {
+  public BizServiceImpl(CompnService compnService, PrjctTrgetSysMapngService prjctTrgetSysMapngService, TrgetSysService trgetSysService, DbDriverService dbDriverService) {
     this.compnService = compnService;
     this.prjctTrgetSysMapngService = prjctTrgetSysMapngService;
     this.trgetSysService = trgetSysService;
@@ -232,9 +233,9 @@ public class BizServiceImpl implements BizService {
   /**
    * select sql문 생성
    * 
-   * @param dbTyNm    db 종류
+   * @param dbTyNm db 종류
    * @param tableName 테이블명
-   * @param id        (데이터)아이디
+   * @param id (데이터)아이디
    * @return
    */
   private String createSelectSql(String dbTyNm, String tableName, String id) {
@@ -247,9 +248,9 @@ public class BizServiceImpl implements BizService {
   /**
    * select sql문 생성
    * 
-   * @param dbTyNm    db 종류
+   * @param dbTyNm db 종류
    * @param tableName 테이블명
-   * @param id        (데이터)아이디
+   * @param id (데이터)아이디
    * @return
    */
   private String createSelectSql(String dbTyNm, String tableName) {
@@ -265,9 +266,9 @@ public class BizServiceImpl implements BizService {
   /**
    * delete sql문 생성
    * 
-   * @param dbTyNm    db 종류
+   * @param dbTyNm db 종류
    * @param tableName 테이블명
-   * @param id        (데이터)아이디
+   * @param id (데이터)아이디
    * @return
    */
   private String createDeleteSql(String dbTyNm, String tableName, String id) {
@@ -283,9 +284,9 @@ public class BizServiceImpl implements BizService {
   /**
    * insert sql문 생성
    * 
-   * @param dbTyNm    db 종류
+   * @param dbTyNm db 종류
    * @param tableName 테이블명
-   * @param map       데이터
+   * @param map 데이터
    * @return
    */
   private String createInsertSql(String dbTyNm, String tableName, Map<String, Object> map) {
@@ -314,9 +315,9 @@ public class BizServiceImpl implements BizService {
   /**
    * update sql문 생성
    * 
-   * @param dbTyNm    db 종류
+   * @param dbTyNm db 종류
    * @param tableName 테이블명
-   * @param map       데이터
+   * @param map 데이터
    * @return
    */
   private String createUpdateSql(String dbTyNm, String tableName, Map<String, Object> map) {
@@ -586,7 +587,7 @@ public class BizServiceImpl implements BizService {
    * 화면아이디로 테이블명 구하기
    * 
    * @param jdbcTemplate
-   * @param scrinId      화면아이디
+   * @param scrinId 화면아이디
    * @return 테이블명
    */
   String getTableName(JdbcTemplate jdbcTemplate, String scrinId) {
@@ -612,7 +613,7 @@ public class BizServiceImpl implements BizService {
    * 화면아이디로 화면그룹아이디 구하기
    * 
    * @param jdbcTemplate
-   * @param scrinId      화면아이디
+   * @param scrinId 화면아이디
    * @return 화면그룹아이디
    */
   String getScrinGroupIdByScrinId(JdbcTemplate jdbcTemplate, String scrinId) {
@@ -641,15 +642,15 @@ public class BizServiceImpl implements BizService {
     StringBuffer sb = new StringBuffer();
 
     switch (DbProduct.valueOf(dbTyNm)) {
-    case MySQL:
-    case MariaDB:
-      sb.append(" SELECT TABLE_NAME, COLUMN_NAME AS column_name");
-      sb.append(" FROM INFORMATION.SCHEMA");
-      sb.append(" WHERE TALBE_NAME = '" + tableName + "'");
-      break;
+      case MySQL:
+      case MariaDB:
+        sb.append(" SELECT TABLE_NAME, COLUMN_NAME AS column_name");
+        sb.append(" FROM INFORMATION.SCHEMA");
+        sb.append(" WHERE TALBE_NAME = '" + tableName + "'");
+        break;
 
-    default:
-      throw new RuntimeException("NOT IMPL " + dbTyNm);
+      default:
+        throw new RuntimeException("NOT IMPL " + dbTyNm);
     }
 
     List<Map<String, Object>> list = jdbcTemplate.queryForList(sb.toString());
@@ -700,30 +701,29 @@ public class BizServiceImpl implements BizService {
    * 테이블의 메타정보 조회. key:table_name, column_name, data_type, column_comment
    * 
    * @param jdbcTemplate
-   * @param dbTyNm       디비타입
-   * @param tableName    테이블명
+   * @param dbTyNm 디비타입
+   * @param tableName 테이블명
    * @return
    * @throws SQLException
    */
-  List<Map<String, Object>> findAllMeta(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName)
-      throws SQLException {
+  List<Map<String, Object>> findAllMeta(JdbcTemplate jdbcTemplate, TrgetSysDto trgetSysDto, String tableName) throws SQLException {
     StringBuffer sb = new StringBuffer();
 
     switch (DbProduct.valueOf(trgetSysDto.getDbTyNm())) {
-    case MySQL:
-    case MariaDB:
-      sb.append(" SELECT TABLE_NAME AS table_name");
-      sb.append("   , COLUMN_NAME AS column_name");
-      sb.append("   , DATA_TYPE AS data_type");
-      sb.append("   , COLUMN_COMMENT AS column_comment");
-      sb.append(" FROM information_schema.columns");
-      sb.append(" WHERE TABLE_NAME = '" + tableName + "'");
-      sb.append(" AND TABLE_SCHEMA = '" + trgetSysDto.getDbNm() + "'");
+      case MySQL:
+      case MariaDB:
+        sb.append(" SELECT TABLE_NAME AS table_name");
+        sb.append("   , COLUMN_NAME AS column_name");
+        sb.append("   , DATA_TYPE AS data_type");
+        sb.append("   , COLUMN_COMMENT AS column_comment");
+        sb.append(" FROM information_schema.columns");
+        sb.append(" WHERE TABLE_NAME = '" + tableName + "'");
+        sb.append(" AND TABLE_SCHEMA = '" + trgetSysDto.getDbNm() + "'");
 
-      break;
+        break;
 
-    default:
-      throw new RuntimeException("NO IMPL " + trgetSysDto);
+      default:
+        throw new RuntimeException("NO IMPL " + trgetSysDto);
     }
 
     return jdbcTemplate.queryForList(sb.toString());

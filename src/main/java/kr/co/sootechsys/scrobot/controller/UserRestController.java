@@ -25,7 +25,7 @@ import kr.co.sootechsys.scrobot.service.UserService;
 
 @RestController
 @RequestMapping("/users")
-@Api(description = "회원")
+@Api(value = "회원 CONTROLLER")
 public class UserRestController {
 
   private UserService service;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.CmmnCodeDto;
 import kr.co.sootechsys.scrobot.entity.CmmnCode;
 import kr.co.sootechsys.scrobot.persistence.CmmnCodeRepository;
@@ -14,6 +15,7 @@ import kr.co.sootechsys.scrobot.service.CmmnCodeService;
  * 공통 코드
  */
 @Service
+@Api(value = "공통코드 서비스")
 public class CmmnCodeServiceImpl implements CmmnCodeService {
 
   private CmmnCodeRepository repo;

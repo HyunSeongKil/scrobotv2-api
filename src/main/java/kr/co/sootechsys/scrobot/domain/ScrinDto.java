@@ -2,6 +2,7 @@ package kr.co.sootechsys.scrobot.domain;
 
 import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Api(value = "화면 DTO")
 public class ScrinDto {
 
   /**

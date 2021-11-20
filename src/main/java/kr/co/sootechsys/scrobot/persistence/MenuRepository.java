@@ -2,6 +2,7 @@ package kr.co.sootechsys.scrobot.persistence;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.entity.Menu;
 
@@ -9,6 +10,7 @@ import kr.co.sootechsys.scrobot.entity.Menu;
 /**
  * 메뉴
  */
+@Api(value = "메뉴 레포지토리")
 public interface MenuRepository extends JpaRepository<Menu, String> {
 
   /**

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.service.MenuService;
@@ -21,6 +22,7 @@ import kr.co.sootechsys.scrobot.service.MenuService;
  */
 @RestController
 @RequestMapping("/menus")
+@Api(value = "메뉴 CONTROLLER")
 public class MenuRestController {
 
   private MenuService service;

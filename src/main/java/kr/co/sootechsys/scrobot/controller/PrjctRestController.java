@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.Jwts;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
@@ -33,6 +34,7 @@ import kr.co.sootechsys.scrobot.service.ScrinService;
  */
 @RestController
 @RequestMapping("/prjcts")
+@Api(value = "프로젝트 CONTROLLER")
 public class PrjctRestController {
 
   private PrjctService service;
@@ -41,8 +43,7 @@ public class PrjctRestController {
   private ScrinService scrinService;
   private CompnService compnService;
 
-  public PrjctRestController(JwtService jwtService, PrjctService service, ScrinGroupService scrinGroupService,
-      ScrinService scrinService, CompnService compnService) {
+  public PrjctRestController(JwtService jwtService, PrjctService service, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService) {
     this.service = service;
     this.jwtService = jwtService;
     this.scrinGroupService = scrinGroupService;

@@ -4,21 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.WordDicaryDto;
 import kr.co.sootechsys.scrobot.entity.WordDicary;
 import kr.co.sootechsys.scrobot.persistence.WordDicaryRepository;
 import kr.co.sootechsys.scrobot.service.WordDicaryService;
 
 @Service
+@Api(value = "용어사전 서비스")
 public class WordDicaryServiceImpl implements WordDicaryService {
     WordDicaryRepository repo;
 
-    public WordDicaryServiceImpl(WordDicaryRepository repo){
+    public WordDicaryServiceImpl(WordDicaryRepository repo) {
         this.repo = repo;
     }
 
-    WordDicaryDto toDto(WordDicary e){
+    WordDicaryDto toDto(WordDicary e) {
         WordDicaryDto dto = WordDicaryDto.builder().build();
         dto.setEngAbrvNm(e.getEngAbrvNm());
         dto.setWordNm(e.getWordNm());
@@ -33,12 +34,12 @@ public class WordDicaryServiceImpl implements WordDicaryService {
 
         List<WordDicary> entities = repo.findAllByWordNmContains(wordNm);
 
-        entities.forEach(e->{
+        entities.forEach(e -> {
             dtos.add(toDto(e));
         });
-        
-        
+
+
         return dtos;
     }
-    
+
 }

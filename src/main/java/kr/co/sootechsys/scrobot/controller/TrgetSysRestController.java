@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
@@ -20,6 +21,7 @@ import kr.co.sootechsys.scrobot.service.TrgetSysService;
  */
 @RestController
 @RequestMapping("trget-syss")
+@Api(value = "대상 시스템 CONTROLLER")
 public class TrgetSysRestController {
 
   private TrgetSysService service;

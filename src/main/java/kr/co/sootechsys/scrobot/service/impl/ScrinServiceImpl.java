@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.entity.Scrin;
@@ -17,6 +17,7 @@ import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 
 @Service
+@Api(value = "화면 서비스")
 public class ScrinServiceImpl implements ScrinService {
 
   private ScrinRepository repo;
@@ -30,13 +31,11 @@ public class ScrinServiceImpl implements ScrinService {
   }
 
   ScrinDto toDto(Scrin e) {
-    return ScrinDto.builder().scrinId(e.getScrinId()).scrinNm(e.getScrinNm()).scrinSeCode(e.getScrinSeCode())
-        .scrinGroupId(e.getScrinGroupId()).build();
+    return ScrinDto.builder().scrinId(e.getScrinId()).scrinNm(e.getScrinNm()).scrinSeCode(e.getScrinSeCode()).scrinGroupId(e.getScrinGroupId()).build();
   }
 
   Scrin toEntity(ScrinDto dto) {
-    return Scrin.builder().scrinId(dto.getScrinSeCode() + Util.getShortUuid()).scrinNm(dto.getScrinNm())
-        .scrinSeCode(dto.getScrinSeCode()).scrinGroupId(dto.getScrinGroupId()).build();
+    return Scrin.builder().scrinId(dto.getScrinSeCode() + Util.getShortUuid()).scrinNm(dto.getScrinNm()).scrinSeCode(dto.getScrinSeCode()).scrinGroupId(dto.getScrinGroupId()).build();
   }
 
   @Override
@@ -55,7 +54,7 @@ public class ScrinServiceImpl implements ScrinService {
   /**
    * 콤포넌트 복사
    * 
-   * @param srcScrinId   원본 화면아이디
+   * @param srcScrinId 원본 화면아이디
    * @param trgetScrinId 대상 화면아이디
    */
   void copyCompn(String srcScrinId, String trgetScrinId) {
@@ -75,7 +74,7 @@ public class ScrinServiceImpl implements ScrinService {
    * 화면 복사
    * 
    * @param srcScrinId 원본 화면아이디
-   * @param trgetDto   대상 dto
+   * @param trgetDto 대상 dto
    * @returns 대상 화면아이디
    */
   @Transactional

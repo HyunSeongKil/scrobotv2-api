@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.el.MethodNotFoundException;
 import org.springframework.stereotype.Service;
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.entity.Menu;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -12,6 +13,7 @@ import kr.co.sootechsys.scrobot.persistence.MenuRepository;
 import kr.co.sootechsys.scrobot.service.MenuService;
 
 @Service
+@Api(value = "메뉴 서비스")
 public class MenuServiceImpl implements MenuService {
 
   private MenuRepository repo;

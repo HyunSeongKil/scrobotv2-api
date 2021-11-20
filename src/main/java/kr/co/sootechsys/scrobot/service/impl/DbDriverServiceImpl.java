@@ -9,12 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-
+import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.service.DbDriverService;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Api(value = "디비 드라이버 서비스")
 public class DbDriverServiceImpl implements DbDriverService {
 
   private Map<String, String> dbDriverMap = null;

@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "prjct_trget_sys_mapng")
-@Api(description = "프로젝트-대상시스템 매핑")
+@ApiModel(value = "프로젝트-대상시스템 매핑 엔티티")
 public class PrjctTrgetSysMapng {
 
   /**

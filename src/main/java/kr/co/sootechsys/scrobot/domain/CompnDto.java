@@ -1,7 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
 import java.util.Date;
-
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +17,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Api(value = "콤포넌트 DTO")
 public class CompnDto {
 
   /**
