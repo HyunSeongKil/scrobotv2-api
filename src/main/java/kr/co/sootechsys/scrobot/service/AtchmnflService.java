@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import kr.co.sootechsys.scrobot.domain.AtchmnflDto;
+import kr.co.sootechsys.scrobot.entity.Atchmnfl;
 
 public interface AtchmnflService {
   Long regist(AtchmnflDto dto);
 
   Long regist(Long atchmnflGroupId, MultipartFile file) throws IllegalStateException, IOException;
+
+  Long regist(List<MultipartFile> files) throws IllegalStateException, IOException;
 
   AtchmnflDto findById(Long atchmnflId);
 
@@ -22,4 +25,9 @@ public interface AtchmnflService {
    * @return
    */
   List<AtchmnflDto> findAllByPrjctId(String prjctId);
+
+  AtchmnflDto transferTo(Long atchmnflGroupId, MultipartFile mf) throws IllegalStateException, IOException;
+
+  List<AtchmnflDto> findAllByAtchmnflGroupId(Long atchmnflGroupId);
+
 }

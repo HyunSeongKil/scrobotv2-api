@@ -2,7 +2,8 @@ package kr.co.sootechsys.scrobot.controller;
 
 import java.io.IOException;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.AtchmnflDto;
@@ -23,7 +25,6 @@ import kr.co.sootechsys.scrobot.service.AtchmnflService;
 @Api(value = "파일 첨부 CONTROLLER")
 public class AtchmnflRestController {
 
-
   private AtchmnflService service;
   private AtchmnflGroupService atchmnflGroupService;
 
@@ -34,10 +35,18 @@ public class AtchmnflRestController {
 
   @PostMapping()
   @ApiOperation(value = "등록")
-  public ResponseEntity<Map<String, Object>> regist(@RequestParam String prjctId, @RequestParam MultipartFile file) throws IllegalStateException, IOException {
+  public ResponseEntity<Map<String, Object>> regist(@RequestParam String prjctId, @RequestParam MultipartFile file)
+      throws IllegalStateException, IOException {
     Long atchmnflGroupId = atchmnflGroupService.regist(prjctId);
 
     return ResponseEntity.ok(Map.of("data", service.regist(atchmnflGroupId, file)));
+  }
+
+  @PostMapping("/files")
+  @ApiOperation(value = "파일 업로드 & 등록")
+  public ResponseEntity<Map<String, Object>> regist(@RequestParam("files") List<MultipartFile> files)
+      throws IllegalStateException, IOException {
+    return ResponseEntity.ok(Map.of("data", service.regist(files)));
   }
 
   @GetMapping("/dwld-file")
@@ -50,5 +59,10 @@ public class AtchmnflRestController {
     mav.addObject(CmmnFileDownloadView.FILE_NAME, dto.getOriginalFileNm());
 
     return mav;
+  }
+
+  @GetMapping("/atchmnfl-group")
+  public ResponseEntity<Map<String, Object>> findAllByAtchmnflGroupId(@RequestParam Long atchmnflGroupId) {
+    return ResponseEntity.ok(Map.of("data", service.findAllByAtchmnflGroupId(atchmnflGroupId)));
   }
 }
