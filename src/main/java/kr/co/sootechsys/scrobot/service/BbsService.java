@@ -23,4 +23,11 @@ public interface BbsService {
   Map<String, Object> findAll(SearchBbsDto searchDto, Pageable pageable);
 
   BbsDto findById(Long bbsId);
+
+  /**
+   * 조회수 증가 (비동기)
+   * 
+   * @param bbsId 게시판아이디
+   */
+  void increaseInqireCoAsync(Long bbsId);
 }

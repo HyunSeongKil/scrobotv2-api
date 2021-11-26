@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -147,6 +148,24 @@ public class BbsServiceImpl implements BbsService {
     //
     dto.setAtchmnflGroupId(atchmnflGroupId);
     return repo.save(toEntity(dto)).getBbsId();
+  }
+
+  @Override
+
+  @Async
+  public void increaseInqireCoAsync(Long bbsId) {
+    Optional<Bbs> opt = repo.findById(bbsId);
+    if (opt.isPresent()) {
+      Bbs e = opt.get();
+      if (null == e.getInqireCo()) {
+        e.setInqireCo(1L);
+      } else {
+        e.setInqireCo(e.getInqireCo() + 1);
+      }
+
+      repo.save(e);
+    }
+
   }
 
 }

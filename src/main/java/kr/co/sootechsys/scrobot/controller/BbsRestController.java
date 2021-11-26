@@ -56,6 +56,7 @@ public class BbsRestController {
 
   @GetMapping("/{bbsId}")
   public ResponseEntity<Map<String, Object>> findById(@PathVariable Long bbsId) {
+    service.increaseInqireCoAsync(bbsId);
     return ResponseEntity.ok(Map.of("data", service.findById(bbsId)));
   }
 }
