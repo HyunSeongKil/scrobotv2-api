@@ -47,6 +47,10 @@ public class Bbs {
   @ApiModelProperty(value = "조회 횟수")
   private Long inqireCo;
 
+  @Column(name = "qaa_se_cd")
+  @ApiModelProperty(value = "질문답변 구분 코드")
+  private String qaaSeCd;
+
   @Column(name = "register_id")
   private String registerId;
 

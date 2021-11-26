@@ -42,7 +42,8 @@ public class BbsServiceImpl implements BbsService {
 
   Bbs toEntity(BbsDto dto) {
     Bbs e = Bbs.builder().atchmnflGroupId(dto.getAtchmnflGroupId()).bbsCn(dto.getBbsCn()).bbsSeCd(dto.getBbsSeCd())
-        .bbsSjNm(dto.getBbsSjNm()).registerId(dto.getRegisterId()).registerNm(dto.getRegisterNm()).build();
+        .bbsSjNm(dto.getBbsSjNm()).qaaSeCd(dto.getQaaSeCd()).registerId(dto.getRegisterId())
+        .registerNm(dto.getRegisterNm()).build();
 
     if (null == dto.getBbsId() || 0 >= dto.getBbsId()) {
       e.setBbsId(System.nanoTime());
@@ -57,8 +58,8 @@ public class BbsServiceImpl implements BbsService {
 
   BbsDto toDto(Bbs e) {
     return BbsDto.builder().atchmnflGroupId(e.getAtchmnflGroupId()).bbsCn(e.getBbsCn()).bbsId(e.getBbsId())
-        .bbsSeCd(e.getBbsSeCd()).bbsSjNm(e.getBbsSjNm()).inqireCo(e.getInqireCo()).registDt(e.getRegistDt())
-        .registerId(e.getRegisterId()).registerNm(e.getRegisterNm()).build();
+        .bbsSeCd(e.getBbsSeCd()).bbsSjNm(e.getBbsSjNm()).inqireCo(e.getInqireCo()).qaaSeCd(e.getQaaSeCd())
+        .registDt(e.getRegistDt()).registerId(e.getRegisterId()).registerNm(e.getRegisterNm()).build();
   }
 
   @Override
