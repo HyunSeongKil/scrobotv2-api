@@ -10,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.service.CmmnCodeService;
 
-
 /**
  * 공통코드
  */
@@ -32,7 +31,8 @@ public class CmmnCodeRestController {
 
   @GetMapping("/{prntsCmmnCode}/{cmmnCode}")
   @ApiOperation(value = "상세조회")
-  public ResponseEntity<Map<String, Object>> detail(@PathVariable String prntsCmmnCode, @PathVariable String cmmnCode) {
+  public ResponseEntity<Map<String, Object>> findByPrntsCmmnCodeAndCmmnCode(@PathVariable String prntsCmmnCode,
+      @PathVariable String cmmnCode) {
     return ResponseEntity.ok(Map.of("data", service.findByPrntsCmmnCodeAndCmmnCode(prntsCmmnCode, cmmnCode)));
   }
 }
