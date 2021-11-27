@@ -35,6 +35,7 @@ public class CmmnCode {
    * 공통 코드 아이디
    */
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "cmmn_code_id")
   @ApiModelProperty(value = "공통 코드 아이디")
   private Long cmmnCodeId;
