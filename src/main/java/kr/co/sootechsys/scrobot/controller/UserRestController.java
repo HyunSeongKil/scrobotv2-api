@@ -63,4 +63,10 @@ public class UserRestController {
 
     return ResponseEntity.ok(Map.of("data", null == dto ? "N" : "Y"));
   }
+
+  @GetMapping("/by-prjct")
+  @ApiOperation(value = "프로젝트아이디로 사용자 목록 조회")
+  public ResponseEntity<Map<String, Object>> findAllByPrjctId(@RequestParam String prjctId) {
+    return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
+  }
 }

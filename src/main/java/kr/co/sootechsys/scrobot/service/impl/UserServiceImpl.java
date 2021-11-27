@@ -4,7 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.crypto.BadPaddingException;
@@ -122,6 +124,17 @@ public class UserServiceImpl implements UserService {
     String jwt = jwtService.createToken(dto, 1000 * 60L * 10L); // 10분
 
     return jwt;
+  }
+
+  @Override
+  public List<UserDto> findAllByPrjctId(String prjctId) {
+    List<UserDto> dtos = new ArrayList<>();
+
+    repo.findAllByPrjctId(prjctId).forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return dtos;
   }
 
 }

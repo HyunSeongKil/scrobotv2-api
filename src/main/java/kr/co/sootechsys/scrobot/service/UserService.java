@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.BadPaddingException;
@@ -28,4 +29,12 @@ public interface UserService {
    * @param refreshToken refresh token
    */
   String reIssueToken(String refreshToken);
+
+  /**
+   * 프로젝트아이디로 사용자 목록 조회
+   * 
+   * @param prjctId 프로젝트아이디
+   * @return 사용자 목록
+   */
+  List<UserDto> findAllByPrjctId(String prjctId);
 }
