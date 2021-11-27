@@ -1,6 +1,15 @@
 package kr.co.sootechsys.scrobot.service;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 
 /**
@@ -13,15 +22,31 @@ public interface TrgetSysService {
    * 
    * @param dto 값
    * @return
+   * @throws BadPaddingException
+   * @throws IllegalBlockSizeException
+   * @throws InvalidAlgorithmParameterException
+   * @throws NoSuchPaddingException
+   * @throws NoSuchAlgorithmException
+   * @throws UnsupportedEncodingException
+   * @throws InvalidKeyException
    */
-  String regist(TrgetSysDto dto);
+  String regist(TrgetSysDto dto) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException,
+      NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
 
   /**
    * 수정
    * 
    * @param dto 값
+   * @throws BadPaddingException
+   * @throws IllegalBlockSizeException
+   * @throws InvalidAlgorithmParameterException
+   * @throws NoSuchPaddingException
+   * @throws NoSuchAlgorithmException
+   * @throws UnsupportedEncodingException
+   * @throws InvalidKeyException
    */
-  void updt(TrgetSysDto dto);
+  void updt(TrgetSysDto dto) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException,
+      NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
 
   /**
    * 삭제

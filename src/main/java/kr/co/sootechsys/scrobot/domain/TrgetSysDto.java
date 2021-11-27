@@ -49,7 +49,7 @@ public class TrgetSysDto {
   private String dbUserNm;
 
   /**
-   * 디비 비밀번호 명
+   * (암호화된)디비 비밀번호 명
    */
   private String dbPasswordNm;
 

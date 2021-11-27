@@ -72,7 +72,7 @@ public class TrgetSys {
    * 디비 비밀번호 명
    */
   @Column(name = "db_password_nm")
-  @ApiModelProperty(value = "디비 비밀번호 명")
+  @ApiModelProperty(value = "(암호화된)디비 비밀번호 명")
   private String dbPasswordNm;
 
   /**
