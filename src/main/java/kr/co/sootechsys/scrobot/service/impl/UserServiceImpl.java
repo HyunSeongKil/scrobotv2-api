@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
     }
 
     UserDto mbDto = toDto(opt.get());
-    String password = Util.encodeAes(secretKey, dto.getPassword());
-    log.debug("{} {}", password, Util.decodeAes(secretKey, password));
+    String cipherText = Util.sha512(dto.getPassword());
+    log.debug("{} {}", mbDto.getPassword(), cipherText);
 
-    if (!mbDto.getPassword().equals(password)) {
+    if (!mbDto.getPassword().equals(cipherText)) {
       // 비번 틀림
       return Map.of("e", "E-PASSWORD");
     }
