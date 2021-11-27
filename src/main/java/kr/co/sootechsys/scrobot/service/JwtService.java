@@ -12,9 +12,10 @@ public interface JwtService {
    * 토큰 생성
    * 
    * @param dto
+   * @param expiredTimeMs 만료시간. 밀리초
    * @return
    */
-  String createToken(UserDto dto);
+  String createToken(UserDto dto, Long expiredTimeMs);
 
   /**
    * 토큰 검증

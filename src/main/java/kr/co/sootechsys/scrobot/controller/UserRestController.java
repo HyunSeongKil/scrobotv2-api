@@ -34,18 +34,25 @@ public class UserRestController {
     this.service = userService;
   }
 
+  @PutMapping("/reissue")
+  @ApiOperation(value = "토큰 재발급")
+  public ResponseEntity<Map<String, Object>> reIssueToken(@RequestBody Map<String, Object> map) {
+    return ResponseEntity.ok(Map.of("data", service.reIssueToken(map.get("refreshToken").toString())));
+  }
+
   @PutMapping("/signin")
   @ApiOperation(value = "signin")
   public ResponseEntity<Map<String, Object>> signin(@RequestBody UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     return ResponseEntity.ok(Map.of("data", service.signin(dto)));
   }
-
 
   @PostMapping("/join")
   @ApiOperation(value = "회원가입")
   public void join(@RequestBody UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     service.join(dto);
   }
 

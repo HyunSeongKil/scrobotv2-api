@@ -5,6 +5,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -41,25 +42,29 @@ public class UserServiceImpl implements UserService {
   }
 
   User toEntity(UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-    User e = User.builder().password(Util.encodeAes(secretKey, dto.getPassword())).userId(dto.getUserId()).userNm(dto.getUserNm()).registDt(new Date()).telno(dto.getTelno()).build();
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    User e = User.builder().password(Util.encodeAes(secretKey, dto.getPassword())).userId(dto.getUserId())
+        .userNm(dto.getUserNm()).registDt(new Date()).telno(dto.getTelno()).build();
 
     return e;
   }
 
   UserDto toDto(User e) {
-    return UserDto.builder().userId(e.getUserId()).userNm(e.getUserNm()).password(e.getPassword()).registDt(e.getRegistDt()).lastLoginDt(e.getLastLoginDt()).sttusCode(e.getSttusCode())
+    return UserDto.builder().userId(e.getUserId()).userNm(e.getUserNm()).password(e.getPassword())
+        .registDt(e.getRegistDt()).lastLoginDt(e.getLastLoginDt()).sttusCode(e.getSttusCode())
         .telno(e.getTelno()).build();
   }
 
   @Override
   @Transactional
-  public String signin(UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+  public Map<String, Object> signin(UserDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     Optional<User> opt = repo.findById(dto.getUserId());
     if (opt.isEmpty()) {
       // 회원 없음
-      return "E-USER_ID";
+      return Map.of("e", "E-USER_ID");
     }
 
     UserDto mbDto = toDto(opt.get());
@@ -68,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     if (!mbDto.getPassword().equals(password)) {
       // 비번 틀림
-      return "E-PASSWORD";
+      return Map.of("e", "E-PASSWORD");
     }
 
     // TODO 상태 점검
@@ -79,15 +84,17 @@ public class UserServiceImpl implements UserService {
     repo.save(e);
 
     // jwt 생성
-    String jwt = jwtService.createToken(mbDto);
+    String jwt = jwtService.createToken(mbDto, 1000 * 60L * 10L); // 10분
+    String refreshToken = jwtService.createToken(mbDto, 1000 * 60L * 60L * 24L); // 1day
     log.debug("{} {}", jwt, jwtService.getUserId(jwt));
 
-    return jwt;
+    return Map.of("accessToken", jwt, "refreshToken", refreshToken);
   }
 
   @Override
   public void join(UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     repo.save(toEntity(dto));
 
   }
@@ -99,9 +106,22 @@ public class UserServiceImpl implements UserService {
       return toDto(opt.get());
     }
 
-
     return null;
 
+  }
+
+  @Override
+  public String reIssueToken(String refreshToken) {
+    boolean b = jwtService.varifyToken(refreshToken);
+    if (!b) {
+      throw new RuntimeException("");
+    }
+
+    String userId = jwtService.getUserId(refreshToken);
+    UserDto dto = findById(userId);
+    String jwt = jwtService.createToken(dto, 1000 * 60L * 10L); // 10분
+
+    return jwt;
   }
 
 }

@@ -45,24 +45,25 @@ public class JwtServiceImpl implements JwtService {
   }
 
   @Override
-  public String createToken(UserDto dto) {
+  public String createToken(UserDto dto, Long expiredTimeMs) {
     Map<String, Object> header = new HashMap<>();
     header.put("typ", "JWT");
     header.put("alg", "HS256");
 
     // Long expiredTime = 1000 * 60L * 60L * 2L;
-    Long expiredTime = 1000 * 60L * 10L; // 1분
+    // Long expiredTimeMs = 1000 * 60L * 10L; // 10분
     Date exp = new Date();
-    exp.setTime(exp.getTime() + expiredTime);
+    exp.setTime(exp.getTime() + expiredTimeMs);
 
     Map<String, Object> payload = new HashMap<>();
     payload.put("userId", dto.getUserId());
     payload.put("userNm", dto.getUserNm());
 
     // 초단위로 설정되어야 함 (밀리초단위 아님)
-    payload.put("exp", (System.currentTimeMillis() / 1000) + (expiredTime / 1000));
+    payload.put("exp", (System.currentTimeMillis() / 1000) + (expiredTimeMs / 1000));
 
-    String jwt = Jwts.builder().setSubject("user").setExpiration(exp).setHeader(header).setClaims(payload).signWith(key).compact();
+    String jwt = Jwts.builder().setSubject("user").setExpiration(exp).setHeader(header).setClaims(payload).signWith(key)
+        .compact();
 
     return jwt;
   }
