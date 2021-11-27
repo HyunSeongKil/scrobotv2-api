@@ -1,6 +1,15 @@
 package kr.co.sootechsys.scrobot.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +23,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
-
 
 /**
  * 대상 시스템
@@ -32,13 +40,17 @@ public class TrgetSysRestController {
 
   @PostMapping()
   @ApiOperation(value = "등록")
-  public void regist(@RequestBody TrgetSysDto dto) {
+  public void regist(@RequestBody TrgetSysDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     service.regist(dto);
   }
 
   @PutMapping()
   @ApiOperation(value = "수정")
-  public void updt(@RequestBody TrgetSysDto dto) {
+  public void updt(@RequestBody TrgetSysDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     service.updt(dto);
   }
 
