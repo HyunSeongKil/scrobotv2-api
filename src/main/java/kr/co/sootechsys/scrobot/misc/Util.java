@@ -1,9 +1,11 @@
 package kr.co.sootechsys.scrobot.misc;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,25 +21,61 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-
 /**
  * 유틸
  */
 public class Util {
-
 
   public static void main(String[] args) {
     String secretKey = "sootechsys.co.kr-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789";
 
     try {
       System.out.println(encodeAes(secretKey, "password"));
-    } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+      System.out.println("sha512\t" + "plainText:password" + "\tcipherText:" + sha512("password"));
+    } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException
+        | InvalidAlgorithmParameterException | IllegalBlockSizeException
         | BadPaddingException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
+  /**
+   * sha512 암호화
+   * 
+   * @param plainText 평문
+   * @return 암호문
+   */
+  public static String sha512(String plainText) {
+    try {
+      // getInstance() method is called with algorithm SHA-512
+      MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+      // digest() method is called
+      // to calculate message digest of the input string
+      // returned as array of byte
+      byte[] messageDigest = md.digest(plainText.getBytes());
+
+      // Convert byte array into signum representation
+      BigInteger no = new BigInteger(1, messageDigest);
+
+      // Convert message digest into hex value
+      String hashtext = no.toString(16);
+
+      // Add preceding 0s to make it 32 bit
+      while (hashtext.length() < 32) {
+        hashtext = "0" + hashtext;
+      }
+
+      // return the HashText
+      return hashtext;
+    }
+
+    // For specifying wrong message digest algorithms
+    catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   /**
    * SecretKeySpec 생성
@@ -58,8 +96,6 @@ public class Util {
 
   }
 
-
-
   /**
    * aes로 암호화
    * 
@@ -75,7 +111,8 @@ public class Util {
    * @throws BadPaddingException
    */
   public static String encodeAes(String key, String plainText)
-      throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     SecretKeySpec keySpec = createSecretKeySpec(key);
 
     Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -87,8 +124,6 @@ public class Util {
 
     return enStr;
   }
-
-
 
   /**
    * aes로 복호화
@@ -105,7 +140,8 @@ public class Util {
    * @throws BadPaddingException
    */
   public static String decodeAes(String key, String cipherText)
-      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException,
+      UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
     Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
     String iv = key.substring(0, 16);
     c.init(Cipher.DECRYPT_MODE, createSecretKeySpec(key), new IvParameterSpec(iv.getBytes("UTF-8")));
@@ -119,7 +155,6 @@ public class Util {
     return UUID.randomUUID().toString().split("-")[0];
   }
 
-
   /**
    * 파일 확장자 추출
    * 
@@ -127,9 +162,9 @@ public class Util {
    * @return
    */
   public static Optional<String> getFileExt(String filename) {
-    return Optional.ofNullable(filename).filter(f -> f.contains(".")).map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    return Optional.ofNullable(filename).filter(f -> f.contains("."))
+        .map(f -> f.substring(filename.lastIndexOf(".") + 1));
   }
-
 
   public static String join(Collection coll, String deli) {
     StringBuffer sb = new StringBuffer();
@@ -138,16 +173,13 @@ public class Util {
       sb.append(x).append(deli);
     });
 
-
     return sb.toString();
   }
-
 
   public static boolean isEmpty(Object obj) {
     if (null == obj) {
       return true;
     }
-
 
     if (String.class == obj.getClass()) {
       return (0 == ((String) obj).trim().length());
@@ -157,10 +189,8 @@ public class Util {
       return 0 == ((List<?>) obj).size();
     }
 
-
     throw new RuntimeException("NOT IMPL " + obj.getClass());
   }
-
 
   public static String getPkColmnName(String tableName) {
     return tableName + "_pk";
