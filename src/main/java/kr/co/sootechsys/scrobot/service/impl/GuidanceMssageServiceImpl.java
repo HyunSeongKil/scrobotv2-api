@@ -10,14 +10,18 @@ import kr.co.sootechsys.scrobot.domain.GuidanceMssageDto;
 import kr.co.sootechsys.scrobot.entity.GuidanceMssage;
 import kr.co.sootechsys.scrobot.persistence.GuidanceMssageRepository;
 import kr.co.sootechsys.scrobot.service.GuidanceMssageService;
+import kr.co.sootechsys.scrobot.service.PrjctGuidanceMssageMapngService;
 
 @Service
 public class GuidanceMssageServiceImpl implements GuidanceMssageService {
 
   private GuidanceMssageRepository repo;
+  private PrjctGuidanceMssageMapngService prjctGuidanceMssageMapngService;
 
-  public GuidanceMssageServiceImpl(GuidanceMssageRepository repo) {
+  public GuidanceMssageServiceImpl(GuidanceMssageRepository repo,
+      PrjctGuidanceMssageMapngService prjctGuidanceMssageMapngService) {
     this.repo = repo;
+    this.prjctGuidanceMssageMapngService = prjctGuidanceMssageMapngService;
   }
 
   GuidanceMssage toEntity(GuidanceMssageDto dto) {
@@ -52,6 +56,10 @@ public class GuidanceMssageServiceImpl implements GuidanceMssageService {
 
   @Override
   public void deleteById(Long guidanceMssageId) {
+    // delete mapng
+    prjctGuidanceMssageMapngService.deleteByGuidanceMssageId(guidanceMssageId);
+
+    //
     repo.deleteById(guidanceMssageId);
   }
 

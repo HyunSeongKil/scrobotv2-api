@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.sootechsys.scrobot.domain.PrjctGuidanceMssageMapngDto;
 import kr.co.sootechsys.scrobot.entity.PrjctGuidanceMssageMapng;
@@ -35,18 +36,27 @@ public class PrjctGuidanceMssageMapngServiceImpl implements PrjctGuidanceMssageM
   }
 
   @Override
+  @Transactional
   public Long regist(PrjctGuidanceMssageMapngDto dto) {
     return repo.save(toEntity(dto)).getPrjctGuidanceMssageMapngId();
   }
 
   @Override
+  @Transactional
   public void update(PrjctGuidanceMssageMapngDto dto) {
     repo.save(toEntity(dto));
   }
 
   @Override
+  @Transactional
   public void deleteById(Long prjctGuidanceMssageMapngId) {
     repo.deleteById(prjctGuidanceMssageMapngId);
+  }
+
+  @Override
+  @Transactional
+  public void deleteByGuidanceMssageId(Long guidanceMssageId) {
+    repo.deleteByGuidanceMssageId(guidanceMssageId);
   }
 
 }
