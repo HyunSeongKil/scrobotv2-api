@@ -1,6 +1,8 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -51,6 +53,17 @@ public class GuidanceMssageServiceImpl implements GuidanceMssageService {
   @Override
   public void deleteById(Long guidanceMssageId) {
     repo.deleteById(guidanceMssageId);
+  }
+
+  @Override
+  public List<GuidanceMssageDto> findAllByPrjctId(String prjctId) {
+    List<GuidanceMssageDto> dtos = new ArrayList<>();
+
+    repo.findAllByPrjctId(prjctId).forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return dtos;
   }
 
 }
