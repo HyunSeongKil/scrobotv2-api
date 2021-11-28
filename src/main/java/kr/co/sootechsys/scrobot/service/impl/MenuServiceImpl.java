@@ -1,10 +1,16 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.el.MethodNotFoundException;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
 import kr.co.sootechsys.scrobot.entity.Menu;
@@ -32,6 +38,12 @@ public class MenuServiceImpl implements MenuService {
     e.setUrlNm(dto.getUrlNm());
     e.setScrinId(dto.getScrinId());
 
+    if (null == dto.getMenuId() || "" == dto.getMenuId()) {
+      e.setRegistDt(new Date());
+    } else {
+      e.setMenuId(dto.getMenuId());
+    }
+
     return e;
   }
 
@@ -44,15 +56,15 @@ public class MenuServiceImpl implements MenuService {
     dto.setPrntsMenuId(e.getPrntsMenuId());
     dto.setUrlNm(e.getUrlNm());
     dto.setScrinId(e.getScrinId());
+    dto.setRegistDt(e.getRegistDt());
 
     return dto;
   }
 
   @Override
+  @Transactional
   public void deleteByPrjctId(String prjctId) {
-    repo.findAllByPrjctId(prjctId).forEach(e -> {
-      repo.delete(e);
-    });
+    repo.deleteAllByPrjctId(prjctId);
   }
 
   @Override
@@ -97,7 +109,7 @@ public class MenuServiceImpl implements MenuService {
   public List<MenuDto> findAllByPrjctId(String prjctId) {
     List<MenuDto> dtos = new ArrayList<>();
 
-    repo.findAllByPrjctId(prjctId).forEach(e -> {
+    repo.findAllByPrjctId(prjctId, Sort.by(Direction.ASC, "menuOrdrValue")).forEach(e -> {
       dtos.add(toDto(e));
     });
 
@@ -120,11 +132,10 @@ public class MenuServiceImpl implements MenuService {
     return dtos;
   }
 
-
   /**
    * 하위 메뉴 목록 조회
    * 
-   * @param menuDtos 전체 메뉴 목록
+   * @param menuDtos    전체 메뉴 목록
    * @param prntsMenuId 부모 메뉴 아이디
    * @return 하위 메뉴 목록
    */
@@ -139,7 +150,5 @@ public class MenuServiceImpl implements MenuService {
 
     return dtos;
   }
-
-
 
 }

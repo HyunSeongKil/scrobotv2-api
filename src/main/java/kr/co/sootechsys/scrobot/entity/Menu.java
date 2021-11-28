@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -79,6 +81,13 @@ public class Menu {
   @Column(name = "prjct_id")
   @ApiModelProperty(value = "프로젝트 아이디")
   private String prjctId;
+
+  /**
+   * 등록 일시
+   */
+  @Column(name = "regist_dt")
+  @ApiModelProperty(value = "등록 일시")
+  private Date registDt;
 
   /**
    * 프로젝트 인스턴스

@@ -69,7 +69,7 @@ public class ScrinRestController {
 
   @GetMapping("/by-prjct")
   @ApiOperation(value = "프로젝트 아이디로 화면 목록 조회")
-  public ResponseEntity<Map<String, Object>> listByPrjctId(@RequestParam String prjctId) {
+  public ResponseEntity<Map<String, Object>> findAllByPrjctId(@RequestParam String prjctId) {
     return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
   }
 }

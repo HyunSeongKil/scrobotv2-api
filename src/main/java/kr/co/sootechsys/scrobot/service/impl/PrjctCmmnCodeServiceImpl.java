@@ -1,11 +1,22 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.sootechsys.scrobot.domain.PrjctCmmnCodeDto;
 import kr.co.sootechsys.scrobot.entity.PrjctCmmnCode;
@@ -88,6 +99,39 @@ public class PrjctCmmnCodeServiceImpl implements PrjctCmmnCodeService {
     });
 
     return dtos;
+  }
+
+  @Override
+  public List<Map<String, Object>> parseExcel(MultipartFile mf) throws IOException {
+    List<Map<String, Object>> list = new ArrayList<>();
+
+    Workbook workbook = null;
+
+    if (mf.getOriginalFilename().endsWith(".xlsx")) {
+      workbook = new XSSFWorkbook(mf.getInputStream());
+    } else if (mf.getOriginalFilename().endsWith(".xls")) {
+      workbook = new HSSFWorkbook(mf.getInputStream());
+    }
+
+    if (null == workbook) {
+      return list;
+    }
+
+    Sheet sheet = workbook.getSheetAt(0);
+    for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+      Row row = sheet.getRow(i);
+      Map<String, Object> map = new LinkedHashMap<>();
+      list.add(map);
+
+      for (int j = 0; j < row.getLastCellNum(); j++) {
+        Cell cell = row.getCell(j);
+
+        String key = (0 == i ? "header_" : "data_" + j);
+        map.put(key, cell.getStringCellValue());
+      }
+    }
+
+    return list;
   }
 
 }

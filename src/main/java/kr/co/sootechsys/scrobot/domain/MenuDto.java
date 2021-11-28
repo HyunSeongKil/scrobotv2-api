@@ -1,12 +1,13 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import java.util.Date;
+
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 /**
  * 메뉴
@@ -43,7 +44,6 @@ public class MenuDto {
    */
   private String scrinId;
 
-
   /**
    * 메뉴 순서 값
    */
@@ -58,4 +58,9 @@ public class MenuDto {
    * 프로젝트 인스턴스
    */
   private PrjctDto prjct;
+
+  /**
+   * 등록 일시
+   */
+  private Date registDt;
 }

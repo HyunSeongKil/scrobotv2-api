@@ -1,5 +1,6 @@
 package kr.co.sootechsys.scrobot.controller;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.sootechsys.scrobot.domain.PrjctCmmnCodeDto;
 import kr.co.sootechsys.scrobot.service.PrjctCmmnCodeService;
@@ -32,6 +34,11 @@ public class PrjctCmmnCodeRestController {
   @PutMapping()
   public void update(@RequestBody PrjctCmmnCodeDto dto) {
     service.update(dto);
+  }
+
+  @PutMapping("/excel")
+  public ResponseEntity<Map<String, Object>> uploadExcel(@RequestParam MultipartFile mf) throws IOException {
+    return ResponseEntity.ok(Map.of("data", service.parseExcel(mf)));
   }
 
   @DeleteMapping("/{prjctCmmnCodeId}")

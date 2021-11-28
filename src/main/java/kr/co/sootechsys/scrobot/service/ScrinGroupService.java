@@ -5,10 +5,10 @@ import java.util.List;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
 import kr.co.sootechsys.scrobot.entity.ScrinGroup;
 
-
 /**
  * 화면 그룹
  */
+@Deprecated(since = "1128")
 public interface ScrinGroupService {
   /**
    * 등록

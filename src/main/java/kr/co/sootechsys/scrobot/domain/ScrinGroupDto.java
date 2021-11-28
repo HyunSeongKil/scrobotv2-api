@@ -9,10 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 /**
  * 화면 그룹
  */
+@Deprecated(since = "1128")
 @Getter
 @Setter
 @Builder

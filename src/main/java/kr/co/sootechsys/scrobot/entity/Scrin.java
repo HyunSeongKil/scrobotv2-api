@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,6 +49,13 @@ public class Scrin {
   private String scrinNm;
 
   /**
+   * 프로젝트 아이디
+   */
+  @Column(name = "prjct_id")
+  @ApiModelProperty(value = "프로젝트 아이디")
+  private String prjctId;
+
+  /**
    * 화면 그룹 아이디
    */
   @Column(name = "scrin_group_id")
@@ -61,9 +70,23 @@ public class Scrin {
   private String scrinSeCode;
 
   /**
+   * (기준 데이터용)메뉴 아이디
+   */
+  @Column(name = "menu_id")
+  @ApiModelProperty(value = "(기준 데이터용)메뉴 아이디")
+  private String menuId;
+
+  /**
+   * 등록 일시
+   */
+  @Column(name = "regist_dt")
+  @ApiModelProperty(value = "등록 일시")
+  private Date registDt;
+
+  /**
    * 화면 그룹 인스턴스
    */
-  @ManyToOne(targetEntity = ScrinGroup.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "scrin_group_id", insertable = false, updatable = false)
-  private ScrinGroup scrinGroup;
+  // @ManyToOne(targetEntity = ScrinGroup.class, fetch = FetchType.LAZY)
+  // @JoinColumn(name = "scrin_group_id", insertable = false, updatable = false)
+  // private ScrinGroup scrinGroup;
 }
