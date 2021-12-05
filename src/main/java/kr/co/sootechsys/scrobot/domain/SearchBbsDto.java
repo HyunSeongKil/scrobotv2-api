@@ -28,6 +28,14 @@ public class SearchBbsDto {
   @ApiModelProperty(value = "질의 유형")
   private String inqryTyCd = "";
 
+  @Builder.Default
+  @ApiModelProperty(value = "시작 일자")
+  private String fromDe = "";
+
+  @Builder.Default
+  @ApiModelProperty(value = "종료 일자")
+  private String toDe = "";
+
   // private String registerId;
 
   // private String registerNm;

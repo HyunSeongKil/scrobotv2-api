@@ -124,6 +124,9 @@ public class BbsServiceImpl implements BbsService {
                   .and(criteriaBuilder.like(root.get("inqryTyCd"), "%" + searchDto.getInqryTyCd() + "%")));
         }
 
+        // 시작 일자
+        // 종료 일자
+
         query.orderBy(criteriaBuilder.desc(root.get("registDt")));
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));

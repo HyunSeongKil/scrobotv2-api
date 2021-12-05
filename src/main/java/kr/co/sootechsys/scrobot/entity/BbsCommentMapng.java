@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "bbs_comment_mapng")
-public class BbsCommnetMapng {
+public class BbsCommentMapng {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "bbs_comment_mapng_id")
