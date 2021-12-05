@@ -127,4 +127,15 @@ public class GoodsServiceImpl implements GoodsService {
     return map;
   }
 
+  @Override
+  public List<GoodsDto> findAllByUserId(String userId) {
+    List<GoodsDto> dtos = new ArrayList<>();
+
+    repo.findAllByUserId(userId).forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return dtos;
+  }
+
 }

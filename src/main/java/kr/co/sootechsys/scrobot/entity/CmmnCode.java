@@ -68,4 +68,11 @@ public class CmmnCode {
   @ApiModelProperty(value = "사용 여부")
   private String useAt;
 
+  /**
+   * 설명
+   */
+  @Column(name = "cmmn_code_cn")
+  @ApiModelProperty(value = "공통 코드 설명")
+  private String cmmnCodeCn;
+
 }

@@ -31,9 +31,6 @@ public class BbsDto {
   @ApiModelProperty(value = "조회 횟수")
   private Long inqireCo;
 
-  @ApiModelProperty(value = "질문 구분 코드")
-  private String qaaSeCd;
-
   @ApiModelProperty(value = "고정 여부")
   private String fixingAt;
 

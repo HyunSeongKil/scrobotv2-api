@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.ApiOperation;
+
 public interface BbsService {
   Long regist(BbsDto dto);
 
@@ -32,4 +34,7 @@ public interface BbsService {
    * @param bbsId 게시판아이디
    */
   void increaseInqireCoAsync(Long bbsId);
+
+  @ApiOperation(value = "등록자아이디+게시판구분으로 목록 조회")
+  List<BbsDto> findAllByRegisterIdAndBbsSeCd(String registerId, String bbsSeCd);
 }

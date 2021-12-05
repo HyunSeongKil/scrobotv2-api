@@ -16,6 +16,8 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,7 @@ public class BbsServiceImpl implements BbsService {
 
   Bbs toEntity(BbsDto dto) {
     Bbs e = Bbs.builder().atchmnflGroupId(dto.getAtchmnflGroupId()).bbsCn(dto.getBbsCn()).bbsSeCd(dto.getBbsSeCd())
-        .bbsSjNm(dto.getBbsSjNm()).qaaSeCd(dto.getQaaSeCd()).registerId(dto.getRegisterId())
+        .bbsSjNm(dto.getBbsSjNm()).registerId(dto.getRegisterId())
         .registerNm(dto.getRegisterNm()).fixingAt(dto.getFixingAt()).inqryTyCd(dto.getInqryTyCd()).build();
 
     if (null == dto.getBbsId() || 0 >= dto.getBbsId()) {
@@ -63,7 +65,7 @@ public class BbsServiceImpl implements BbsService {
 
   BbsDto toDto(Bbs e) {
     return BbsDto.builder().atchmnflGroupId(e.getAtchmnflGroupId()).bbsCn(e.getBbsCn()).bbsId(e.getBbsId())
-        .bbsSeCd(e.getBbsSeCd()).bbsSjNm(e.getBbsSjNm()).inqireCo(e.getInqireCo()).qaaSeCd(e.getQaaSeCd())
+        .bbsSeCd(e.getBbsSeCd()).bbsSjNm(e.getBbsSjNm()).inqireCo(e.getInqireCo())
         .registDt(e.getRegistDt()).registerId(e.getRegisterId()).registerNm(e.getRegisterNm()).fixingAt(e.getFixingAt())
         .inqryTyCd(e.getInqryTyCd())
         .build();
@@ -215,6 +217,17 @@ public class BbsServiceImpl implements BbsService {
 
     //
     repo.save(toEntity(dto));
+  }
+
+  @Override
+  public List<BbsDto> findAllByRegisterIdAndBbsSeCd(String registerId, String bbsSeCd) {
+    List<BbsDto> dtos = new ArrayList<>();
+
+    repo.findAllByRegisterIdAndBbsSeCd(registerId, bbsSeCd, Sort.by(Direction.DESC, "registDt")).forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return dtos;
   }
 
 }

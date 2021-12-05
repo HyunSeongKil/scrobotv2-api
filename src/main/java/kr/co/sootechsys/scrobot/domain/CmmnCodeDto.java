@@ -42,4 +42,6 @@ public class CmmnCodeDto {
    * 사용 여부
    */
   private String useAt;
+
+  private String cmmnCodeCn;
 }
