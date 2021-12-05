@@ -26,6 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import kr.co.sootechsys.scrobot.domain.AtchmnflDto;
 import kr.co.sootechsys.scrobot.domain.BbsDto;
+import kr.co.sootechsys.scrobot.domain.PageableResult;
 import kr.co.sootechsys.scrobot.domain.SearchBbsDto;
 import kr.co.sootechsys.scrobot.entity.Bbs;
 import kr.co.sootechsys.scrobot.persistence.BbsRepository;
@@ -95,7 +96,7 @@ public class BbsServiceImpl implements BbsService {
   }
 
   @Override
-  public Map<String, Object> findAll(SearchBbsDto searchDto, Pageable pageable) {
+  public PageableResult findAll(SearchBbsDto searchDto, Pageable pageable) {
     Page<Bbs> page = repo.findAll(new Specification<Bbs>() {
       @Override
       public Predicate toPredicate(Root<Bbs> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -140,17 +141,10 @@ public class BbsServiceImpl implements BbsService {
       dtos.add(toDto(e));
     });
 
-    Map<String, Object> map = new HashMap<>();
-    map.put("data", dtos);
-    map.put("number", page.getNumber());
-    map.put("numberOfElements", page.getNumberOfElements());
-    map.put("pageable", page.getPageable());
-    map.put("size", page.getSize());
-    map.put("sort", page.getSort());
-    map.put("totalElements", page.getTotalElements());
-    map.put("totalPages", page.getTotalPages());
+    return PageableResult.builder().data(dtos).number(page.getNumber()).numberOfElements(page.getNumberOfElements())
+        .pageable(page.getPageable()).size(page.getSize()).sort(page.getSort()).totalElements(page.getTotalElements())
+        .totalPages(page.getTotalPages()).build();
 
-    return map;
   }
 
   @Override

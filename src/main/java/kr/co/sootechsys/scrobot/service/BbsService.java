@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.sootechsys.scrobot.domain.BbsDto;
+import kr.co.sootechsys.scrobot.domain.PageableResult;
 import kr.co.sootechsys.scrobot.domain.SearchBbsDto;
 
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +25,7 @@ public interface BbsService {
 
   void deleteById(Long bbsId);
 
-  Map<String, Object> findAll(SearchBbsDto searchDto, Pageable pageable);
+  PageableResult findAll(SearchBbsDto searchDto, Pageable pageable);
 
   BbsDto findById(Long bbsId);
 

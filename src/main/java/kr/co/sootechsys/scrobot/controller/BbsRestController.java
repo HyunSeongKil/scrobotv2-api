@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.BbsDto;
+import kr.co.sootechsys.scrobot.domain.PageableResult;
 import kr.co.sootechsys.scrobot.domain.SearchBbsDto;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.service.BbsService;
@@ -64,7 +65,7 @@ public class BbsRestController {
   }
 
   @GetMapping()
-  public ResponseEntity<Map<String, Object>> findAllBySearchDto(SearchBbsDto searchDto, Pageable pageable) {
+  public ResponseEntity<PageableResult> findAllBySearchDto(SearchBbsDto searchDto, Pageable pageable) {
     return ResponseEntity.ok(service.findAll(searchDto, pageable));
   }
 
