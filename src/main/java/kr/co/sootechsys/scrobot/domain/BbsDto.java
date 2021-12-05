@@ -34,6 +34,12 @@ public class BbsDto {
   @ApiModelProperty(value = "질문 구분 코드")
   private String qaaSeCd;
 
+  @ApiModelProperty(value = "고정 여부")
+  private String fixingAt;
+
+  @ApiModelProperty(value = "(FAQ)문의 유형 코드")
+  private String inqryTyCd;
+
   private String registerId;
 
   private String registerNm;

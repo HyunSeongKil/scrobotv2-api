@@ -51,6 +51,14 @@ public class Bbs {
   @ApiModelProperty(value = "질문답변 구분 코드")
   private String qaaSeCd;
 
+  @Column(name = "fixing_at")
+  @ApiModelProperty(value = "고정 여부")
+  private String fixingAt;
+
+  @Column(name = "inqry_ty_cd")
+  @ApiModelProperty(value = "(FAQ)문의 유형 코드")
+  private String inqryTyCd;
+
   @Column(name = "register_id")
   private String registerId;
 

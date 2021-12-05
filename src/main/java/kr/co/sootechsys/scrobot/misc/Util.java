@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.misc;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -9,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +40,54 @@ public class Util {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * typescript용 코드 생성 - FormGroup
+   * 
+   * @param dtoClass dto클래스
+   * @return
+   */
+  public static String createFormGroupString(Class<?> dtoClass) {
+    StringBuffer sb = new StringBuffer();
+
+    sb.append(" this.form = new FormGroup({");
+
+    Field[] fields = dtoClass.getDeclaredFields();
+    for (Field f : fields) {
+      sb.append(" " + f.getName() + " : new FormControl(''),");
+    }
+    sb.append("});");
+
+    return sb.toString();
+  }
+
+  /**
+   * typescript용 코드 생성 - export interface Item
+   * 
+   * @param dtoClass dto클래스
+   * @return
+   */
+  public static String createItemString(Class<?> dtoClass) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("export interface " + dtoClass.getSimpleName() + " { ");
+
+    Field[] fields = dtoClass.getDeclaredFields();
+    for (Field f : fields) {
+      sb.append(" " + f.getName() + " : ");
+
+      if (String.class == f.getType() || Date.class == f.getType()) {
+        sb.append(" string;");
+      } else if (Integer.class == f.getType() || Long.class == f.getType() || Double.class == f.getType()) {
+        sb.append(" number;");
+      } else {
+        sb.append(" any;");
+      }
+    }
+
+    sb.append(" };");
+
+    return sb.toString();
   }
 
   /**

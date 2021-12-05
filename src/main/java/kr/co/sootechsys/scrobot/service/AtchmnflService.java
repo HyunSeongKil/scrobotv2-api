@@ -12,6 +12,14 @@ public interface AtchmnflService {
 
   Long regist(Long atchmnflGroupId, MultipartFile file) throws IllegalStateException, IOException;
 
+  /**
+   * 등록. 1.첨부파일그룹등록 2.첨부파일등록
+   * 
+   * @param files 파일 목록
+   * @return 첨부파일그룹아이디
+   * @throws IllegalStateException
+   * @throws IOException
+   */
   Long regist(List<MultipartFile> files) throws IllegalStateException, IOException;
 
   AtchmnflDto findById(Long atchmnflId);

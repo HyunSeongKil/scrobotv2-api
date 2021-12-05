@@ -65,6 +65,7 @@ public class AtchmnflServiceImpl implements AtchmnflService {
   }
 
   @Override
+  @Transactional
   public Long regist(List<MultipartFile> files) throws IllegalStateException, IOException {
     if (null == files || 0 == files.size()) {
       return null;

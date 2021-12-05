@@ -24,6 +24,10 @@ public class SearchBbsDto {
   @Builder.Default
   private String bbsSeCd = "";
 
+  @Builder.Default
+  @ApiModelProperty(value = "질의 유형")
+  private String inqryTyCd = "";
+
   // private String registerId;
 
   // private String registerNm;

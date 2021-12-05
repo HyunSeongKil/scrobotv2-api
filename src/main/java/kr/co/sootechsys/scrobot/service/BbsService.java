@@ -18,6 +18,8 @@ public interface BbsService {
 
   void updt(BbsDto dto);
 
+  void updt(BbsDto dto, List<MultipartFile> files) throws IllegalStateException, IOException;
+
   void deleteById(Long bbsId);
 
   Map<String, Object> findAll(SearchBbsDto searchDto, Pageable pageable);
