@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS `atchmnfl` (
   `regist_dt` datetime(6) DEFAULT NULL,
   `storg_file_nm` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`atchmnfl_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
--- 테이블 데이터 scrobotdb.atchmnfl:~18 rows (대략적) 내보내기
+-- 테이블 데이터 scrobotdb.atchmnfl:~23 rows (대략적) 내보내기
 DELETE FROM `atchmnfl`;
 INSERT INTO `atchmnfl` (`atchmnfl_id`, `atchmnfl_etsion`, `atchmnfl_filesz_value`, `atchmnfl_group_id`, `atchmnfl_storg_path_value`, `encoding_dstnct_cd`, `original_file_nm`, `regist_dt`, `storg_file_nm`) VALUES
 	(1, 'jpg', 129519, 1, '2021', NULL, '210817_화상회의_배경화면.jpg', '2021-11-19 18:43:17.000000', 'cdce24b3.jpg'),
@@ -57,7 +57,10 @@ INSERT INTO `atchmnfl` (`atchmnfl_id`, `atchmnfl_etsion`, `atchmnfl_filesz_value
 	(18, 'jpg', 129519, 12, '2021', NULL, '210817_화상회의_배경화면.jpg', '2021-12-04 19:27:46.000000', '1aa148d6.jpg'),
 	(19, 'PNG', 417198, 13, '2021', NULL, 'at커피숍.PNG', '2021-12-04 19:41:15.000000', '316d7af9.PNG'),
 	(20, 'jpg', 129519, 14, '2021', NULL, '210817_화상회의_배경화면.jpg', '2021-12-05 16:06:07.000000', '6cc1f166.jpg'),
-	(21, 'png', 345271, 15, '2021', NULL, 'BladeAndSoul.png', '2021-12-05 16:06:41.000000', 'd1552226.png');
+	(21, 'png', 345271, 15, '2021', NULL, 'BladeAndSoul.png', '2021-12-05 16:06:41.000000', 'd1552226.png'),
+	(22, 'jpg', 129519, 16, '2021', NULL, '210817_화상회의_배경화면.jpg', '2021-12-05 19:28:35.000000', 'df8ad2b2.jpg'),
+	(23, 'png', 63785, 16, '2021', NULL, 'adsp자격증.png', '2021-12-05 19:28:35.000000', '4ea9ef02.png'),
+	(24, 'PNG', 417198, 16, '2021', NULL, 'at커피숍.PNG', '2021-12-05 19:28:35.000000', '13acd024.PNG');
 
 -- 테이블 scrobotdb.atchmnfl_group 구조 내보내기
 DROP TABLE IF EXISTS `atchmnfl_group`;
@@ -66,9 +69,9 @@ CREATE TABLE IF NOT EXISTS `atchmnfl_group` (
   `prjct_id` varchar(255) DEFAULT NULL,
   `regist_dt` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`atchmnfl_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
--- 테이블 데이터 scrobotdb.atchmnfl_group:~11 rows (대략적) 내보내기
+-- 테이블 데이터 scrobotdb.atchmnfl_group:~16 rows (대략적) 내보내기
 DELETE FROM `atchmnfl_group`;
 INSERT INTO `atchmnfl_group` (`atchmnfl_group_id`, `prjct_id`, `regist_dt`) VALUES
 	(1, 'ca41cd7f', '2021-11-19 18:43:17.000000'),
@@ -85,7 +88,8 @@ INSERT INTO `atchmnfl_group` (`atchmnfl_group_id`, `prjct_id`, `regist_dt`) VALU
 	(12, NULL, '2021-12-04 19:27:46.000000'),
 	(13, NULL, '2021-12-04 19:41:15.000000'),
 	(14, NULL, '2021-12-05 16:06:07.000000'),
-	(15, NULL, '2021-12-05 16:06:41.000000');
+	(15, NULL, '2021-12-05 16:06:41.000000'),
+	(16, NULL, '2021-12-05 19:28:35.000000');
 
 -- 테이블 scrobotdb.bbs 구조 내보내기
 DROP TABLE IF EXISTS `bbs`;
@@ -105,13 +109,14 @@ CREATE TABLE IF NOT EXISTS `bbs` (
   PRIMARY KEY (`bbs_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- 테이블 데이터 scrobotdb.bbs:~15 rows (대략적) 내보내기
+-- 테이블 데이터 scrobotdb.bbs:~20 rows (대략적) 내보내기
 DELETE FROM `bbs`;
 INSERT INTO `bbs` (`bbs_id`, `atchmnfl_group_id`, `bbs_cn`, `bbs_se_cd`, `bbs_sj_nm`, `inqire_co`, `regist_dt`, `register_id`, `register_nm`, `qaa_se_cd`, `fixing_at`, `inqry_ty_cd`) VALUES
 	(15787677625200, NULL, '321', 'NOTICE', '321', 0, '2021-12-05 15:55:40.000000', 'user', '유저', '', '', NULL),
 	(15795692802900, NULL, '654', 'NOTICE', '654', 0, '2021-12-05 15:55:48.000000', 'user', '유저', '', 'N', NULL),
-	(16414701177399, 14, '공지사항 입니다.\n\n  엔터\n    에터.... 공백\n\n첨부파일 포함', 'NOTICE', '공지시항 테스트', 1, '2021-12-05 16:06:07.000000', 'user', '유저', '', 'N', NULL),
-	(16448596962299, 15, 'faq 테스트\n\n엔터\n   공백\n\n첨부파일', 'FAQ', 'faq 테스트', 2, '2021-12-05 16:06:41.000000', 'user', '유저', '', '', NULL),
+	(16414701177399, 14, '공지사항 입니다.\n\n  엔터\n    에터.... 공백\n\n첨부파일 포함', 'NOTICE', '공지시항 테스트', 5, '2021-12-05 16:06:07.000000', 'user', '유저', '', 'N', NULL),
+	(16448596962299, 15, 'faq 테스트\n\n엔터\n   공백\n\n첨부파일', 'FAQ', 'faq 테스트', 17, '2021-12-05 16:06:41.000000', 'user', '유저', '', '', NULL),
+	(28562697053200, 16, '문의\n    \n\n        내용', 'QAA', '문의', 4, '2021-12-05 19:28:35.000000', 'user', '유저', NULL, NULL, 'use'),
 	(230297386229900, NULL, NULL, 'QAA', '321', 19, '2021-11-21 16:33:13.000000', NULL, NULL, NULL, 'N', NULL),
 	(230354137993500, 3, NULL, '321', '321', 0, '2021-11-21 16:34:10.000000', NULL, NULL, NULL, 'N', NULL),
 	(230433358242300, 4, NULL, '98', '987', 0, '2021-11-21 16:35:29.000000', NULL, NULL, NULL, 'N', NULL),
@@ -145,33 +150,34 @@ INSERT INTO `bbs_comment_mapng` (`bbs_comment_mapng_id`, `bbs_id`, `comment_id`)
 -- 테이블 scrobotdb.cmmn_code 구조 내보내기
 DROP TABLE IF EXISTS `cmmn_code`;
 CREATE TABLE IF NOT EXISTS `cmmn_code` (
-  `cmmn_code_id` bigint(20) NOT NULL,
+  `cmmn_code_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `cmmn_code` varchar(255) DEFAULT NULL,
+  `cmmn_code_cn` varchar(255) DEFAULT NULL,
   `cmmn_code_nm` varchar(255) DEFAULT NULL,
   `prnts_cmmn_code` varchar(255) DEFAULT NULL,
   `use_at` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`cmmn_code_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 -- 테이블 데이터 scrobotdb.cmmn_code:~16 rows (대략적) 내보내기
 DELETE FROM `cmmn_code`;
-INSERT INTO `cmmn_code` (`cmmn_code_id`, `cmmn_code`, `cmmn_code_nm`, `prnts_cmmn_code`, `use_at`) VALUES
-	(1, 'scrin_se', '화면 구분', '-', 'Y'),
-	(2, 'C', '등록', 'scrin_se', 'Y'),
-	(3, 'R', '조회', 'scrin_se', 'Y'),
-	(4, 'btn_se', '버튼 구분', '-', 'Y'),
-	(5, 'C', '등록', 'btn_se', 'Y'),
-	(6, 'R', '조회', 'btn_se', 'Y'),
-	(7, 'D', '삭제', 'btn_se', 'Y'),
-	(8, 'L', '목록', 'scrin_se', 'Y'),
-	(9, 'U', '수정', 'scrin_se', 'Y'),
-	(10, 'U', '수정', 'btn_se', 'Y'),
-	(11, 'CANCEL', '취소', 'btn_se', 'Y'),
-	(12, 'qaa_se', '질문답변 구분', '-', 'Y'),
-	(13, 'price', '요금', 'qaa_se', 'Y'),
-	(14, 'inqry_ty', '질의 유형', '-', 'Y'),
-	(15, 'use', '사용 방법', 'inqry_ty', 'Y'),
-	(16, 'price', '요금/결제', 'inqry_ty', 'Y');
+INSERT INTO `cmmn_code` (`cmmn_code_id`, `cmmn_code`, `cmmn_code_cn`, `cmmn_code_nm`, `prnts_cmmn_code`, `use_at`) VALUES
+	(1, 'scrin_se', '화면 구분', '-', 'Y', NULL),
+	(2, 'C', '등록', 'scrin_se', 'Y', NULL),
+	(3, 'R', '조회', 'scrin_se', 'Y', NULL),
+	(4, 'btn_se', '버튼 구분', '-', 'Y', NULL),
+	(5, 'C', '등록', 'btn_se', 'Y', NULL),
+	(6, 'R', '조회', 'btn_se', 'Y', NULL),
+	(7, 'D', '삭제', 'btn_se', 'Y', NULL),
+	(8, 'L', '목록', 'scrin_se', 'Y', NULL),
+	(9, 'U', '수정', 'scrin_se', 'Y', NULL),
+	(10, 'U', '수정', 'btn_se', 'Y', NULL),
+	(11, 'CANCEL', '취소', 'btn_se', 'Y', NULL),
+	(12, 'qaa_se', '질문답변 구분', '-', 'Y', NULL),
+	(13, 'price', '요금', 'qaa_se', 'Y', NULL),
+	(14, 'inqry_ty', '질의 유형', '-', 'Y', NULL),
+	(15, 'use', '사용 방법', 'inqry_ty', 'Y', NULL),
+	(16, 'price', '요금/결제', 'inqry_ty', 'Y', NULL);
 
 -- 테이블 scrobotdb.comment 구조 내보내기
 DROP TABLE IF EXISTS `comment`;
@@ -280,6 +286,41 @@ INSERT INTO `compn` (`compn_id`, `compn_cn`, `compn_nm`, `compn_se_code`, `eng_a
 	('f565c6ed', '<div id="id_1633769468235_wrapper" class="wrapper ui-draggable ui-draggable-handle ui-resizable ui-draggable-disabled ui-resizable-disabled" style="position: absolute; width: 150px; height: 30px; border: none; left: 206px; top: 263px;" data-tag-name="input"><input type="text" id="id_1633769468235" style="width: 100px; height: 25px; padding: 0.5em; background-color: rgb(239, 239, 239); color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 16px;" readonly="" focus="" data-eng-abrv-nm="cn" data-hngl-abrv-nm="내용"><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></div>', 'dummy', 'input', 'cn', '내용', 'c519e14e', '2021-10-10 11:30:20', '2021-10-10 11:30:20', 4),
 	('f5ab8801', '<span id="id_1633314895588_wrapper" class="wrapper ui-draggable ui-draggable-handle ui-resizable ui-draggable-disabled ui-resizable-disabled" data-wrapper="true" style="position: absolute; width: 137px; height: 84px; border: none; left: 167px; top: 354px;" data-tag-name="button"><button id="id_1633314895588" type="button" class="btn btn-primary" style="position: absolute; width: 100px; height: 50px; font-size: 16px; color: rgb(255, 255, 255); background-color: rgb(13, 110, 253); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;" disabled="" data-eng-abrv-nm="" data-hngl-abrv-nm="" data-btn-se="U">수정</button><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></span>', 'dummy', 'button', '', '', 'U9ea6ca57', '2021-10-10 16:47:44', '2021-10-10 16:47:44', 1),
 	('fb185b3d', '<h1 id="id_1633945124893" style="position: absolute; width: 411px; height: 58px; border: none; left: 49px; top: 53px; color: rgb(33, 37, 41); background-color: rgba(0, 0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, &quot;Liberation Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;; font-size: 40px;" data-tag-name="h1" data-eng-abrv-nm="" data-hngl-abrv-nm="" class="ui-draggable ui-draggable-handle ui-resizable ui-draggable-disabled ui-resizable-disabled">회원 수정<div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div></h1>', 'dummy', 'h1', '', '', 'U26a2c041', '2021-10-11 18:43:44', '2021-10-11 18:43:44', 0);
+
+-- 테이블 scrobotdb.domain 구조 내보내기
+DROP TABLE IF EXISTS `domain`;
+CREATE TABLE IF NOT EXISTS `domain` (
+  `domain_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `data_lt_value` int(11) DEFAULT NULL,
+  `data_ty_cd` varchar(255) DEFAULT NULL,
+  `domain_cl_cd` varchar(255) DEFAULT NULL,
+  `domain_cn` varchar(255) DEFAULT NULL,
+  `domain_group_cd` varchar(255) DEFAULT NULL,
+  `domain_nm` varchar(255) DEFAULT NULL,
+  `regist_dt` datetime(6) DEFAULT NULL,
+  `std_at` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`domain_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 테이블 데이터 scrobotdb.domain:~0 rows (대략적) 내보내기
+DELETE FROM `domain`;
+
+-- 테이블 scrobotdb.goods 구조 내보내기
+DROP TABLE IF EXISTS `goods`;
+CREATE TABLE IF NOT EXISTS `goods` (
+  `goods_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `goods_cn` varchar(1000) DEFAULT NULL,
+  `goods_key_nm` varchar(255) DEFAULT NULL,
+  `goods_nm` varchar(255) DEFAULT NULL,
+  `goods_price_value` int(11) DEFAULT NULL,
+  `regist_dt` varchar(255) DEFAULT NULL,
+  `register_id` varchar(255) DEFAULT NULL,
+  `register_nm` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`goods_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 테이블 데이터 scrobotdb.goods:~0 rows (대략적) 내보내기
+DELETE FROM `goods`;
 
 -- 테이블 scrobotdb.guidance_mssage 구조 내보내기
 DROP TABLE IF EXISTS `guidance_mssage`;
@@ -476,6 +517,19 @@ INSERT INTO `scrin_group` (`scrin_group_id`, `eng_abrv_nm`, `prjct_id`, `scrin_g
 	('e934edcd', 'bbsctt_manage', 'ca41cd7f', '게시글 관리'),
 	('eb805f1a', 'fctry_manage', '3b056bd3', '공장 관리');
 
+-- 테이블 scrobotdb.secsn 구조 내보내기
+DROP TABLE IF EXISTS `secsn`;
+CREATE TABLE IF NOT EXISTS `secsn` (
+  `secsn_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `regist_dt` datetime(6) DEFAULT NULL,
+  `secsn_reason_cn` varchar(1000) DEFAULT NULL,
+  `user_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`secsn_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 테이블 데이터 scrobotdb.secsn:~0 rows (대략적) 내보내기
+DELETE FROM `secsn`;
+
 -- 테이블 scrobotdb.trget_sys 구조 내보내기
 DROP TABLE IF EXISTS `trget_sys`;
 CREATE TABLE IF NOT EXISTS `trget_sys` (
@@ -511,7 +565,20 @@ CREATE TABLE IF NOT EXISTS `user` (
 DELETE FROM `user`;
 INSERT INTO `user` (`user_id`, `last_login_dt`, `password`, `regist_dt`, `sttus_code`, `user_nm`, `telno`) VALUES
 	('soo', '2021-10-11 18:19:49.000000', 'b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86', '2021-10-09 12:39:54.000000', NULL, '수', NULL),
-	('user', '2021-11-28 11:21:48.000000', 'b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86', '2021-10-09 12:33:09.000000', NULL, '유저', NULL);
+	('user', '2021-12-05 23:24:50.000000', 'b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86', '2021-10-09 12:33:09.000000', NULL, '유저', NULL);
+
+-- 테이블 scrobotdb.user_goods_mapng 구조 내보내기
+DROP TABLE IF EXISTS `user_goods_mapng`;
+CREATE TABLE IF NOT EXISTS `user_goods_mapng` (
+  `user_goods_mapng_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `goods_id` bigint(20) DEFAULT NULL,
+  `regist_dt` datetime(6) DEFAULT NULL,
+  `user_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`user_goods_mapng_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 테이블 데이터 scrobotdb.user_goods_mapng:~0 rows (대략적) 내보내기
+DELETE FROM `user_goods_mapng`;
 
 -- 테이블 scrobotdb.word_dicary 구조 내보내기
 DROP TABLE IF EXISTS `word_dicary`;
