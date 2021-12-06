@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GeneratorType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,9 +34,24 @@ public class Secsn {
   @Column(name = "user_id")
   private String userId;
 
+  @Column(name = "user_nm")
+  private String userNm;
+
+  @Column(name = "telno")
+  private String telno;
+
   @Column(name = "secsn_reason_cn", length = 1000)
   private String secsnReasonCn;
 
-  @Column(name = "regist_dt")
-  private Date registDt;
+
+  @Column(name = "imprvm_cn", length = 1000)
+  @ApiModelProperty(value = "개선 내용")
+  private String imprvmCn;
+
+
+  @Column(name = "join_dt")
+  private Date joinDt;
+
+  @Column(name = "secsn_dt")
+  private Date secsnDt;
 }

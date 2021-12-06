@@ -41,16 +41,14 @@ public class BbsServiceImpl implements BbsService {
   private AtchmnflGroupService atchmnflGroupService;
   private AtchmnflService atchmnflService;
 
-  public BbsServiceImpl(BbsRepository repo, AtchmnflGroupService atchmnflGroupService,
-      AtchmnflService atchmnflService) {
+  public BbsServiceImpl(BbsRepository repo, AtchmnflGroupService atchmnflGroupService, AtchmnflService atchmnflService) {
     this.repo = repo;
     this.atchmnflGroupService = atchmnflGroupService;
     this.atchmnflService = atchmnflService;
   }
 
   Bbs toEntity(BbsDto dto) {
-    Bbs e = Bbs.builder().atchmnflGroupId(dto.getAtchmnflGroupId()).bbsCn(dto.getBbsCn()).bbsSeCd(dto.getBbsSeCd())
-        .bbsSjNm(dto.getBbsSjNm()).registerId(dto.getRegisterId())
+    Bbs e = Bbs.builder().atchmnflGroupId(dto.getAtchmnflGroupId()).bbsCn(dto.getBbsCn()).bbsSeCd(dto.getBbsSeCd()).bbsSjNm(dto.getBbsSjNm()).registerId(dto.getRegisterId())
         .registerNm(dto.getRegisterNm()).fixingAt(dto.getFixingAt()).inqryTyCd(dto.getInqryTyCd()).build();
 
     if (null == dto.getBbsId() || 0 >= dto.getBbsId()) {
@@ -65,11 +63,8 @@ public class BbsServiceImpl implements BbsService {
   }
 
   BbsDto toDto(Bbs e) {
-    return BbsDto.builder().atchmnflGroupId(e.getAtchmnflGroupId()).bbsCn(e.getBbsCn()).bbsId(e.getBbsId())
-        .bbsSeCd(e.getBbsSeCd()).bbsSjNm(e.getBbsSjNm()).inqireCo(e.getInqireCo())
-        .registDt(e.getRegistDt()).registerId(e.getRegisterId()).registerNm(e.getRegisterNm()).fixingAt(e.getFixingAt())
-        .inqryTyCd(e.getInqryTyCd())
-        .build();
+    return BbsDto.builder().atchmnflGroupId(e.getAtchmnflGroupId()).bbsCn(e.getBbsCn()).bbsId(e.getBbsId()).bbsSeCd(e.getBbsSeCd()).bbsSjNm(e.getBbsSjNm()).inqireCo(e.getInqireCo())
+        .registDt(e.getRegistDt()).registerId(e.getRegisterId()).registerNm(e.getRegisterNm()).fixingAt(e.getFixingAt()).inqryTyCd(e.getInqryTyCd()).build();
   }
 
   @Override
@@ -104,27 +99,27 @@ public class BbsServiceImpl implements BbsService {
 
         // 명
         if (null != searchDto.getBbsSjNm() && 0 < searchDto.getBbsSjNm().length()) {
-          predicates
-              .add(criteriaBuilder.and(criteriaBuilder.like(root.get("bbsSjNm"), "%" + searchDto.getBbsSjNm() + "%")));
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("bbsSjNm"), "%" + searchDto.getBbsSjNm() + "%")));
         }
 
         // 내용
         if (null != searchDto.getBbsCn() && 0 < searchDto.getBbsCn().length()) {
-          predicates
-              .add(criteriaBuilder.and(criteriaBuilder.like(root.get("bbsCn"), "%" + searchDto.getBbsCn() + "%")));
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("bbsCn"), "%" + searchDto.getBbsCn() + "%")));
         }
 
         // 구분
         if (null != searchDto.getBbsSeCd() && 0 < searchDto.getBbsSeCd().length()) {
-          predicates
-              .add(criteriaBuilder.and(criteriaBuilder.like(root.get("bbsSeCd"), "%" + searchDto.getBbsSeCd() + "%")));
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("bbsSeCd"), "%" + searchDto.getBbsSeCd() + "%")));
         }
 
         // 질의 유형
         if (null != searchDto.getInqryTyCd() && 0 < searchDto.getInqryTyCd().length()) {
-          predicates
-              .add(criteriaBuilder
-                  .and(criteriaBuilder.like(root.get("inqryTyCd"), "%" + searchDto.getInqryTyCd() + "%")));
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("inqryTyCd"), "%" + searchDto.getInqryTyCd() + "%")));
+        }
+
+        // 등록자
+        if (null != searchDto.getRegisterId() && 0 < searchDto.getRegisterId().length()) {
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("registerId"), searchDto.getRegisterId())));
         }
 
         // 시작 일자
@@ -141,9 +136,8 @@ public class BbsServiceImpl implements BbsService {
       dtos.add(toDto(e));
     });
 
-    return PageableResult.builder().data(dtos).number(page.getNumber()).numberOfElements(page.getNumberOfElements())
-        .pageable(page.getPageable()).size(page.getSize()).sort(page.getSort()).totalElements(page.getTotalElements())
-        .totalPages(page.getTotalPages()).build();
+    return PageableResult.builder().data(dtos).number(page.getNumber()).numberOfElements(page.getNumberOfElements()).pageable(page.getPageable()).size(page.getSize()).sort(page.getSort())
+        .totalElements(page.getTotalElements()).totalPages(page.getTotalPages()).build();
 
   }
 

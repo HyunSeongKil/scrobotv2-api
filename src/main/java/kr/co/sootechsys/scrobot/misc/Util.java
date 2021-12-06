@@ -28,19 +28,21 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class Util {
 
-  public static void main(String[] args) {
-    String secretKey = "sootechsys.co.kr-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789";
+  // public static void main(String[] args) {
+  // String secretKey =
+  // "sootechsys.co.kr-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789";
 
-    try {
-      System.out.println(encodeAes(secretKey, "password"));
-      System.out.println("sha512\t" + "plainText:password" + "\tcipherText:" + sha512("password"));
-    } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException
-        | InvalidAlgorithmParameterException | IllegalBlockSizeException
-        | BadPaddingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+  // try {
+  // System.out.println(encodeAes(secretKey, "password"));
+  // System.out.println(encodeAes(secretKey, "010-1234-5678"));
+  // System.out.println("sha512\t" + "plainText:password" + "\tcipherText:" + sha512("password"));
+  // } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException |
+  // NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+  // | BadPaddingException e) {
+  // // TODO Auto-generated catch block
+  // e.printStackTrace();
+  // }
+  // }
 
   /**
    * typescript용 코드 생성 - FormGroup
@@ -161,8 +163,7 @@ public class Util {
    * @throws BadPaddingException
    */
   public static String encodeAes(String key, String plainText)
-      throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     SecretKeySpec keySpec = createSecretKeySpec(key);
 
     Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -190,8 +191,12 @@ public class Util {
    * @throws BadPaddingException
    */
   public static String decodeAes(String key, String cipherText)
-      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException,
-      UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+    if (null == cipherText || 0 == cipherText.length()) {
+      return "";
+    }
+
+
     Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
     String iv = key.substring(0, 16);
     c.init(Cipher.DECRYPT_MODE, createSecretKeySpec(key), new IvParameterSpec(iv.getBytes("UTF-8")));
@@ -212,8 +217,7 @@ public class Util {
    * @return
    */
   public static Optional<String> getFileExt(String filename) {
-    return Optional.ofNullable(filename).filter(f -> f.contains("."))
-        .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    return Optional.ofNullable(filename).filter(f -> f.contains(".")).map(f -> f.substring(filename.lastIndexOf(".") + 1));
   }
 
   public static String join(Collection coll, String deli) {

@@ -3,6 +3,7 @@ package kr.co.sootechsys.scrobot.domain;
 import java.util.Date;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,19 @@ public class SecsnDto {
 
   private String userId;
 
+  private String userNm;
+
+  private String telno;
+
   private String secsnReasonCn;
 
-  private Date registDt;
+  @ApiModelProperty(value = "개선 내용")
+  private String imprvmCn;
+
+  @ApiModelProperty(value = "가입 일시")
+  private Date joinDt;
+
+  @ApiModelProperty(value = "탈퇴 일시")
+  private Date secsnDt;
+
 }

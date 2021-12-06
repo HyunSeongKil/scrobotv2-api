@@ -36,7 +36,7 @@ public class SearchBbsDto {
   @ApiModelProperty(value = "종료 일자")
   private String toDe = "";
 
-  // private String registerId;
+  private String registerId;
 
   // private String registerNm;
 
