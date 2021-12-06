@@ -14,6 +14,11 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -34,8 +39,7 @@ public class DomainServiceImpl implements DomainService {
   }
 
   Domain toEntity(DomainDto dto) {
-    Domain e = Domain.builder().dataLtValue(dto.getDataLtValue()).dataTyCd(dto.getDataTyCd())
-        .domainClCd(dto.getDomainClCd()).domainCn(dto.getDomainCn()).domainGroupCd(dto.getDomainGroupCd())
+    Domain e = Domain.builder().dataLtValue(dto.getDataLtValue()).dataTyCd(dto.getDataTyCd()).domainClNm(dto.getDomainClNm()).domainCn(dto.getDomainCn()).domainGroupNm(dto.getDomainGroupNm())
         .domainNm(dto.getDomainNm()).stdAt(dto.getStdAt()).build();
 
     if (null == dto.getDomainId() || 0 > dto.getDomainId()) {
@@ -48,9 +52,8 @@ public class DomainServiceImpl implements DomainService {
   }
 
   DomainDto toDto(Domain e) {
-    return DomainDto.builder().domainId(e.getDomainId()).dataLtValue(e.getDataLtValue()).dataTyCd(e.getDataTyCd())
-        .domainClCd(e.getDomainClCd()).domainCn(e.getDomainCn()).domainGroupCd(e.getDomainGroupCd())
-        .domainNm(e.getDomainNm()).stdAt(e.getStdAt()).build();
+    return DomainDto.builder().domainId(e.getDomainId()).dataLtValue(e.getDataLtValue()).dataTyCd(e.getDataTyCd()).domainClNm(e.getDomainClNm()).domainCn(e.getDomainCn())
+        .domainGroupNm(e.getDomainGroupNm()).domainNm(e.getDomainNm()).stdAt(e.getStdAt()).build();
   }
 
   @Override
@@ -87,9 +90,7 @@ public class DomainServiceImpl implements DomainService {
 
         // 명
         if (null != searchDto.getDomainNm() && 0 < searchDto.getDomainNm().length()) {
-          predicates
-              .add(
-                  criteriaBuilder.and(criteriaBuilder.like(root.get("domainNm"), "%" + searchDto.getDomainNm() + "%")));
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("domainNm"), "%" + searchDto.getDomainNm() + "%")));
         }
 
         // TODO 다른조건
@@ -105,9 +106,69 @@ public class DomainServiceImpl implements DomainService {
       dtos.add(toDto(e));
     });
 
-    return PageableResult.builder().data(dtos).number(page.getNumber()).numberOfElements(page.getNumberOfElements())
-        .pageable(page.getPageable()).size(page.getSize()).sort(page.getSort()).totalElements(page.getTotalElements())
-        .totalPages(page.getTotalPages()).build();
+    return PageableResult.builder().data(dtos).number(page.getNumber()).numberOfElements(page.getNumberOfElements()).pageable(page.getPageable()).size(page.getSize()).sort(page.getSort())
+        .totalElements(page.getTotalElements()).totalPages(page.getTotalPages()).build();
+  }
+
+  @Override
+  public List<Map<String, Object>> parseExcel(MultipartFile excelFile) throws Exception {
+    //
+    Map<Integer, String> cellNm = Map.of(0, "domainNm", 1, "domainCn", 2, "domainGroupNm", 3, "domainClNm", 4, "dataTyCd", 5, "dataLtValue", 6, "stdAt");
+
+    List<Map<String, Object>> list = new ArrayList<>();
+
+    try {
+      // xlsx
+      XSSFWorkbook workbook = new XSSFWorkbook(excelFile.getInputStream());
+      Sheet sheet = workbook.getSheetAt(0);
+      int rowCo = sheet.getPhysicalNumberOfRows();
+      // 1st는 제목이라 skip함
+      for (int i = 1; i < rowCo; i++) {
+        Row row = sheet.getRow(i);
+        int cellCo = row.getPhysicalNumberOfCells();
+
+        Map<String, Object> map = new HashMap<>();
+        list.add(map);
+
+        for (int j = 0; j < cellCo; j++) {
+          Cell cell = row.getCell(j);
+
+          map.put(cellNm.get(j), getCellValue(cell));
+        }
+      }
+
+    } catch (Exception e) {
+      throw e;
+    }
+
+    return list;
+  }
+
+  private Object getCellValue(Cell c) {
+    switch (c.getCellType()) {
+      case Cell.CELL_TYPE_NUMERIC:
+        return c.getNumericCellValue();
+      case Cell.CELL_TYPE_STRING:
+        return c.getStringCellValue();
+    }
+
+    return "";
+  }
+
+  @Override
+  public Integer registByBulk(List<DomainDto> dtos) {
+    if (null == dtos || 0 == dtos.size()) {
+      return 0;
+    }
+
+    dtos.forEach(dto -> {
+      // TODO 입력값 검사
+
+
+      regist(dto);
+    });
+
+    return dtos.size();
   }
 
 }

@@ -24,11 +24,11 @@ public class DomainDto {
   @ApiModelProperty(value = "도메인 내용")
   private String domainCn;
 
-  @ApiModelProperty(value = "도메인 그룹 코드")
-  private String domainGroupCd;
+  @ApiModelProperty(value = "도메인 그룹 명")
+  private String domainGroupNm;
 
-  @ApiModelProperty(value = "도메인 분류 코드")
-  private String domainClCd;
+  @ApiModelProperty(value = "도메인 분류 명")
+  private String domainClNm;
 
   @ApiModelProperty(value = "데이터 타입 코드")
   private String dataTyCd;

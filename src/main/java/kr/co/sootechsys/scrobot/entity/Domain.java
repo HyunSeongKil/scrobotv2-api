@@ -38,13 +38,13 @@ public class Domain {
   @ApiModelProperty(value = "도메인 내용")
   private String domainCn;
 
-  @Column(name = "domain_group_cd")
-  @ApiModelProperty(value = "도메인 그룹 코드")
-  private String domainGroupCd;
+  @Column(name = "domain_group_nm")
+  @ApiModelProperty(value = "도메인 그룹 명")
+  private String domainGroupNm;
 
-  @Column(name = "domain_cl_cd")
-  @ApiModelProperty(value = "도메인 분류 코드")
-  private String domainClCd;
+  @Column(name = "domain_cl_nm")
+  @ApiModelProperty(value = "도메인 분류 명")
+  private String domainClNm;
 
   @Column(name = "data_ty_cd")
   @ApiModelProperty(value = "데이터 타입 코드")
