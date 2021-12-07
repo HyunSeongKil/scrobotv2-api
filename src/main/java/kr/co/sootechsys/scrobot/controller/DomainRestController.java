@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.DomainDto;
 import kr.co.sootechsys.scrobot.domain.PageableResult;
 import kr.co.sootechsys.scrobot.domain.SearchDomainDto;
+import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.service.DomainService;
 
 @RestController
@@ -61,6 +62,14 @@ public class DomainRestController {
   public void deleteById(@PathVariable Long domainId) {
     service.deleteById(domainId);
   }
+
+  @GetMapping("/ts")
+  @ApiOperation(value = "ts 코드 생성")
+  public ResponseEntity<Map<String, Object>> ts() {
+    Map<String, Object> map = Map.of("form", Util.createFormGroupString(DomainDto.class), "item", Util.createItemString(DomainDto.class));
+    return ResponseEntity.ok(map);
+  }
+
 
   @GetMapping("/{domainId}")
   @ApiOperation(value = "pk로 조회")
