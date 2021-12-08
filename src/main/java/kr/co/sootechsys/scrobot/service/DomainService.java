@@ -21,7 +21,7 @@ public interface DomainService {
   PageableResult findAll(SearchDomainDto searchDto, Pageable pageable);
 
   /**
-   * 엑셀파일 파싱 cell순서 1.
+   * 엑셀파일 파싱 cell순서 1.도메인명 2.도메인그룹명 3.도메인분류명 4.설명 5.데이터타입 6.데이터길이 7.표준여부
    * 
    * @param excelFile
    * @return

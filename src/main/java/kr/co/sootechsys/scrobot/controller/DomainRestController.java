@@ -53,8 +53,8 @@ public class DomainRestController {
 
   @PutMapping("/parse-excel")
   @ApiOperation(value = "엑셀파일 파싱")
-  public ResponseEntity<Map<String, Object>> parseExcel(@RequestPart MultipartFile excelFile) throws Exception {
-    return ResponseEntity.ok(Map.of("data", service.parseExcel(excelFile)));
+  public ResponseEntity<Map<String, Object>> parseExcel(@RequestPart MultipartFile files) throws Exception {
+    return ResponseEntity.ok(Map.of("data", service.parseExcel(files)));
   }
 
   @DeleteMapping("/{domainId}")
