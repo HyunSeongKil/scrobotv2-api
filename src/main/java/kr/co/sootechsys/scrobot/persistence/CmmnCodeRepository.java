@@ -3,6 +3,7 @@ package kr.co.sootechsys.scrobot.persistence;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.entity.CmmnCode;
 
@@ -11,7 +12,7 @@ import kr.co.sootechsys.scrobot.entity.CmmnCode;
  * 공통 코드
  */
 @Api(value = "공통코드 레포지토리")
-public interface CmmnCodeRepository extends JpaRepository<CmmnCode, Long> {
+public interface CmmnCodeRepository extends JpaRepository<CmmnCode, Long>, JpaSpecificationExecutor<CmmnCode> {
 
   /**
    * 부모 공통코드로 목록 조회

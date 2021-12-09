@@ -2,21 +2,35 @@ package kr.co.sootechsys.scrobot.service.impl;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.CmmnCodeDto;
+import kr.co.sootechsys.scrobot.domain.PageableResult;
+import kr.co.sootechsys.scrobot.domain.SearchCmmnCodeDto;
 import kr.co.sootechsys.scrobot.entity.CmmnCode;
 import kr.co.sootechsys.scrobot.persistence.CmmnCodeRepository;
 import kr.co.sootechsys.scrobot.service.CmmnCodeService;
@@ -41,6 +55,14 @@ public class CmmnCodeServiceImpl implements CmmnCodeService {
     e.setPrntsCmmnCode(dto.getPrntsCmmnCode());
     e.setUseAt(dto.getUseAt());
     e.setCmmnCodeCn(dto.getCmmnCodeCn());
+    e.setRegisterId(dto.getRegisterId());
+    e.setRegisterNm(dto.getRegisterNm());
+
+    if (null == dto.getCmmnCodeId() || 0 > dto.getCmmnCodeId()) {
+      e.setRegistDt(new Date());
+    } else {
+      e.setCmmnCodeId(dto.getCmmnCodeId());
+    }
 
     return e;
   }
@@ -53,6 +75,9 @@ public class CmmnCodeServiceImpl implements CmmnCodeService {
     dto.setPrntsCmmnCode(e.getPrntsCmmnCode());
     dto.setUseAt(e.getUseAt());
     dto.setCmmnCodeCn(e.getCmmnCodeCn());
+    dto.setRegistDt(e.getRegistDt());
+    dto.setRegisterId(e.getRegisterId());
+    dto.setRegisterNm(e.getRegisterNm());
 
     return dto;
   }
@@ -155,6 +180,51 @@ public class CmmnCodeServiceImpl implements CmmnCodeService {
     });
 
     return dtos.size();
+  }
+
+  @Override
+  public PageableResult findAll(SearchCmmnCodeDto searchDto, Pageable pageable) {
+    Page<CmmnCode> page = repo.findAll(new Specification<CmmnCode>() {
+      @Override
+      public Predicate toPredicate(Root<CmmnCode> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        // 코드
+        if (null != searchDto.getCmmnCode() && 0 < searchDto.getCmmnCode().length()) {
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("cmmnCode"), "%" + searchDto.getCmmnCode() + "%")));
+        }
+
+        // 명
+        if (null != searchDto.getCmmnCodeNm() && 0 < searchDto.getCmmnCodeNm().length()) {
+          predicates.add(criteriaBuilder.and(criteriaBuilder.like(root.get("cmmnCodeNm"), "%" + searchDto.getCmmnCodeNm() + "%")));
+        }
+
+
+
+        query.orderBy(criteriaBuilder.asc(root.get("prntsCmmnCode")));
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+      }
+    }, pageable);
+
+    List<CmmnCodeDto> dtos = new ArrayList<>();
+    page.getContent().forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return PageableResult.builder().data(dtos).number(page.getNumber()).numberOfElements(page.getNumberOfElements()).pageable(page.getPageable()).size(page.getSize()).sort(page.getSort())
+        .totalElements(page.getTotalElements()).totalPages(page.getTotalPages()).build();
+
+  }
+
+  @Override
+  public void deleteById(Long cmmnCodeId) {
+    repo.deleteById(cmmnCodeId);
+  }
+
+  @Override
+  public void update(CmmnCodeDto dto) {
+    repo.save(toEntity(dto));
   }
 
 }

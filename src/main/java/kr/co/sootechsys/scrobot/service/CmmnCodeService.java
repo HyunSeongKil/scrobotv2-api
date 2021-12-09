@@ -2,10 +2,12 @@ package kr.co.sootechsys.scrobot.service;
 
 import java.util.List;
 import java.util.Map;
-
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.sootechsys.scrobot.domain.CmmnCodeDto;
+import kr.co.sootechsys.scrobot.domain.PageableResult;
+import kr.co.sootechsys.scrobot.domain.SearchCmmnCodeDto;
 
 /**
  * 공통 코드
@@ -42,7 +44,7 @@ public interface CmmnCodeService {
    * 상세조회
    * 
    * @param prntsCmmnCode 부모공통코드
-   * @param cmmnCode      공통코드
+   * @param cmmnCode 공통코드
    * @return
    */
   CmmnCodeDto findByPrntsCmmnCodeAndCmmnCode(String prntsCmmnCode, String cmmnCode);
@@ -55,10 +57,14 @@ public interface CmmnCodeService {
   List<CmmnCodeDto> findAll();
 
   /**
-   * 엑셀파일 파싱
-   * 첫줄은 제목임
-   * cell 순서 1.cmmnCode 2.cmmnCodeNm 3.cmmnCodeCn 4.prntsCmmnCode
+   * 엑셀파일 파싱 첫줄은 제목임 cell 순서 1.cmmnCode 2.cmmnCodeNm 3.cmmnCodeCn 4.prntsCmmnCode
    */
   List<Map<String, Object>> parseExcel(MultipartFile excelFile) throws Exception;
+
+  PageableResult findAll(SearchCmmnCodeDto searchDto, Pageable pageable);
+
+  void deleteById(Long cmmnCodeId);
+
+  void update(CmmnCodeDto dto);
 
 }

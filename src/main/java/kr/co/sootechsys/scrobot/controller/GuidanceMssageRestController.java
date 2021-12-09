@@ -2,7 +2,6 @@ package kr.co.sootechsys.scrobot.controller;
 
 import java.util.Map;
 
-import org.mapstruct.ReportingPolicy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

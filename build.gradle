@@ -1,3 +1,4 @@
+// 2.5.4  Spring Boot plugin requires Gradle 6.8.x, 6.9.x, or 7.x
 plugins {
 	id 'org.springframework.boot' version '2.5.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
