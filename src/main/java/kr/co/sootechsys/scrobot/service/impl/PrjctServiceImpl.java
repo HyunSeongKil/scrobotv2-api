@@ -58,12 +58,12 @@ public class PrjctServiceImpl implements PrjctService {
 
   Prjct toEntity(PrjctDto dto) {
     return Prjct.builder().registDt(new Date()).prjctId(Util.getShortUuid()).prjctNm(dto.getPrjctNm())
-        .prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).build();
+        .prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).updtDt(new Date()).build();
   }
 
   PrjctDto toDto(Prjct e) {
     return PrjctDto.builder().registDt(e.getRegistDt()).prjctId(e.getPrjctId()).prjctNm(e.getPrjctNm())
-        .prjctCn(e.getPrjctCn()).userId(e.getUserId()).build();
+        .prjctCn(e.getPrjctCn()).userId(e.getUserId()).updtDt(e.getUpdtDt()).build();
   }
 
   @Override

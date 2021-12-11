@@ -78,4 +78,10 @@ public class TrgetSysRestController {
   public ResponseEntity<Map<String, Object>> findAllByPrjctId(@RequestParam String prjctId) {
     return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
   }
+
+  @GetMapping("/exists/by-prjct")
+  @ApiOperation(value = "프로젝트아이디로 목록 조회")
+  public ResponseEntity<Map<String, Object>> existsByPrjctId(@RequestParam String prjctId) {
+    return ResponseEntity.ok(Map.of("data", 0 < service.findAllByPrjctId(prjctId).size() ? "Y" : "N"));
+  }
 }

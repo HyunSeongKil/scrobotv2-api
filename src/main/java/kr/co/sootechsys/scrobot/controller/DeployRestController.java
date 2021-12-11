@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,9 +34,9 @@ public class DeployRestController {
     return ResponseEntity.ok(Map.of("data", service.deploy(dto)));
   }
 
-  @PutMapping("/by-prjct/{prjctId}")
+  @PutMapping("/by-prjct")
   @ApiOperation(value = "프로젝트아이디로 배포")
-  public ResponseEntity<Map<String, Object>> deploy(@PathVariable String prjctId) throws SQLException {
+  public ResponseEntity<Map<String, Object>> deploy(@RequestParam String prjctId) throws SQLException {
     return ResponseEntity.ok(Map.of("data", service.deploy(prjctId)));
   }
 }
