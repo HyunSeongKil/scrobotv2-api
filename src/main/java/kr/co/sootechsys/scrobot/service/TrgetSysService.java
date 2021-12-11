@@ -69,4 +69,6 @@ public interface TrgetSysService {
    * @return
    */
   List<TrgetSysDto> findAll();
+
+  List<TrgetSysDto> findAllByPrjctId(String prjctId);
 }

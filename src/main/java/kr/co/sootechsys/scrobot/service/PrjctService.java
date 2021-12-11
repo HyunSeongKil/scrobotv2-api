@@ -1,10 +1,18 @@
 package kr.co.sootechsys.scrobot.service;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 
-import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
+import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 
 /**
  * 프로젝트
@@ -49,10 +57,19 @@ public interface PrjctService {
   List<PrjctDto> findAllByUserId(String userId);
 
   /**
-   * 프로젝트 복사 
+   * 프로젝트 복사
+   * 
    * @param oldPrjctId
    * @return 신규로 생성된 프로젝트 아이디
    */
   String copy(String oldPrjctId);
+
+  void update(PrjctDto dto, TrgetSysDto trgetSysDto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
+
+  String regist(PrjctDto dto, TrgetSysDto trgetSysDto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException;
 
 }

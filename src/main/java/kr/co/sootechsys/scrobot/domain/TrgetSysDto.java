@@ -2,6 +2,7 @@ package kr.co.sootechsys.scrobot.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,6 +58,18 @@ public class TrgetSysDto {
    * 디비 명
    */
   private String dbNm;
+
+  /**
+   * 디비 호스트 명
+   */
+  @ApiModelProperty(value = "디비 호스트 명")
+  private String dbHostNm;
+
+  /**
+   * 디비 포트 값
+   */
+  @ApiModelProperty(value = "디비 포트 값")
+  private Integer dbPortValue;
 
   @Override
   public String toString() {

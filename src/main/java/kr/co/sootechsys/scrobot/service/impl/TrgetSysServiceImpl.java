@@ -38,7 +38,6 @@ public class TrgetSysServiceImpl implements TrgetSysService {
   TrgetSys toEntity(TrgetSysDto dto) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException,
       NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     TrgetSys e = TrgetSys.builder().build();
-    e.setTrgetSysId(Util.getShortUuid());
     // e.setDbDriverNm(dto.getDbDriverNm());
     e.setDbPasswordNm(Util.encodeAes(secretKey, dto.getDbPasswordNm()));
     e.setDbUrlNm(dto.getDbUrlNm());
@@ -46,6 +45,14 @@ public class TrgetSysServiceImpl implements TrgetSysService {
     e.setDbTyNm(dto.getDbTyNm());
     e.setTrgetSysNm(dto.getTrgetSysNm());
     e.setDbNm(dto.getDbNm());
+    e.setDbPortValue(dto.getDbPortValue());
+    e.setDbHostNm(dto.getDbHostNm());
+
+    if (null == dto.getTrgetSysId() || 0 == dto.getTrgetSysId().length()) {
+      e.setTrgetSysId(Util.getShortUuid());
+    } else {
+      e.setTrgetSysId(dto.getTrgetSysId());
+    }
 
     return e;
   }
@@ -61,6 +68,8 @@ public class TrgetSysServiceImpl implements TrgetSysService {
     dto.setTrgetSysId(e.getTrgetSysId());
     dto.setTrgetSysNm(e.getTrgetSysNm());
     dto.setDbNm(e.getDbNm());
+    dto.setDbPortValue(e.getDbPortValue());
+    dto.setDbHostNm(e.getDbHostNm());
 
     return dto;
   }
@@ -110,6 +119,21 @@ public class TrgetSysServiceImpl implements TrgetSysService {
     List<TrgetSysDto> dtos = new ArrayList<>();
 
     repo.findAll().forEach(e -> {
+      try {
+        dtos.add(toDto(e));
+      } catch (Exception e1) {
+        log.error("{}", e1);
+      }
+    });
+
+    return dtos;
+  }
+
+  @Override
+  public List<TrgetSysDto> findAllByPrjctId(String prjctId) {
+    List<TrgetSysDto> dtos = new ArrayList<>();
+
+    repo.findAllByPrjctId(prjctId).forEach(e -> {
       try {
         dtos.add(toDto(e));
       } catch (Exception e1) {

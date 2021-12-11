@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import io.swagger.annotations.Api;
+import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.service.DbDriverService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +45,15 @@ public class DbDriverServiceImpl implements DbDriverService {
     }
 
     return null;
+  }
+
+  @Override
+  public String getUrl(TrgetSysDto dto) {
+    if ("MYSQL".equals(dto.getDbTyNm().toUpperCase())) {
+      return "jdbc:mysql://" + dto.getDbHostNm() + ":" + dto.getDbPortValue() + "/" + dto.getDbNm();
+    }
+
+    throw new RuntimeException("NOT IMPL");
   }
 
 }

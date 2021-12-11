@@ -1,15 +1,23 @@
 package kr.co.sootechsys.scrobot.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +31,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.domain.ScrinGroupDto;
+import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.JwtService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
@@ -43,7 +52,8 @@ public class PrjctRestController {
   private ScrinService scrinService;
   private CompnService compnService;
 
-  public PrjctRestController(JwtService jwtService, PrjctService service, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService) {
+  public PrjctRestController(JwtService jwtService, PrjctService service, ScrinGroupService scrinGroupService,
+      ScrinService scrinService, CompnService compnService) {
     this.service = service;
     this.jwtService = jwtService;
     this.scrinGroupService = scrinGroupService;

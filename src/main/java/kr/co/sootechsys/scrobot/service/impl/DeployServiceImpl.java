@@ -99,7 +99,7 @@ public class DeployServiceImpl implements DeployService {
   @Override
   @Transactional
   public Map<String, Long> deploy(DeployDto dto) throws SQLException {
-    prjctTrgetSysMapngService.regist(dto.getPrjctId(), dto.getTrgetSysId());
+    // prjctTrgetSysMapngService.regist(dto.getPrjctId(), dto.getTrgetSysId());
 
     BasicDataSource ds = null;
     TrgetSysDto trgetSysDto = trgetSysService.findById(dto.getTrgetSysId());
@@ -114,8 +114,7 @@ public class DeployServiceImpl implements DeployService {
 
       //
       executeBasicDdl(trgetJdbcTemplate, trgetSysDto, CmmnCode.class, Compn.class, Menu.class, Prjct.class, Scrin.class,
-          ScrinGroup.class, TrgetSys.class, PrjctTrgetSysMapng.class,
-          AtchmnflGroup.class, Atchmnfl.class);
+          TrgetSys.class, PrjctTrgetSysMapng.class, AtchmnflGroup.class, Atchmnfl.class);
 
       //
       deleteOldData(trgetJdbcTemplate, dto.getPrjctId());
@@ -210,7 +209,7 @@ public class DeployServiceImpl implements DeployService {
     PrjctDto prjctDto = prjctService.findById(prjctId);
     List<ScrinGroupDto> scrinGroupDtos = getScrinGroups(prjctId);
     List<MenuDto> menuDtos = getMenus(prjctId);
-    List<ScrinDto> scrinDtos = getScrins(scrinGroupDtos);
+    List<ScrinDto> scrinDtos = getScrins(prjctId);
     List<CompnDto> compnDtos = getCompns(scrinDtos);
     PrjctTrgetSysMapngDto prjctTrgetSysMapng = prjctTrgetSysMapngService.findByPrjctId(prjctId);
     List<AtchmnflGroupDto> atchmnflGroupDtos = atchmnflGroupService.findAllByPrjctId(prjctId);
@@ -225,6 +224,8 @@ public class DeployServiceImpl implements DeployService {
     insertPrjctTrgetSysMapng(trgetJjdbcTemplate, prjctTrgetSysMapng);
     insertAtchmnflGroup(trgetJjdbcTemplate, atchmnflGroupDtos);
     insertAtchmnfl(trgetJjdbcTemplate, atchmnflDtos);
+
+    // TODO 파일 복사는 어떻게???
 
   }
 
@@ -315,27 +316,27 @@ public class DeployServiceImpl implements DeployService {
 
       sb.append(" INSERT INTO " + DbUtil.getTableName(Compn.class) + "(");
       sb.append("   compn_id");
-      sb.append("   , compn_nm");
       sb.append("   , compn_cn");
+      sb.append("   , compn_nm");
+      sb.append("   , compn_se_code");
       sb.append("   , eng_abrv_nm");
       sb.append("   , hngl_abrv_nm");
       sb.append("   , scrin_id");
-      sb.append("   , compn_se_code");
-      sb.append("   , ordr_value");
       sb.append("   , regist_dt");
       sb.append("   , updt_dt");
+      sb.append("   , ordr_value");
       sb.append(" )");
       sb.append(" VALUES (");
       sb.append("   '" + dto.getCompnId() + "' ");
-      sb.append("   , '" + dto.getCompnNm() + "' ");
       sb.append("   , '" + dto.getCompnCn() + "' ");
+      sb.append("   , '" + dto.getCompnNm() + "' ");
+      sb.append("   , '" + dto.getCompnSeCode() + "' ");
       sb.append("   , '" + dto.getEngAbrvNm() + "' ");
       sb.append("   , '" + dto.getHnglAbrvNm() + "' ");
       sb.append("   , '" + dto.getScrinId() + "' ");
-      sb.append("   , '" + dto.getCompnSeCode() + "' ");
-      sb.append("   , '" + dto.getOrdrValue() + "' ");
       sb.append("   , '" + dto.getRegistDt() + "' ");
       sb.append("   , '" + dto.getUpdtDt() + "' ");
+      sb.append("   , '" + dto.getOrdrValue() + "' ");
       sb.append(" )");
 
       jdbcTemplate.execute(sb.toString());
@@ -358,19 +359,21 @@ public class DeployServiceImpl implements DeployService {
 
       sb.append(" INSERT INTO " + DbUtil.getTableName(Scrin.class) + "(");
       sb.append("   scrin_id");
+      sb.append("   , scrin_group_id");
       sb.append("   , scrin_nm");
       sb.append("   , scrin_se_code");
-      sb.append("   , scrin_group_id");
       sb.append("   , menu_id");
       sb.append("   , prjct_id");
+      sb.append("   , regist_dt");
       sb.append(" )");
       sb.append(" VALUES (");
       sb.append("   '" + dto.getScrinId() + "' ");
+      sb.append("   , '" + dto.getScrinGroupId() + "' ");
       sb.append("   , '" + dto.getScrinNm() + "' ");
       sb.append("   , '" + dto.getScrinSeCode() + "' ");
-      sb.append("   , '" + dto.getScrinGroupId() + "' ");
       sb.append("   , '" + dto.getMenuId() + "' ");
       sb.append("   , '" + dto.getPrjctId() + "' ");
+      sb.append("   , '" + dto.getRegistDt() + "' ");
       sb.append(" )");
 
       jdbcTemplate.execute(sb.toString());
@@ -394,21 +397,21 @@ public class DeployServiceImpl implements DeployService {
       sb.append(" INSERT INTO " + DbUtil.getTableName(Menu.class) + "(");
       sb.append("   menu_id");
       sb.append("   , menu_nm");
+      sb.append("   , menu_ordr_value");
       sb.append("   , prjct_id");
       sb.append("   , prnts_menu_id");
-      sb.append("   , url_nm");
       sb.append("   , scrin_id");
-      sb.append("   , menu_ordr_value");
+      sb.append("   , url_nm");
       sb.append("   , regist_dt");
       sb.append(" )");
       sb.append(" VALUES (");
       sb.append("   '" + dto.getMenuId() + "' ");
       sb.append("   , '" + dto.getMenuNm() + "' ");
+      sb.append("   , '" + dto.getMenuOrdrValue() + "' ");
       sb.append("   , '" + dto.getPrjctId() + "' ");
       sb.append("   , '" + dto.getPrntsMenuId() + "' ");
-      sb.append("   , '" + dto.getUrlNm() + "' ");
       sb.append("   , '" + dto.getScrinId() + "' ");
-      sb.append("   , '" + dto.getMenuOrdrValue() + "' ");
+      sb.append("   , '" + dto.getUrlNm() + "' ");
       sb.append("   , '" + dto.getRegistDt() + "' ");
       sb.append(" )");
 
@@ -422,6 +425,7 @@ public class DeployServiceImpl implements DeployService {
    * @param jdbcTemplate
    * @param scrinGroupDtos
    */
+  @Deprecated(since = "")
   private void insertScrinGroup(JdbcTemplate jdbcTemplate, List<ScrinGroupDto> scrinGroupDtos) {
     if (null == scrinGroupDtos) {
       return;
@@ -487,15 +491,23 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   cmmn_code_id");
       sb.append("   , cmmn_code");
       sb.append("   , cmmn_code_nm");
+      sb.append("   , cmmn_code_cn");
       sb.append("   , prnts_cmmn_code");
       sb.append("   , use_at");
+      sb.append("   , register_id");
+      sb.append("   , register_nm");
+      sb.append("   , regist_dt");
       sb.append(" )");
       sb.append(" VALUES (");
       sb.append(" " + dto.getCmmnCodeId() + " ");
       sb.append("   ,'" + dto.getCmmnCode() + "' ");
       sb.append("   ,'" + dto.getCmmnCodeNm() + "' ");
+      sb.append("   ,'" + dto.getCmmnCodeCn() + "' ");
       sb.append("   ,'" + dto.getPrntsCmmnCode() + "' ");
       sb.append("   ,'" + dto.getUseAt() + "' ");
+      sb.append("   ,'" + dto.getRegisterId() + "' ");
+      sb.append("   ,'" + dto.getRegisterNm() + "' ");
+      sb.append("   ,'" + dto.getRegistDt() + "' ");
       sb.append(" )");
 
       jdbcTemplate.execute(sb.toString());
@@ -514,12 +526,18 @@ public class DeployServiceImpl implements DeployService {
     sb.append(" INSERT INTO " + DbUtil.getTableName(Prjct.class) + "(");
     sb.append("   prjct_id");
     sb.append("   , prjct_nm");
+    sb.append("   , prjct_cn");
     sb.append("   , user_id");
+    sb.append("   , regist_dt");
+    sb.append("   , updt_dt");
     sb.append(" )");
     sb.append(" VALUES (");
     sb.append("   '" + prjctDto.getPrjctId() + "' ");
     sb.append("   , '" + prjctDto.getPrjctNm() + "' ");
+    sb.append("   , '" + prjctDto.getPrjctCn() + "' ");
     sb.append("   , '" + prjctDto.getUserId() + "' ");
+    sb.append("   , '" + prjctDto.getRegistDt() + "' ");
+    sb.append("   , '" + prjctDto.getUpdtDt() + "' ");
     sb.append(" )");
 
     jdbcTemplate.execute(sb.toString());
@@ -551,18 +569,8 @@ public class DeployServiceImpl implements DeployService {
    * @param scrinGroupDtos
    * @return
    */
-  private List<ScrinDto> getScrins(List<ScrinGroupDto> scrinGroupDtos) {
-    List<ScrinDto> dtos = new ArrayList<>();
-
-    if (null == scrinGroupDtos) {
-      return dtos;
-    }
-
-    scrinGroupDtos.forEach(scrinGroupDto -> {
-      dtos.addAll(scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()));
-    });
-
-    return dtos;
+  private List<ScrinDto> getScrins(String prjctId) {
+    return scrinService.findAllByPrjctId(prjctId);
   }
 
   /**
@@ -607,7 +615,7 @@ public class DeployServiceImpl implements DeployService {
         + DbUtil.getTableName(ScrinGroup.class) + " WHERE prjct_id = '" + prjctId + "'");
 
     // 화면
-    List<Map<String, Object>> scrins = getScrins(trgetJdbcTemplate, scrinGroups);
+    List<Map<String, Object>> scrins = getScrins(trgetJdbcTemplate, prjctId);
 
     // 컴포넌트
     List<Map<String, Object>> compns = getCompns(trgetJdbcTemplate, scrins);
@@ -806,24 +814,19 @@ public class DeployServiceImpl implements DeployService {
    * 화면 목록 조회
    * 
    * @param jdbcTemplate
-   * @param scrinGroups  화면그룹 목록
+   * @param prjctId      프로젝트아이디
    * @return
    */
-  List<Map<String, Object>> getScrins(JdbcTemplate jdbcTemplate, List<Map<String, Object>> scrinGroups) {
+  List<Map<String, Object>> getScrins(JdbcTemplate jdbcTemplate, String prjctId) {
     List<Map<String, Object>> list = new ArrayList<>();
 
-    if (null == scrinGroups) {
+    if (null == prjctId) {
       return list;
     }
 
-    for (Map<String, Object> map : scrinGroups) {
-      List<Map<String, Object>> scrins = jdbcTemplate.queryForList("SELECT scrin_id FROM "
-          + DbUtil.getTableName(Scrin.class) + " WHERE scrin_group_id = '" + map.get("scrin_group_id") + "' ");
-      list.addAll(scrins);
+    return jdbcTemplate.queryForList(
+        "SELECT scrin_id FROM " + DbUtil.getTableName(Scrin.class) + " WHERE prjct_id = '" + prjctId + "' ");
 
-    }
-
-    return list;
   }
 
   /**
@@ -836,7 +839,7 @@ public class DeployServiceImpl implements DeployService {
 
     BasicDataSource ds = new BasicDataSource();
     ds.setDriverClassName(dbDriverService.getDbDriverNm(dto.getDbTyNm()));
-    ds.setUrl(dto.getDbUrlNm());
+    ds.setUrl(dbDriverService.getUrl(dto));
     ds.setUsername(dto.getDbUserNm());
     ds.setPassword(dto.getDbPasswordNm());
 
@@ -1222,6 +1225,20 @@ public class DeployServiceImpl implements DeployService {
     if (!exists) {
       compnDtos.add(compnDto);
     }
+  }
+
+  @Override
+  public Map<String, Long> deploy(String prjctId) throws SQLException {
+    List<TrgetSysDto> dtos = trgetSysService.findAllByPrjctId(prjctId);
+    if (0 == dtos.size()) {
+      throw new RuntimeException("not exists trget sys");
+    }
+
+    DeployDto dto = new DeployDto();
+    dto.setPrjctId(prjctId);
+    dto.setTrgetSysId(dtos.get(0).getTrgetSysId());
+
+    return deploy(dto);
   }
 
 }

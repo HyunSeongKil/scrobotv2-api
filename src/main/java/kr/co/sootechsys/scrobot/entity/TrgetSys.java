@@ -82,4 +82,18 @@ public class TrgetSys {
   @ApiModelProperty(value = "디비 명")
   private String dbNm;
 
+  /**
+   * 디비 호스트 명
+   */
+  @Column(name = "db_host_nm")
+  @ApiModelProperty(value = "디비 호스트 명")
+  private String dbHostNm;
+
+  /**
+   * 디비 포트 값
+   */
+  @Column(name = "db_port_value")
+  @ApiModelProperty(value = "디비 포트 값")
+  private Integer dbPortValue;
+
 }

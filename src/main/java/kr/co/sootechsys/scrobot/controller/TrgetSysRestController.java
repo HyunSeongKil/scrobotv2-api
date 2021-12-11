@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,10 +41,10 @@ public class TrgetSysRestController {
 
   @PostMapping()
   @ApiOperation(value = "등록")
-  public void regist(@RequestBody TrgetSysDto dto)
+  public ResponseEntity<Map<String, Object>> regist(@RequestBody TrgetSysDto dto)
       throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
       InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-    service.regist(dto);
+    return ResponseEntity.ok(Map.of("data", service.regist(dto)));
   }
 
   @PutMapping()
@@ -70,5 +71,11 @@ public class TrgetSysRestController {
   @ApiOperation(value = "목록 조회")
   public ResponseEntity<Map<String, Object>> list() {
     return ResponseEntity.ok(Map.of("data", service.findAll()));
+  }
+
+  @GetMapping("/by-prjct")
+  @ApiOperation(value = "프로젝트아이디로 목록 조회")
+  public ResponseEntity<Map<String, Object>> findAllByPrjctId(@RequestParam String prjctId) {
+    return ResponseEntity.ok(Map.of("data", service.findAllByPrjctId(prjctId)));
   }
 }

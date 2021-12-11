@@ -1,21 +1,33 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.entity.Prjct;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.persistence.PrjctRepository;
 import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.MenuService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
+import kr.co.sootechsys.scrobot.service.PrjctTrgetSysMapngService;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
+import kr.co.sootechsys.scrobot.service.TrgetSysService;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -28,24 +40,31 @@ public class PrjctServiceImpl implements PrjctService {
   private ScrinService scrinService;
   private CompnService compnService;
   private MenuService menuService;
+  private TrgetSysService trgetSysService;
+  private PrjctTrgetSysMapngService prjctTrgetSysMapngService;
 
-  public PrjctServiceImpl(PrjctRepository repo, ScrinGroupService scrinGroupService, ScrinService scrinService, CompnService compnService, MenuService menuService) {
+  public PrjctServiceImpl(PrjctRepository repo, PrjctTrgetSysMapngService prjctTrgetSysMapngService,
+      TrgetSysService trgetSysService, ScrinGroupService scrinGroupService, ScrinService scrinService,
+      CompnService compnService, MenuService menuService) {
     this.repo = repo;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
     this.compnService = compnService;
     this.menuService = menuService;
+    this.trgetSysService = trgetSysService;
+    this.prjctTrgetSysMapngService = prjctTrgetSysMapngService;
 
   }
 
   Prjct toEntity(PrjctDto dto) {
-    return Prjct.builder().registDt(new Date()).prjctId(Util.getShortUuid()).prjctNm(dto.getPrjctNm()).prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).build();
+    return Prjct.builder().registDt(new Date()).prjctId(Util.getShortUuid()).prjctNm(dto.getPrjctNm())
+        .prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).build();
   }
 
   PrjctDto toDto(Prjct e) {
-    return PrjctDto.builder().registDt(e.getRegistDt()).prjctId(e.getPrjctId()).prjctNm(e.getPrjctNm()).prjctCn(e.getPrjctCn()).userId(e.getUserId()).build();
+    return PrjctDto.builder().registDt(e.getRegistDt()).prjctId(e.getPrjctId()).prjctNm(e.getPrjctNm())
+        .prjctCn(e.getPrjctCn()).userId(e.getUserId()).build();
   }
-
 
   @Override
   public String regist(PrjctDto dto) {
@@ -86,10 +105,8 @@ public class PrjctServiceImpl implements PrjctService {
       scrinGroupService.deleteById(scrinGroupDto.getScrinGroupId());
     });
 
-
     // delete 메뉴
     menuService.deleteByPrjctId(prjctId);
-
 
     // delete 프로젝트
     repo.deleteById(prjctId);
@@ -113,7 +130,6 @@ public class PrjctServiceImpl implements PrjctService {
       dtos.add(toDto(e));
     });
 
-
     return dtos;
   }
 
@@ -133,7 +149,6 @@ public class PrjctServiceImpl implements PrjctService {
         scrinDto.setCompnDtos(compnService.findAllByScrinId(scrinDto.getScrinId()));
       });
     });
-
 
     // 프로젝트 등록
     prjctDto.setPrjctNm(prjctDto.getPrjctNm() + "(복사본)");
@@ -167,5 +182,35 @@ public class PrjctServiceImpl implements PrjctService {
     return newPrjctId;
   }
 
+  @Override
+  @Transactional
+  public void update(PrjctDto dto, TrgetSysDto trgetSysDto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    updt(dto);
+
+    if (null == trgetSysDto.getTrgetSysId() || 0 == trgetSysDto.getTrgetSysId().length()) {
+      //
+      String trgetSysId = trgetSysService.regist(trgetSysDto);
+      prjctTrgetSysMapngService.regist(dto.getPrjctId(), trgetSysId);
+    } else {
+      trgetSysService.updt(trgetSysDto);
+    }
+
+  }
+
+  @Override
+  @Transactional
+  public String regist(PrjctDto dto, TrgetSysDto trgetSysDto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    String prjctId = regist(dto);
+
+    String trgetSysId = trgetSysService.regist(trgetSysDto);
+
+    prjctTrgetSysMapngService.regist(prjctId, trgetSysId);
+
+    return prjctId;
+  }
 
 }
