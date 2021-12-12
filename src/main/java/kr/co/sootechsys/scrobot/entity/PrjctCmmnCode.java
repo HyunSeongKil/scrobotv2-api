@@ -36,7 +36,7 @@ public class PrjctCmmnCode {
   @ApiModelProperty(value = "프로젝트 아이디")
   private String prjctId;
 
-  @Column(name = "cmmn_code_id")
+  @Column(name = "cmmn_code")
   @ApiModelProperty(value = "공통 코드")
   private String cmmnCode;
 
@@ -44,9 +44,13 @@ public class PrjctCmmnCode {
   @ApiModelProperty(value = "공통 코드 명")
   private String cmmnCodeNm;
 
-  @Column(name = "prnts_prjct_cmmn_code")
+  @Column(name = "cmmn_code_cn")
+  @ApiModelProperty(value = "공통 코드 설명")
+  private String cmmnCodeCn;
+
+  @Column(name = "prnts_cmmn_code")
   @ApiModelProperty(value = "부모 공통 코드 ")
-  private String prntsPrjctCmmnCode;
+  private String prntsCmmnCode;
 
   @Column(name = "use_at")
   @ApiModelProperty(value = "사용 여부")

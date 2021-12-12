@@ -28,8 +28,11 @@ public class PrjctCmmnCodeDto {
   @ApiModelProperty(value = "공통 코드 명")
   private String cmmnCodeNm;
 
+  @ApiModelProperty(value = "공통 코드 설명")
+  private String cmmnCodeCn;
+
   @ApiModelProperty(value = "부모 공통 코드 ")
-  private String prntsPrjctCmmnCode;
+  private String prntsCmmnCode;
 
   @ApiModelProperty(value = "사용 여부")
   private String useAt;
