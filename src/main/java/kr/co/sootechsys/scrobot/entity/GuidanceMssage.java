@@ -42,6 +42,10 @@ public class GuidanceMssage {
   @ApiModelProperty(value = "등록자 아이디")
   private String registerId;
 
+  @Column(name = "prjct_id")
+  @ApiModelProperty(value = "프로젝트 아이디")
+  private String prjctId;
+
   @Column(name = "register_nm")
   @ApiModelProperty(value = "등록자 명")
   private String registerNm;

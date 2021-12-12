@@ -24,6 +24,9 @@ public class GuidanceMssageDto {
   @ApiModelProperty(value = "안내 메시지 내용")
   private String guidanceMssageCn;
 
+  @ApiModelProperty(value = "프로젝트 아이디")
+  private String prjctId;
+
   @ApiModelProperty(value = "등록자 아이디")
   private String registerId;
 
