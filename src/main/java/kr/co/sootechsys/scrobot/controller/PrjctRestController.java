@@ -69,7 +69,9 @@ public class PrjctRestController {
 
   @PostMapping("/copy")
   @ApiOperation(value = "프로젝트 복사")
-  public ResponseEntity<Map<String, Object>> copy(@RequestBody PrjctDto dto) {
+  public ResponseEntity<Map<String, Object>> copy(@RequestBody PrjctDto dto)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     return ResponseEntity.ok(Map.of("data", service.copy(dto.getPrjctId())));
   }
 

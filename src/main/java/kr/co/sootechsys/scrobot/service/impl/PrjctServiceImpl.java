@@ -6,26 +6,40 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import org.springframework.beans.NotWritablePropertyException;
+import org.springframework.jdbc.core.metadata.OracleCallMetaDataProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import io.swagger.annotations.Api;
+import kr.co.sootechsys.scrobot.domain.CompnDto;
+import kr.co.sootechsys.scrobot.domain.GuidanceMssageDto;
+import kr.co.sootechsys.scrobot.domain.MenuDto;
+import kr.co.sootechsys.scrobot.domain.PrjctCmmnCodeDto;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
+import kr.co.sootechsys.scrobot.domain.PrjctUserMapngDto;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.entity.Prjct;
+import kr.co.sootechsys.scrobot.entity.PrjctCmmnCode;
 import kr.co.sootechsys.scrobot.misc.Util;
 import kr.co.sootechsys.scrobot.persistence.PrjctRepository;
 import kr.co.sootechsys.scrobot.service.CompnService;
+import kr.co.sootechsys.scrobot.service.GuidanceMssageService;
 import kr.co.sootechsys.scrobot.service.MenuService;
+import kr.co.sootechsys.scrobot.service.PrjctCmmnCodeService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
 import kr.co.sootechsys.scrobot.service.PrjctTrgetSysMapngService;
+import kr.co.sootechsys.scrobot.service.PrjctUserMapngService;
 import kr.co.sootechsys.scrobot.service.ScrinGroupService;
 import kr.co.sootechsys.scrobot.service.ScrinService;
 import kr.co.sootechsys.scrobot.service.TrgetSysService;
@@ -43,10 +57,14 @@ public class PrjctServiceImpl implements PrjctService {
   private MenuService menuService;
   private TrgetSysService trgetSysService;
   private PrjctTrgetSysMapngService prjctTrgetSysMapngService;
+  private PrjctCmmnCodeService prjctCmmnCodeService;
+  private GuidanceMssageService guidanceMssageService;
+  private PrjctUserMapngService prjctUserMapngService;
 
   public PrjctServiceImpl(PrjctRepository repo, PrjctTrgetSysMapngService prjctTrgetSysMapngService,
       TrgetSysService trgetSysService, ScrinGroupService scrinGroupService, ScrinService scrinService,
-      CompnService compnService, MenuService menuService) {
+      CompnService compnService, MenuService menuService, PrjctCmmnCodeService prjctCmmnCodeService,
+      GuidanceMssageService guidanceMssageService, PrjctUserMapngService prjctUserMapngService) {
     this.repo = repo;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
@@ -54,12 +72,25 @@ public class PrjctServiceImpl implements PrjctService {
     this.menuService = menuService;
     this.trgetSysService = trgetSysService;
     this.prjctTrgetSysMapngService = prjctTrgetSysMapngService;
+    this.prjctCmmnCodeService = prjctCmmnCodeService;
+    this.guidanceMssageService = guidanceMssageService;
+    this.prjctUserMapngService = prjctUserMapngService;
 
   }
 
   Prjct toEntity(PrjctDto dto) {
-    return Prjct.builder().registDt(new Date()).prjctId(Util.getShortUuid()).prjctNm(dto.getPrjctNm())
-        .prjctCn(dto.getPrjctCn()).userId(dto.getUserId()).updtDt(new Date()).build();
+    Prjct e = Prjct.builder().prjctNm(dto.getPrjctNm()).prjctCn(dto.getPrjctCn()).userId(dto.getUserId())
+        .updtDt(new Date()).build();
+
+    if (null == dto.getPrjctId() || 0 == dto.getPrjctId().length()) {
+      e.setPrjctId(Util.getShortUuid());
+      e.setRegistDt(new Date());
+    } else {
+      e.setPrjctId(dto.getPrjctId());
+      e.setRegistDt(dto.getRegistDt());
+    }
+
+    return e;
   }
 
   PrjctDto toDto(Prjct e) {
@@ -136,58 +167,251 @@ public class PrjctServiceImpl implements PrjctService {
 
   @Override
   @Transactional
-  public String copy(String oldPrjctId) {
-    // old 프로젝트 조회
-    PrjctDto prjctDto = findById(oldPrjctId);
-    // old 화면 목록 조회
-    List<ScrinDto> scrinDtos = scrinService.findAllByPrjctId(oldPrjctId);
-    // old 콤포넌트 목록 조회
-    scrinDtos.forEach(scrinDto -> {
-      scrinDto.setCompnDtos(compnService.findAllByScrinId(scrinDto.getScrinId()));
-    });
-    // old 대상 시스템 목록 조회
-    List<TrgetSysDto> trgetSysDtos = trgetSysService.findAllByPrjctId(oldPrjctId);
+  public String copy(String oldPrjctId)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+    class InnerClass {
+      /**
+       * 프로젝트 복사
+       */
+      String copyPrjct(String oldPrjctId) {
+        // 1
+        PrjctDto dto = findById(oldPrjctId);
+        // 2
+        dto.setPrjctId(null);
+        dto.setPrjctNm(dto.getPrjctNm() + "(복사본)");
+        // 3
+        return regist(dto);
 
-    // 화면그룹 목록 조회
-    prjctDto.setScrinGroupDtos(scrinGroupService.findAllByPrjctId(prjctDto.getPrjctId()));
-    prjctDto.getScrinGroupDtos().forEach(scrinGroupDto -> {
-      // 화면 목록 조회
-      scrinGroupDto.setScrinDtos(scrinService.findAllByScrinGroupId(scrinGroupDto.getScrinGroupId()));
+      }
 
-      scrinGroupDto.getScrinDtos().forEach(scrinDto -> {
-        // 콤포넌트 목록 조회
-        scrinDto.setCompnDtos(compnService.findAllByScrinId(scrinDto.getScrinId()));
-      });
-    });
+      /**
+       * 프로젝트-사용자 매핑 복사
+       * 
+       * @param oldPrjctId
+       * @param newPrjctId
+       */
+      void copyPrjctUserMapng(String oldPrjctId, String newPrjctId) {
+        // 1. get old list
+        List<PrjctUserMapngDto> dtos = prjctUserMapngService.findAllByPrjctId(oldPrjctId);
+
+        dtos.forEach(x -> {
+          // 2. change value
+          x.setPrjctId(newPrjctId);
+          x.setPrjctUserMapngId(null);
+          // 3. new regist
+          prjctUserMapngService.regist(x);
+        });
+      }
+
+      /**
+       * 프로젝트-대상시스템 매핑 복사
+       * 
+       * @param oldPrjctId
+       * @param newPrjctId
+       * @param newTrgetSysId
+       */
+      void copyPrjctTrgetSysMapng(String oldPrjctId, String newPrjctId, String newTrgetSysId) {
+        // 1. get old list
+        PrjctTrgetSysMapngDto dto = prjctTrgetSysMapngService.findByPrjctId(oldPrjctId);
+        if (null == dto) {
+          return;
+        }
+
+        // 2. change value
+        dto.setPrjctTrgetSysMapngId(null);
+        dto.setPrjctId(newPrjctId);
+        dto.setTrgetSysId(newTrgetSysId);
+        // 3. new regist
+        prjctTrgetSysMapngService.regist(dto);
+      }
+
+      /**
+       * 대상 시스템 복사
+       * 
+       * @param oldPrjctId
+       * @return
+       * @throws InvalidKeyException
+       * @throws UnsupportedEncodingException
+       * @throws NoSuchAlgorithmException
+       * @throws NoSuchPaddingException
+       * @throws InvalidAlgorithmParameterException
+       * @throws IllegalBlockSizeException
+       * @throws BadPaddingException
+       */
+      String copyTrgetSys(String oldPrjctId)
+          throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+          InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+        List<TrgetSysDto> dtos = trgetSysService.findAllByPrjctId(oldPrjctId);
+
+        String trgetSysId = null;
+
+        for (TrgetSysDto dto : dtos) {
+          // 2
+          dto.setTrgetSysId(null);
+          // 3 new regist
+          trgetSysId = trgetSysService.regist(dto);
+
+        }
+
+        return trgetSysId;
+      }
+
+      /**
+       * 안내 메시지 복사
+       * 
+       * @param oldPrjctId
+       * @param newPrjctId
+       */
+      void copyGuidanceMessage(String oldPrjctId, String newPrjctId) {
+        // 1
+        List<GuidanceMssageDto> dtos = guidanceMssageService.findAllByPrjctId(oldPrjctId);
+
+        for (GuidanceMssageDto dto : dtos) {
+          // 2
+          dto.setGuidanceMssageId(null);
+          dto.setPrjctId(newPrjctId);
+          // 3
+          guidanceMssageService.regist(dto);
+        }
+      }
+
+      /**
+       * 프로젝트 공통 코드 복사
+       * 
+       * @param oldPrjctId
+       * @param newPrjctId
+       */
+      void copyPrjctCmmnCode(String oldPrjctId, String newPrjctId) {
+        // 1
+        List<PrjctCmmnCodeDto> dtos = prjctCmmnCodeService.findAllByPrjctId(oldPrjctId);
+
+        for (PrjctCmmnCodeDto dto : dtos) {
+          // 2
+          dto.setPrjctCmmnCodeId(null);
+          dto.setPrjctId(newPrjctId);
+          // 3
+          prjctCmmnCodeService.regist(dto);
+        }
+      }
+
+      /**
+       * 메뉴 복사
+       * 
+       * @param oldPrjctId
+       * @param newPrjctId
+       */
+      void copyMenu(String oldPrjctId, String newPrjctId) {
+
+        List<String> oldMenus = new ArrayList<>();
+        List<String> newMenus = new ArrayList<>();
+
+        // 1
+        List<MenuDto> dtos = menuService.findAllByPrjctId(oldPrjctId);
+
+        for (MenuDto dto : dtos) {
+          oldMenus.add(dto.getMenuId());
+
+          // 2
+          dto.setMenuId(null);
+          dto.setPrjctId(newPrjctId);
+          // 3
+          String newMenuId = menuService.regist(dto);
+          newMenus.add(newMenuId);
+        }
+
+        // 신규로 등록된 목록 조회
+        dtos = menuService.findAllByPrjctId(newPrjctId);
+        for (MenuDto dto : dtos) {
+          if ("-".equals(dto.getPrntsMenuId())) {
+            continue;
+          }
+
+          // 신규 메뉴아이디 조회
+          String newPrntsMenuId = getNewMenuId(dto.getPrntsMenuId(), oldMenus, newMenus);
+          dto.setPrntsMenuId(newPrntsMenuId);
+          // 업데이트
+          menuService.updt(dto);
+        }
+
+        // 화면 테이블에 존재하는 메뉴아이디 업데이트
+        List<ScrinDto> scrinDtos = scrinService.findAllByPrjctId(newPrjctId);
+        for (ScrinDto dto : scrinDtos) {
+          log.debug("old {}", dto);
+          String newMenuId = getNewMenuId(dto.getMenuId(), oldMenus, newMenus);
+          dto.setMenuId(newMenuId);
+          //
+          scrinService.updt(dto);
+          log.debug("new {}", dto);
+        }
+      }
+
+      String getNewMenuId(String oldMenuId, List<String> oldMenus, List<String> newMenus) {
+        for (int i = 0; i < oldMenus.size(); i++) {
+          if (oldMenuId.equals(oldMenus.get(i))) {
+            return newMenus.get(i);
+          }
+        }
+
+        return null;
+      }
+
+      /**
+       * 화면&콤포넌트 복사
+       * 
+       * @param oldPrjctId
+       * @param newPrjctId
+       */
+      void copyScrinAndCompn(String oldPrjctId, String newPrjctId) {
+        // 1
+        List<ScrinDto> scrinDtos = scrinService.findAllByPrjctId(oldPrjctId);
+
+        for (ScrinDto dto : scrinDtos) {
+          // 1
+          dto.setCompnDtos(compnService.findAllByScrinId(dto.getScrinId()));
+        }
+
+        // 화면
+        for (ScrinDto scrinDto : scrinDtos) {
+          // 2
+          scrinDto.setScrinId(null);
+          scrinDto.setPrjctId(newPrjctId);
+          // 3
+          String newScrinId = scrinService.regist(scrinDto);
+
+          // 콤포넌트
+          for (CompnDto compnDto : scrinDto.getCompnDtos()) {
+            // 2
+            compnDto.setCompnId(null);
+            compnDto.setScrinId(newScrinId);
+            // 3
+            compnService.regist(compnDto);
+          }
+        }
+      }
+    }
+    ;
+
+    //
+    InnerClass ic = new InnerClass();
 
     // 프로젝트 등록
-    prjctDto.setPrjctNm(prjctDto.getPrjctNm() + "(복사본)");
-    log.debug("{}", prjctDto);
-    String newPrjctId = regist(prjctDto);
-
-    prjctDto.getScrinGroupDtos().forEach(scrinGroupDto -> {
-      scrinGroupDto.setPrjctId(newPrjctId);
-
-      // 화면 그룹 등록
-      log.debug("{}", scrinGroupDto);
-      String newScrinGroupId = scrinGroupService.regist(scrinGroupDto);
-
-      scrinGroupDto.getScrinDtos().forEach(scrinDto -> {
-        scrinDto.setScrinGroupId(newScrinGroupId);
-
-        // 화면 등록
-        log.debug("{}", scrinDto);
-        String newScrinId = scrinService.regist(scrinDto);
-
-        scrinDto.getCompnDtos().forEach(compnDto -> {
-          compnDto.setScrinId(newScrinId);
-
-          // 콤포넌트 등록
-          log.debug("{}", compnDto);
-          compnService.regist(compnDto);
-        });
-      });
-    });
+    String newPrjctId = ic.copyPrjct(oldPrjctId);
+    log.debug("newPrjctId: {}", newPrjctId);
+    // 화면&콤포넌트 목록
+    ic.copyScrinAndCompn(oldPrjctId, newPrjctId);
+    // 메뉴 목록
+    ic.copyMenu(oldPrjctId, newPrjctId);
+    // 프로젝트 공통코드
+    ic.copyPrjctCmmnCode(oldPrjctId, newPrjctId);
+    // 안내 메시지
+    ic.copyGuidanceMessage(oldPrjctId, newPrjctId);
+    // 대상시스템
+    String newTrgetSysId = ic.copyTrgetSys(oldPrjctId);
+    // 프로젝트-대상시스템 매핑
+    ic.copyPrjctTrgetSysMapng(oldPrjctId, newPrjctId, newTrgetSysId);
+    // 프로젝트-사용자 매핑
+    ic.copyPrjctUserMapng(oldPrjctId, newPrjctId);
 
     return newPrjctId;
   }

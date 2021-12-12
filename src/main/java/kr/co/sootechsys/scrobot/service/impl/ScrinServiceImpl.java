@@ -38,14 +38,16 @@ public class ScrinServiceImpl implements ScrinService {
   }
 
   Scrin toEntity(ScrinDto dto) {
-    Scrin e = Scrin.builder().scrinId(dto.getScrinSeCode() + Util.getShortUuid()).scrinNm(dto.getScrinNm())
-        .scrinSeCode(dto.getScrinSeCode()).scrinGroupId(dto.getScrinGroupId()).menuId(dto.getMenuId())
+    Scrin e = Scrin.builder().scrinNm(dto.getScrinNm()).scrinSeCode(dto.getScrinSeCode())
+        .scrinGroupId(dto.getScrinGroupId()).menuId(dto.getMenuId())
         .prjctId(dto.getPrjctId()).stdrDataNm(dto.getStdrDataNm()).build();
 
     if (null == dto.getScrinId() || 0 == dto.getScrinId().length()) {
+      e.setScrinId(Util.getShortUuid());
       e.setRegistDt(new Date());
     } else {
       e.setScrinId(dto.getScrinId());
+      e.setRegistDt(dto.getRegistDt());
     }
 
     return e;
@@ -115,16 +117,7 @@ public class ScrinServiceImpl implements ScrinService {
   @Override
   @Transactional
   public void updt(ScrinDto dto) {
-    Optional<Scrin> opt = repo.findById(dto.getScrinId());
-    if (opt.isEmpty()) {
-      return;
-    }
-
-    Scrin e = opt.get();
-    e.setScrinNm(dto.getScrinNm());
-    e.setScrinSeCode(dto.getScrinSeCode());
-
-    repo.save(e);
+    repo.save(toEntity(dto));
   }
 
   @Override

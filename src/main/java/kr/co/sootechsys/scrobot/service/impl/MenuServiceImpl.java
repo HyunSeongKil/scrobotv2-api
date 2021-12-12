@@ -42,6 +42,7 @@ public class MenuServiceImpl implements MenuService {
       e.setRegistDt(new Date());
     } else {
       e.setMenuId(dto.getMenuId());
+      e.setRegistDt(dto.getRegistDt());
     }
 
     return e;
