@@ -50,9 +50,29 @@ public class MenuScrinMapngRestController {
     return ResponseEntity.ok(Map.of("data", service.findAllByMenuId(menuId)));
   }
 
+  @GetMapping("/by-scrin")
+  @ApiOperation(value = "화면아이디로 목록 조회")
+  public ResponseEntity<Map<String, Object>> findAllByScrinId(@RequestParam String scrinId) {
+    return ResponseEntity.ok(Map.of("data", service.findAllByScrinId(scrinId)));
+  }
+
   @GetMapping("/exists")
   @ApiOperation(value = "매핑정보 존재하는지 여부")
   public ResponseEntity<Map<String, Object>> existsByMenuId(@RequestParam String menuId) {
     return ResponseEntity.ok(Map.of("data", service.existsByMenuId(menuId)));
+  }
+
+  @GetMapping("/by-menu-scrin")
+  @ApiOperation(value = "메뉴아이디+화면아이디로 조회")
+  public ResponseEntity<Map<String, Object>> findByMenuIdAndScrinId(@RequestParam String menuId,
+      @RequestParam String scrinId) {
+    return ResponseEntity.ok(Map.of("data", service.findByMenuIdAndScrinId(menuId, scrinId)));
+  }
+
+  @GetMapping("/exists-by-menu-scrin")
+  @ApiOperation(value = "메뉴아이디+화면아이디로 조회")
+  public ResponseEntity<Map<String, Object>> existsByMenuIdAndScrinId(@RequestParam String menuId,
+      @RequestParam String scrinId) {
+    return ResponseEntity.ok(Map.of("data", null == service.findByMenuIdAndScrinId(menuId, scrinId) ? "N" : "Y"));
   }
 }

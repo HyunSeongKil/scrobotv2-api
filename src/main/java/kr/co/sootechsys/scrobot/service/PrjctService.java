@@ -49,7 +49,7 @@ public interface PrjctService {
   PrjctDto findById(String prjctId);
 
   /**
-   * 사용자 아이디로 목록 조회
+   * 사용자 아이디로 목록 조회 (프로젝트-사용자 매핑 테이블과 조인)
    * 
    * @param userId 사용자 아이디
    * @return

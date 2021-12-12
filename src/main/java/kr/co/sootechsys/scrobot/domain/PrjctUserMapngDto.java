@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.domain;
 
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -24,4 +26,7 @@ public class PrjctUserMapngDto {
 
   @ApiModelProperty(value = "관리자 여부")
   private String mngrAt;
+
+  @ApiModelProperty(value = "등록 일시")
+  private Date registDt;
 }

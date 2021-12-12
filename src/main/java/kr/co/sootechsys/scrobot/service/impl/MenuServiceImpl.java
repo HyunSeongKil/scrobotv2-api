@@ -36,7 +36,7 @@ public class MenuServiceImpl implements MenuService {
     e.setPrjctId(dto.getPrjctId());
     e.setPrntsMenuId(dto.getPrntsMenuId());
     e.setUrlNm(dto.getUrlNm());
-    e.setScrinId(dto.getScrinId());
+    // e.setScrinId(dto.getScrinId());
 
     if (null == dto.getMenuId() || "" == dto.getMenuId()) {
       e.setRegistDt(new Date());
@@ -55,7 +55,7 @@ public class MenuServiceImpl implements MenuService {
     dto.setPrjctId(e.getPrjctId());
     dto.setPrntsMenuId(e.getPrntsMenuId());
     dto.setUrlNm(e.getUrlNm());
-    dto.setScrinId(e.getScrinId());
+    // dto.setScrinId(e.getScrinId());
     dto.setRegistDt(e.getRegistDt());
 
     return dto;

@@ -1,6 +1,8 @@
 package kr.co.sootechsys.scrobot.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import kr.co.sootechsys.scrobot.domain.PrjctUserMapngDto;
 import kr.co.sootechsys.scrobot.entity.PrjctUserMapng;

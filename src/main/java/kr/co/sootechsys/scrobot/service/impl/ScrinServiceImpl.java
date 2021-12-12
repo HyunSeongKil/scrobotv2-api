@@ -34,14 +34,13 @@ public class ScrinServiceImpl implements ScrinService {
   ScrinDto toDto(Scrin e) {
     return ScrinDto.builder().scrinId(e.getScrinId()).scrinNm(e.getScrinNm()).scrinSeCode(e.getScrinSeCode())
         .scrinGroupId(e.getScrinGroupId()).menuId(e.getMenuId()).prjctId(e.getPrjctId()).registDt(e.getRegistDt())
-        .build();
+        .stdrDataNm(e.getStdrDataNm()).build();
   }
 
   Scrin toEntity(ScrinDto dto) {
     Scrin e = Scrin.builder().scrinId(dto.getScrinSeCode() + Util.getShortUuid()).scrinNm(dto.getScrinNm())
         .scrinSeCode(dto.getScrinSeCode()).scrinGroupId(dto.getScrinGroupId()).menuId(dto.getMenuId())
-        .prjctId(dto.getPrjctId())
-        .build();
+        .prjctId(dto.getPrjctId()).stdrDataNm(dto.getStdrDataNm()).build();
 
     if (null == dto.getScrinId() || 0 == dto.getScrinId().length()) {
       e.setRegistDt(new Date());

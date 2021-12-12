@@ -77,6 +77,13 @@ public class Scrin {
   private String menuId;
 
   /**
+   * 기준 데이터 명
+   */
+  @Column(name = "stdr_data_nm")
+  @ApiModelProperty(value = "기준 데이터 명")
+  private String stdrDataNm;
+
+  /**
    * 등록 일시
    */
   @Column(name = "regist_dt")

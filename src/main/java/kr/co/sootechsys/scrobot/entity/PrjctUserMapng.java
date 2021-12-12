@@ -1,5 +1,7 @@
 package kr.co.sootechsys.scrobot.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,4 +41,8 @@ public class PrjctUserMapng {
   @Column(name = "mngr_at")
   @ApiModelProperty(value = "관리자 여부")
   private String mngrAt;
+
+  @Column(name = "regist_dt")
+  @ApiModelProperty(value = "등록 일시")
+  private Date registDt;
 }

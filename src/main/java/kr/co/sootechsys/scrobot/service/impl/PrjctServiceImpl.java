@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import io.swagger.annotations.Api;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
+import kr.co.sootechsys.scrobot.domain.ScrinDto;
 import kr.co.sootechsys.scrobot.domain.TrgetSysDto;
 import kr.co.sootechsys.scrobot.entity.Prjct;
 import kr.co.sootechsys.scrobot.misc.Util;
@@ -136,8 +137,17 @@ public class PrjctServiceImpl implements PrjctService {
   @Override
   @Transactional
   public String copy(String oldPrjctId) {
-    // 프로젝트 조회
+    // old 프로젝트 조회
     PrjctDto prjctDto = findById(oldPrjctId);
+    // old 화면 목록 조회
+    List<ScrinDto> scrinDtos = scrinService.findAllByPrjctId(oldPrjctId);
+    // old 콤포넌트 목록 조회
+    scrinDtos.forEach(scrinDto -> {
+      scrinDto.setCompnDtos(compnService.findAllByScrinId(scrinDto.getScrinId()));
+    });
+    // old 대상 시스템 목록 조회
+    List<TrgetSysDto> trgetSysDtos = trgetSysService.findAllByPrjctId(oldPrjctId);
+
     // 화면그룹 목록 조회
     prjctDto.setScrinGroupDtos(scrinGroupService.findAllByPrjctId(prjctDto.getPrjctId()));
     prjctDto.getScrinGroupDtos().forEach(scrinGroupDto -> {

@@ -14,7 +14,7 @@ import kr.co.sootechsys.scrobot.entity.User;
 @Api(value = "회원 레포지토리")
 public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
 
-  @Query(value = "SELECT a FROM User a INNER JOIN PrjctUserMapng mapng ON a.userId = mapng.prjctUserMapngId WHERE mapng.prjctId = :prjctId")
+  @Query(value = "SELECT a FROM User a INNER JOIN PrjctUserMapng mapng ON a.userId = mapng.userId WHERE mapng.prjctId = :prjctId")
   @ApiOperation(value = "프로젝트아이디로 사용자 목록 조회")
   Iterable<User> findAllByPrjctId(@Param("prjctId") String prjctId);
 

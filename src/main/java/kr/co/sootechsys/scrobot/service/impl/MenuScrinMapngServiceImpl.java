@@ -79,4 +79,25 @@ public class MenuScrinMapngServiceImpl implements MenuScrinMapngService {
 
   }
 
+  @Override
+  public MenuScrinMapngDto findByMenuIdAndScrinId(String menuId, String scrinId) {
+    Optional<MenuScrinMapng> opt = repo.findByMenuIdAndScrinId(menuId, scrinId);
+    if (opt.isPresent()) {
+      return toDto(opt.get());
+    }
+
+    return null;
+  }
+
+  @Override
+  public List<MenuScrinMapngDto> findAllByScrinId(String scrinId) {
+    List<MenuScrinMapngDto> dtos = new ArrayList<>();
+
+    repo.findAllByScrinId(scrinId).forEach(e -> {
+      dtos.add(toDto(e));
+    });
+
+    return dtos;
+  }
+
 }

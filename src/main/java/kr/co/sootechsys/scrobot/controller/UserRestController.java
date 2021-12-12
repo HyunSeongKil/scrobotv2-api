@@ -41,34 +41,39 @@ public class UserRestController {
   @PutMapping("/reissue")
   @ApiOperation(value = "토큰 재발급")
   public ResponseEntity<Map<String, Object>> reIssueToken(@RequestBody Map<String, Object> map)
-      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+      UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
     return ResponseEntity.ok(Map.of("data", service.reIssueToken(map.get("refreshToken").toString())));
   }
 
   @PutMapping("/signin")
   @ApiOperation(value = "signin")
   public ResponseEntity<Map<String, Object>> signin(@RequestBody UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     return ResponseEntity.ok(Map.of("data", service.signin(dto)));
   }
 
   @PostMapping("/join")
   @ApiOperation(value = "회원가입")
   public void join(@RequestBody UserDto dto)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     service.join(dto);
   }
 
   @GetMapping("/ts")
   @ApiOperation(value = "ts")
   public ResponseEntity<Map<String, Object>> ts() {
-    return ResponseEntity.ok(Map.of("form", Util.createFormGroupString(UserDto.class), "item", Util.createItemString(UserDto.class)));
+    return ResponseEntity
+        .ok(Map.of("form", Util.createFormGroupString(UserDto.class), "item", Util.createItemString(UserDto.class)));
   }
 
   @GetMapping("/dupl")
   @ApiOperation(value = "아이디 중복 검사")
   public ResponseEntity<Map<String, Object>> checkDupl(@RequestParam String userId)
-      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+      UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
     UserDto dto = service.findById(userId);
 
     return ResponseEntity.ok(Map.of("data", null == dto ? "N" : "Y"));
@@ -82,11 +87,12 @@ public class UserRestController {
 
   @GetMapping("/find-id")
   @ApiOperation(value = "id 찾기")
-  public ResponseEntity<Map<String, Object>> findIdByUserNmAndTelno(@RequestParam String userNm, @RequestParam String telno)
-      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+  public ResponseEntity<Map<String, Object>> findIdByUserNmAndTelno(@RequestParam String userNm,
+      @RequestParam String telno)
+      throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException,
+      InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
     return ResponseEntity.ok(Map.of("data", service.findIdByUserNmAndTelno(userNm, telno)));
   }
-
 
   @GetMapping()
   @ApiOperation(value = "목록 조회")
@@ -94,10 +100,20 @@ public class UserRestController {
     return ResponseEntity.ok(service.findAll(searchDto, pageable));
   }
 
+  @GetMapping("/exists")
+  @ApiOperation(value = "존재여부 ")
+  public ResponseEntity<Map<String, Object>> existsByUserId(@RequestParam String userId)
+      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+      UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+    return ResponseEntity.ok(Map.of("data", null != service.findById(userId) ? "Y" : "N"));
+  }
+
   @GetMapping("/{userId}")
   @ApiOperation(value = "상세 조회")
   public ResponseEntity<Map<String, Object>> findById(@PathVariable String userId)
-      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
+      throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+      UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException {
     return ResponseEntity.ok(Map.of("data", service.findById(userId)));
   }
+
 }

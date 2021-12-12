@@ -1,9 +1,11 @@
 package kr.co.sootechsys.scrobot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.sootechsys.scrobot.domain.PrjctUserMapngDto;
 import kr.co.sootechsys.scrobot.entity.PrjctUserMapng;
@@ -23,7 +25,7 @@ public class PrjctUserMapngServiceImpl implements PrjctUserMapngService {
         .mngrAt(dto.getMngrAt()).build();
 
     if (null == dto.getPrjctUserMapngId() || 0 >= dto.getPrjctUserMapngId()) {
-      //
+      e.setRegistDt(new Date());
     } else {
       e.setPrjctUserMapngId(dto.getPrjctUserMapngId());
     }
@@ -33,7 +35,7 @@ public class PrjctUserMapngServiceImpl implements PrjctUserMapngService {
 
   PrjctUserMapngDto toDto(PrjctUserMapng e) {
     return PrjctUserMapngDto.builder().prjctId(e.getPrjctId()).prjctUserMapngId(e.getPrjctUserMapngId())
-        .userId(e.getUserId()).mngrAt(e.getMngrAt()).build();
+        .userId(e.getUserId()).mngrAt(e.getMngrAt()).registDt(e.getRegistDt()).build();
   }
 
   @Override
@@ -71,6 +73,19 @@ public class PrjctUserMapngServiceImpl implements PrjctUserMapngService {
     });
 
     return dtos;
+  }
+
+  @Override
+  @Transactional
+  public void updateToMngr(PrjctUserMapngDto dto) {
+    // 다른 사용자들은 관리자에서 해제
+    repo.findAllByPrjctId(dto.getPrjctId()).forEach(e -> {
+      e.setMngrAt("N");
+      repo.save(e);
+    });
+
+    //
+    repo.save(toEntity(dto));
   }
 
 }

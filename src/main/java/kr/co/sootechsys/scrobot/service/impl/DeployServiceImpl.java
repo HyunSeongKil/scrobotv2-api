@@ -30,6 +30,7 @@ import kr.co.sootechsys.scrobot.domain.CompnDto;
 import kr.co.sootechsys.scrobot.domain.DbProduct;
 import kr.co.sootechsys.scrobot.domain.DeployDto;
 import kr.co.sootechsys.scrobot.domain.MenuDto;
+import kr.co.sootechsys.scrobot.domain.MenuScrinMapngDto;
 import kr.co.sootechsys.scrobot.domain.PrjctDto;
 import kr.co.sootechsys.scrobot.domain.PrjctTrgetSysMapngDto;
 import kr.co.sootechsys.scrobot.domain.ScrinDto;
@@ -40,6 +41,7 @@ import kr.co.sootechsys.scrobot.entity.AtchmnflGroup;
 import kr.co.sootechsys.scrobot.entity.CmmnCode;
 import kr.co.sootechsys.scrobot.entity.Compn;
 import kr.co.sootechsys.scrobot.entity.Menu;
+import kr.co.sootechsys.scrobot.entity.MenuScrinMapng;
 import kr.co.sootechsys.scrobot.entity.Prjct;
 import kr.co.sootechsys.scrobot.entity.PrjctTrgetSysMapng;
 import kr.co.sootechsys.scrobot.entity.Scrin;
@@ -53,6 +55,7 @@ import kr.co.sootechsys.scrobot.service.CmmnCodeService;
 import kr.co.sootechsys.scrobot.service.CompnService;
 import kr.co.sootechsys.scrobot.service.DbDriverService;
 import kr.co.sootechsys.scrobot.service.DeployService;
+import kr.co.sootechsys.scrobot.service.MenuScrinMapngService;
 import kr.co.sootechsys.scrobot.service.MenuService;
 import kr.co.sootechsys.scrobot.service.PrjctService;
 import kr.co.sootechsys.scrobot.service.PrjctTrgetSysMapngService;
@@ -68,6 +71,7 @@ public class DeployServiceImpl implements DeployService {
 
   private PrjctService prjctService;
   private MenuService menuService;
+  private MenuScrinMapngService menuScrinMapngService;
   private ScrinGroupService scrinGroupService;
   private ScrinService scrinService;
   private CompnService compnService;
@@ -79,6 +83,7 @@ public class DeployServiceImpl implements DeployService {
   private AtchmnflService atchmnflService;
 
   public DeployServiceImpl(CmmnCodeService cmmnCodeService, PrjctService prjctService, MenuService menuService,
+      MenuScrinMapngService menuScrinMapngService,
       ScrinGroupService scrinGroupService, ScrinService scrinService,
       CompnService compnService, TrgetSysService trgetSysService, PrjctTrgetSysMapngService prjctTrgetSysMapngService,
       DbDriverService dbDriverService, AtchmnflGroupService atchmnflGroupService,
@@ -86,6 +91,7 @@ public class DeployServiceImpl implements DeployService {
     this.cmmnCodeService = cmmnCodeService;
     this.prjctService = prjctService;
     this.menuService = menuService;
+    this.menuScrinMapngService = menuScrinMapngService;
     this.scrinGroupService = scrinGroupService;
     this.scrinService = scrinService;
     this.compnService = compnService;
@@ -113,8 +119,8 @@ public class DeployServiceImpl implements DeployService {
       trgetSysDto.setDbTyNm(DbUtil.getDbProductName(trgetJdbcTemplate));
 
       //
-      executeBasicDdl(trgetJdbcTemplate, trgetSysDto, CmmnCode.class, Compn.class, Menu.class, Prjct.class, Scrin.class,
-          TrgetSys.class, PrjctTrgetSysMapng.class, AtchmnflGroup.class, Atchmnfl.class);
+      executeBasicDdl(trgetJdbcTemplate, trgetSysDto, CmmnCode.class, Compn.class, Menu.class, MenuScrinMapng.class,
+          Prjct.class, Scrin.class, TrgetSys.class, PrjctTrgetSysMapng.class, AtchmnflGroup.class, Atchmnfl.class);
 
       //
       deleteOldData(trgetJdbcTemplate, dto.getPrjctId());
@@ -204,26 +210,28 @@ public class DeployServiceImpl implements DeployService {
   }
 
   @Transactional
-  void insertNewData(JdbcTemplate trgetJjdbcTemplate, String prjctId) {
+  void insertNewData(JdbcTemplate trgetJdbcTemplate, String prjctId) {
     List<CmmnCodeDto> cmmnCodeDtos = cmmnCodeService.findAll();
     PrjctDto prjctDto = prjctService.findById(prjctId);
     List<ScrinGroupDto> scrinGroupDtos = getScrinGroups(prjctId);
     List<MenuDto> menuDtos = getMenus(prjctId);
+    List<MenuScrinMapngDto> menuScrinMapngDtos = getMenuScrinMapngs(menuDtos);
     List<ScrinDto> scrinDtos = getScrins(prjctId);
     List<CompnDto> compnDtos = getCompns(scrinDtos);
     PrjctTrgetSysMapngDto prjctTrgetSysMapng = prjctTrgetSysMapngService.findByPrjctId(prjctId);
     List<AtchmnflGroupDto> atchmnflGroupDtos = atchmnflGroupService.findAllByPrjctId(prjctId);
     List<AtchmnflDto> atchmnflDtos = atchmnflService.findAllByPrjctId(prjctId);
 
-    insertCmmnCode(trgetJjdbcTemplate, cmmnCodeDtos);
-    insertPrjct(trgetJjdbcTemplate, prjctDto);
-    insertMenu(trgetJjdbcTemplate, menuDtos);
-    insertScrinGroup(trgetJjdbcTemplate, scrinGroupDtos);
-    insertScrin(trgetJjdbcTemplate, scrinDtos);
-    insertCompn(trgetJjdbcTemplate, compnDtos);
-    insertPrjctTrgetSysMapng(trgetJjdbcTemplate, prjctTrgetSysMapng);
-    insertAtchmnflGroup(trgetJjdbcTemplate, atchmnflGroupDtos);
-    insertAtchmnfl(trgetJjdbcTemplate, atchmnflDtos);
+    insertCmmnCode(trgetJdbcTemplate, cmmnCodeDtos);
+    insertPrjct(trgetJdbcTemplate, prjctDto);
+    insertMenu(trgetJdbcTemplate, menuDtos);
+    insertScrinGroup(trgetJdbcTemplate, scrinGroupDtos);
+    insertScrin(trgetJdbcTemplate, scrinDtos);
+    insertMenuScrinMapng(trgetJdbcTemplate, menuScrinMapngDtos);
+    insertCompn(trgetJdbcTemplate, compnDtos);
+    insertPrjctTrgetSysMapng(trgetJdbcTemplate, prjctTrgetSysMapng);
+    insertAtchmnflGroup(trgetJdbcTemplate, atchmnflGroupDtos);
+    insertAtchmnfl(trgetJdbcTemplate, atchmnflDtos);
 
     // TODO 파일 복사는 어떻게???
 
@@ -362,6 +370,7 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , scrin_group_id");
       sb.append("   , scrin_nm");
       sb.append("   , scrin_se_code");
+      sb.append("   , stdr_data_nm");
       sb.append("   , menu_id");
       sb.append("   , prjct_id");
       sb.append("   , regist_dt");
@@ -371,12 +380,38 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , '" + dto.getScrinGroupId() + "' ");
       sb.append("   , '" + dto.getScrinNm() + "' ");
       sb.append("   , '" + dto.getScrinSeCode() + "' ");
+      sb.append("   , '" + dto.getStdrDataNm() + "' ");
       sb.append("   , '" + dto.getMenuId() + "' ");
       sb.append("   , '" + dto.getPrjctId() + "' ");
       sb.append("   , '" + dto.getRegistDt() + "' ");
       sb.append(" )");
 
       jdbcTemplate.execute(sb.toString());
+    });
+  }
+
+  /**
+   * 대상 시스템에 메뉴-화면 매핑 목록 등록
+   */
+  private void insertMenuScrinMapng(JdbcTemplate trgetJdbcTemplate, List<MenuScrinMapngDto> menuScrinMapngDtos) {
+    if (null == menuScrinMapngDtos) {
+      return;
+    }
+
+    menuScrinMapngDtos.forEach(dto -> {
+      StringBuffer sb = new StringBuffer();
+
+      sb.append(" INSERT INTO " + DbUtil.getTableName(MenuScrinMapng.class) + "(");
+      sb.append("   menu_scrin_mapng_id");
+      sb.append("   , menu_id");
+      sb.append("   , scrin_id");
+      sb.append(" ) VALUES (");
+      sb.append("   " + dto.getMenuScrinMapngId());
+      sb.append("   , '" + dto.getMenuId() + "'");
+      sb.append("   , '" + dto.getScrinId() + "'");
+      sb.append(" )");
+
+      trgetJdbcTemplate.execute(sb.toString());
     });
   }
 
@@ -400,7 +435,6 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , menu_ordr_value");
       sb.append("   , prjct_id");
       sb.append("   , prnts_menu_id");
-      sb.append("   , scrin_id");
       sb.append("   , url_nm");
       sb.append("   , regist_dt");
       sb.append(" )");
@@ -410,7 +444,6 @@ public class DeployServiceImpl implements DeployService {
       sb.append("   , '" + dto.getMenuOrdrValue() + "' ");
       sb.append("   , '" + dto.getPrjctId() + "' ");
       sb.append("   , '" + dto.getPrntsMenuId() + "' ");
-      sb.append("   , '" + dto.getScrinId() + "' ");
       sb.append("   , '" + dto.getUrlNm() + "' ");
       sb.append("   , '" + dto.getRegistDt() + "' ");
       sb.append(" )");
@@ -584,6 +617,19 @@ public class DeployServiceImpl implements DeployService {
   }
 
   /**
+   * 메뉴목록으로 메뉴-화면 매핑 목록 조회
+   */
+  private List<MenuScrinMapngDto> getMenuScrinMapngs(List<MenuDto> menuDtos) {
+    List<MenuScrinMapngDto> dtos = new ArrayList<>();
+
+    menuDtos.forEach(menuDto -> {
+      dtos.addAll(menuScrinMapngService.findAllByMenuId(menuDto.getMenuId()));
+    });
+
+    return dtos;
+  }
+
+  /**
    * 화면 그룹 목록 조회
    * 
    * @param prjctId
@@ -610,6 +656,9 @@ public class DeployServiceImpl implements DeployService {
     List<Map<String, Object>> menus = trgetJdbcTemplate.queryForList(
         "SELECT menu_id, prjct_id FROM " + DbUtil.getTableName(Menu.class) + " WHERE prjct_id = '" + prjctId + "'");
 
+    // 메뉴-화면 매핑
+    List<Map<String, Object>> menuScrinMapngs = getMenuScrinMapngs(trgetJdbcTemplate, menus);
+
     // 화면그룹
     List<Map<String, Object>> scrinGroups = trgetJdbcTemplate.queryForList("SELECT scrin_group_id, prjct_id FROM "
         + DbUtil.getTableName(ScrinGroup.class) + " WHERE prjct_id = '" + prjctId + "'");
@@ -632,6 +681,7 @@ public class DeployServiceImpl implements DeployService {
     deleteCompn(trgetJdbcTemplate, compns);
     deleteScrin(trgetJdbcTemplate, scrins);
     deleteScrinGroup(trgetJdbcTemplate, scrinGroups);
+    deleteMenuScrinMapng(trgetJdbcTemplate, menuScrinMapngs);
     deleteMenu(trgetJdbcTemplate, menus);
     deletePrjctTrgetSysMapng(trgetJdbcTemplate, prjctId);
     deletePrjct(trgetJdbcTemplate, prjctId);
@@ -713,6 +763,18 @@ public class DeployServiceImpl implements DeployService {
     }
 
     jdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(Prjct.class) + " WHERE prjct_id = '" + prjctId + "' ");
+  }
+
+  @Transactional
+  void deleteMenuScrinMapng(JdbcTemplate trgetJdbcTemplate, List<Map<String, Object>> menuScrinMapngs) {
+    if (null == menuScrinMapngs) {
+      return;
+    }
+
+    menuScrinMapngs.forEach(x -> {
+      trgetJdbcTemplate.execute("DELETE FROM " + DbUtil.getTableName(MenuScrinMapng.class)
+          + " WHERE menu_scrin_mapng_id = " + x.get("menu_scrin_mapng_id"));
+    });
   }
 
   /**
@@ -806,6 +868,27 @@ public class DeployServiceImpl implements DeployService {
           + DbUtil.getTableName(Compn.class) + " WHERE scrin_id = '" + map.get("scrin_id") + "' ");
       list.addAll(compns);
     }
+
+    return list;
+  }
+
+  /**
+   * 메뉴목록으로 메뉴-화면 매핑 목록 조회
+   * 
+   * @param jdbcTemplate
+   * @param menus        메뉴 목록
+   */
+  List<Map<String, Object>> getMenuScrinMapngs(JdbcTemplate jdbcTemplate, List<Map<String, Object>> menus) {
+    List<Map<String, Object>> list = new ArrayList<>();
+
+    if (null == menus) {
+      return list;
+    }
+
+    menus.forEach(x -> {
+      list.addAll(jdbcTemplate
+          .queryForList("SELECT menu_scrin_mapng_id FROM menu_scrin_mapng WHERE menu_id = '" + x.get("menu_id") + "'"));
+    });
 
     return list;
   }

@@ -32,4 +32,15 @@ public interface MenuScrinMapngService {
    * @param dto 값
    */
   void update(MenuScrinMapngDto dto);
+
+  /**
+   * 메뉴아이디+화면아이디로 조회
+   * 
+   * @param menuId  메뉴아이디
+   * @param scrinId 화면아이디
+   * @return
+   */
+  MenuScrinMapngDto findByMenuIdAndScrinId(String menuId, String scrinId);
+
+  List<MenuScrinMapngDto> findAllByScrinId(String scrinId);
 }

@@ -53,6 +53,9 @@ public class ScrinDto {
    */
   private String menuId;
 
+  @ApiModelProperty(value = "기준 데이터 명")
+  private String stdrDataNm;
+
   /**
    * 등록 일시
    */

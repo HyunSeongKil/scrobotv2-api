@@ -39,10 +39,10 @@ public class MenuDto {
    */
   private String urlNm;
 
-  /**
-   * 화면 아이디
-   */
-  private String scrinId;
+  // /**
+  // * 화면 아이디
+  // */
+  // private String scrinId;
 
   /**
    * 메뉴 순서 값

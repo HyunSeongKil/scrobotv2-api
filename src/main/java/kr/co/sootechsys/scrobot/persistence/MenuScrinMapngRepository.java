@@ -1,6 +1,7 @@
 package kr.co.sootechsys.scrobot.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +13,9 @@ public interface MenuScrinMapngRepository extends JpaRepository<MenuScrinMapng, 
   List<MenuScrinMapng> findAllByMenuId(String menuId);
 
   void deleteAllByMenuId(String menuId);
+
+  Optional<MenuScrinMapng> findByMenuIdAndScrinId(String menuId, String scrinId);
+
+  Iterable<MenuScrinMapng> findAllByScrinId(String scrinId);
 
 }
